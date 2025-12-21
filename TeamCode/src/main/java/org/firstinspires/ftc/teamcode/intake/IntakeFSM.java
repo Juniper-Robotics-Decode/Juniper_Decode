@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.intake;
 
+import com.arcrobotics.ftclib.util.Timing;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 
+import java.util.concurrent.TimeUnit;
 
 public class IntakeFSM {
-
 
     enum State {
         RAMPING_UP_TO_INTAKE,
@@ -13,14 +15,18 @@ public class IntakeFSM {
         STOPPING,
         READY_TO_INTAKE,
         EJECTING,
-        STOPPED
+        STOPPED,
+        REMOVING_JAM,
+        JAM_REMOVED,
     }
 
     private RollerFSM Roller;
     private State currentState = State.RAMPING_UP_TO_INTAKE;
     private Telemetry telemetry;
+    Timing.Timer autoReverseTimer;
 
     public IntakeFSM(HWMap hardwareMap, Telemetry telemetry) {
+        autoReverseTimer = new Timing.Timer(1, TimeUnit.SECONDS);
         Roller = new RollerFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
     }
@@ -29,12 +35,6 @@ public class IntakeFSM {
         Roller.updateState();
         findTargetState(YPress, D_Pad_Left_Press);
         switch (currentState) {
-            case RAMPING_UP_TO_EJECT:
-                Roller.eject();
-                if (Roller.EJECTING()) {
-                    currentState = State.EJECTING;
-                }
-                break;
 
             case RAMPING_UP_TO_INTAKE:
                 Roller.intake();
@@ -49,9 +49,22 @@ public class IntakeFSM {
                     currentState = State.STOPPED;
                 }
                 break;
+
+            case RAMPING_UP_TO_EJECT:
+                Roller.eject();
+                if (Roller.EJECTING()) {
+                    currentState = State.EJECTING;
+                }
+                break;
+
+            case REMOVING_JAM:
+                Roller.eject();
+                if (Roller.FULL_SPEED_EJECT()) {
+                    currentState = State.JAM_REMOVED;
+                }
+                break;
         }
         telemetry.addData("Current State ", currentState);
-
     }
 
     public void findTargetState(boolean YPress, boolean D_Pad_Left_Press) {
@@ -62,10 +75,19 @@ public class IntakeFSM {
             currentState = State.RAMPING_UP_TO_INTAKE;
         }
 
+        if (Roller.JAMMED()) {
+            currentState = State.REMOVING_JAM;
+        }
+
+        if (currentState == State.JAM_REMOVED) {
+            currentState = State.RAMPING_UP_TO_INTAKE;
+        }
+
         if (D_Pad_Left_Press && (currentState == State.READY_TO_INTAKE || currentState == State.EJECTING)) {
             currentState = State.STOPPING;
         } else if (D_Pad_Left_Press && currentState == State.STOPPED) {
             currentState = State.RAMPING_UP_TO_INTAKE;
+
         }
     }
 }

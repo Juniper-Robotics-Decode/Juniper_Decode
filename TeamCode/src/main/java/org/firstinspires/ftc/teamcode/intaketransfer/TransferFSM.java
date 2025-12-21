@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 public class TransferFSM {
 
-
     public enum State {
         MOVING_DOWN,
         MOVING_UP,
@@ -17,8 +16,9 @@ public class TransferFSM {
         STOPPING,
         AT_DOWN,
         AT_UP,
-        MOVING,
+        MOVING_FORWARD,
         STOPPED,
+        REVERSING,
     }
 
     private State currentState = State.START_TO_MOVE;
@@ -27,12 +27,11 @@ public class TransferFSM {
     private TransferServoFSM transferServoFSM;
     Timing.Timer autoMoveTimer;
 
-
     public TransferFSM(HWMap hardwareMap, Telemetry telemetry) {
         Belt = new BeltFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
         transferServoFSM = new TransferServoFSM(hardwareMap, telemetry);
-        autoMoveTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+        autoMoveTimer = new Timing.Timer(3, TimeUnit.SECONDS);
     }
 
     public void updateState(boolean D_Pad_Right_Press, boolean Right_Bumper) {
@@ -45,7 +44,7 @@ public class TransferFSM {
             case START_TO_MOVE:
                 Belt.Move();
                 if (Belt.MOVING()) {
-                    currentState = State.MOVING;
+                    currentState = State.MOVING_FORWARD;
                 }
                 break;
 
@@ -57,9 +56,6 @@ public class TransferFSM {
                 break;
 
             case MOVING_UP:
-                if (!autoMoveTimer.isTimerOn()) {
-                    autoMoveTimer.start();
-                }
                 transferServoFSM.MoveUp();
                 if (transferServoFSM.AT_UP()) {
                     currentState = State.AT_UP;
@@ -72,24 +68,33 @@ public class TransferFSM {
                     currentState = State.STOPPED;
                 }
                 break;
+
+            case REVERSING:
+                Belt.Reverse();
+                if (Belt.REVERSING()) {
+                    currentState = State.REVERSING;
+                }
         }
         telemetry.addData("Transfer Current State ", currentState);
+        telemetry.addData("Auto Move Timer ", autoMoveTimer.elapsedTime());
     }
 
     public void findTargetState(boolean D_Pad_Right_Press, boolean Right_Bumper) {
         if (D_Pad_Right_Press && Belt.MOVING()) {
             currentState = State.STOPPING;
         }
+
         if (D_Pad_Right_Press && Belt.STOPPED()) {
             currentState = State.START_TO_MOVE;
         }
         if (Right_Bumper && transferServoFSM.AT_UP()) {
             currentState = State.MOVING_DOWN;
-
         }
+
         if (Right_Bumper && transferServoFSM.AT_DOWN()) {
             currentState = State.MOVING_UP;
         }
+
         if (autoMoveTimer.done() && transferServoFSM.AT_UP()) {
             autoMoveTimer.pause();
             currentState = State.MOVING_DOWN;

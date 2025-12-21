@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.intaketransfer;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +20,8 @@ public class ServoTest extends LinearOpMode {
     public void runOpMode() {
         Timing.Timer timer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        transferServo = hardwareMap.get(Servo.class, "TS");
-        transferServo.setDirection(Servo.Direction.REVERSE);
+        transferServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "TS");
+
 
         if (gamepad2.dpad_up) {
             transferServo.setPosition(.25);
@@ -56,5 +57,3 @@ public class ServoTest extends LinearOpMode {
         }
     }
 }
-
-
