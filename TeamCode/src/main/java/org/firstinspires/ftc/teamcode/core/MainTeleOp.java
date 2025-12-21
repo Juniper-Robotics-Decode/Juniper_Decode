@@ -81,6 +81,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
     private HWMap hwMap;
+    private RobotSettings robotSettings;
     private GamepadEx gamepad;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
@@ -148,9 +149,10 @@ public class MainTeleOp extends LinearOpMode {
         telemetry.update();
 
         hwMap = new HWMap(hardwareMap);
+        robotSettings = new RobotSettings();
         intakeFSM = new IntakeFSM(hwMap, telemetry);
         transferFSM = new TransferFSM(hwMap, telemetry);
-        shooterFSM = new ShooterFSM(hwMap,telemetry);
+        shooterFSM = new ShooterFSM(hwMap,telemetry, robotSettings);
 
 
         waitForStart();

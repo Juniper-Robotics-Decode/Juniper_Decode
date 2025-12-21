@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
 public class ShooterFSM {
 
@@ -20,11 +21,11 @@ public class ShooterFSM {
     private boolean flywheelStopping = false;
 
     private Telemetry telemetry;
-    public ShooterFSM (HWMap hardwareMap, Telemetry telemetry) {
+    public ShooterFSM (HWMap hardwareMap, Telemetry telemetry, RobotSettings robotSettings) {
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry);
         turretFSM = new TurretFSM(hardwareMap,telemetry);
         pitchFSM = new PitchFSM(hardwareMap,telemetry);
-        positionFSM = new PositionFSM(hardwareMap,telemetry);
+        positionFSM = new PositionFSM(hardwareMap,telemetry, robotSettings);
         this.telemetry = telemetry;
         state = States.PREPARING_TO_SHOOT;
     }

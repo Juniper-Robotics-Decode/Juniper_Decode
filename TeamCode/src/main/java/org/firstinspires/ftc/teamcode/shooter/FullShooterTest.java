@@ -8,11 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
 @TeleOp
 public class FullShooterTest extends LinearOpMode {
 
     HWMap hwMap;
+    RobotSettings robotSettings;
     GamepadEx gamepad;
     ShooterFSM shooterFSM;
     @Override
@@ -20,8 +22,9 @@ public class FullShooterTest extends LinearOpMode {
         try {
             this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             hwMap = new HWMap(hardwareMap);
+            robotSettings = new RobotSettings();
             gamepad = new GamepadEx(gamepad1);
-            shooterFSM = new ShooterFSM(hwMap,telemetry);
+            shooterFSM = new ShooterFSM(hwMap,telemetry, robotSettings);
         }catch (Exception e) {
             telemetry.addData("Exception", e.getMessage());
             telemetry.update();

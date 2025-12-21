@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.core;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
+@Config
 public class RobotSettings {
     public enum Alliance{
         RED,
@@ -15,7 +18,7 @@ public class RobotSettings {
         LIMELIGHT_AND_PINPOINT
     }
     public enum StartPos{
-        CLOSE_RED (new Pose2D(DistanceUnit.METER, 0.0, 0.0, AngleUnit.DEGREES, 0.0)),
+        CLOSE_RED (new Pose2D(DistanceUnit.METER, -1.64, -0.27, AngleUnit.DEGREES, 0.0)),
         FAR_RED (new Pose2D(DistanceUnit.METER, 0.0, 0.0, AngleUnit.DEGREES, 0.0)),
         CLOSE_BLUE (new Pose2D(DistanceUnit.METER, 0.0, 0.0, AngleUnit.DEGREES, 0.0)),
         FAR_BLUE((new Pose2D(DistanceUnit.METER, 0.0, 0.0, AngleUnit.DEGREES, 0.0)));

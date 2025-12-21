@@ -46,9 +46,9 @@ public class PositionFSM {
 
     private Telemetry telemetry;
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry) {
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, RobotSettings robotSettings) {
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry);
-        pinpoint = new Pinpoint(hwMap);
+        pinpoint = new Pinpoint(hwMap, robotSettings);
         state = States.NO_VALID_TARGET;
         createVelocityMap();
         this.telemetry = telemetry;
@@ -81,7 +81,7 @@ public class PositionFSM {
                 }
                 findFlywheelTargetVelocity(pinpoint.getGoalDistance());
                 findPitchTargetAngle();
-                findTurretError(pinpoint.getHeadingError());
+                findTurretError(pinpoint.getHeadingErrorTrig());
             }
         }
         else {
@@ -164,7 +164,7 @@ public class PositionFSM {
 
         telemetry.addLine("----------PINPOINT LOG----------");
         telemetry.addData("Goal Distance", pinpoint.getGoalDistance());
-        telemetry.addData("pinpoint heading error", pinpoint.getHeadingError());
+        telemetry.addData("pinpoint heading error", pinpoint.getHeadingErrorTrig());
         telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
         telemetry.addLine("----------POSITION FSM LOG----------");
     }
