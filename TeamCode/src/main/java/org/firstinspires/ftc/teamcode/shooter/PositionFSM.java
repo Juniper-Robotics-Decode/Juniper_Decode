@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
-import org.firstinspires.ftc.teamcode.shooter.wrappers.Pinpoint;
+import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
 public class PositionFSM {
 
@@ -46,9 +46,9 @@ public class PositionFSM {
 
     private Telemetry telemetry;
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry, RobotSettings robotSettings) {
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint) {
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry);
-        pinpoint = new Pinpoint(hwMap, robotSettings);
+        this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
         createVelocityMap();
         this.telemetry = telemetry;
