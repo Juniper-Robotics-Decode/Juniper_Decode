@@ -1,13 +1,10 @@
-package org.firstinspires.ftc.teamcode.shooter.wrappers;
+package org.firstinspires.ftc.teamcode.core;
 
 import com.pedropathing.localization.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.MainAuto;
-import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
 public class Pinpoint {
 
@@ -29,7 +26,8 @@ public class Pinpoint {
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         odo.resetPosAndIMU();
-        odo.setPosition(RobotSettings.startPosState.getPose2D());
+        pos = new Pose2D(DistanceUnit.METER, 0,0,AngleUnit.DEGREES, 0);
+        odo.setPosition(pos);
     }
 
     public boolean pinpointReady() {
@@ -65,6 +63,10 @@ public class Pinpoint {
 
     public static double getY() {
         return y;
+    }
+
+    public void resetPosAndIMU() {
+        odo.resetPosAndIMU();
     }
 
     public double getGoalDistance() {
