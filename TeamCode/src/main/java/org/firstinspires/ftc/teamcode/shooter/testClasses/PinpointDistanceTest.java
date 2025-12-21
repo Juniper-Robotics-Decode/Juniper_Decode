@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MainAuto;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
-import org.firstinspires.ftc.teamcode.shooter.wrappers.Pinpoint;
+import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
 @TeleOp
 public class PinpointDistanceTest extends LinearOpMode {

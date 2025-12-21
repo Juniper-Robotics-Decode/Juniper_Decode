@@ -64,8 +64,8 @@ public class MainTeleOp extends LinearOpMode {
 
 
         hwMap = new HWMap(hardwareMap);
-        pinpoint = new Pinpoint(hwMap);
         robotSettings = new RobotSettings();
+        pinpoint = new Pinpoint(hwMap, robotSettings);
 
         swerveDrivetrain = new swerveDrivetrain(hwMap);
 
@@ -75,7 +75,7 @@ public class MainTeleOp extends LinearOpMode {
 
         intakeFSM = new IntakeFSM(hwMap, telemetry);
         transferFSM = new TransferFSM(hwMap, telemetry);
-        shooterFSM = new ShooterFSM(hwMap,telemetry, robotSettings, pinpoint);
+        shooterFSM = new ShooterFSM(hwMap,telemetry, pinpoint);
 
 
         waitForStart();
