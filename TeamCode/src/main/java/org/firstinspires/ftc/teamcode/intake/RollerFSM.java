@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode.intake;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
-
 @Config
 public class RollerFSM {
-    public static MotorEx Roller;
     private Telemetry telemetry;
-    public static State State; // If transfer servo is moving, eject and if intake has signiciant veolcity drop becuase of third ball eject
+    public static State State;
     private final MotorWrapper intakeMotor;
     public static double kS = 0, kV = 1.2, kA = 0;
     public static double p = 0.15, i = 0, d = 0;
@@ -21,34 +18,40 @@ public class RollerFSM {
     public static double stoppingTargetVelocity = 0;
     public static double intakingTargetVelocity = 2790;
     public static double ejectingTargetVelocity = -1400;
-
+    public static double jammingCurrentThreshold = 3;
+    public static double jammingVelocityThreshold = 1000;
 
     public enum State {
         STOPPED,
         INTAKING,
         EJECTING,
+        JAMMED,
+        RAMPING_UP_TO_INTAKE
     }
 
-
     public RollerFSM(HWMap hwMap, Telemetry telemetry) {
-        intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1);
+        intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, true);
         this.telemetry = telemetry;
-        State = State.STOPPED;
+        State = State.RAMPING_UP_TO_INTAKE;
+
     }
 
     public void updateState() {
 
-        if (intakeMotor.getVelocity() == 0) {
+        if (currentVelocity == 0) {
             State = State.STOPPED;
         }
 
-        if (intakeMotor.getVelocity() > 0) {
+        if (currentVelocity > 1500) {
             State = State.INTAKING;
         }
 
-        if (intakeMotor.getVelocity() < 0) {
+        if (currentVelocity < 0) {
             State = State.EJECTING;
+        }
 
+        if (0 > targetVelocity && currentVelocity < jammingVelocityThreshold && jammingCurrentThreshold > intakeMotor.getCurrent() && State != State.RAMPING_UP_TO_INTAKE) {
+            State = State.JAMMED;
         }
 
 
@@ -56,15 +59,14 @@ public class RollerFSM {
         intakeMotor.setVelocityConstants(p, i, d, kS, kV, kA);
         updatePID();
         telemetry.addData("Roller FSM State ", State);
-        telemetry.addData("Current Veolcity ", currentVelocity);
+        telemetry.addData("Current Velocity ", currentVelocity);
         telemetry.addData("Target Velocity ", targetVelocity);
+        telemetry.addData("Current Amount ", intakeMotor.getCurrent());
     }
 
-
     public void updatePID() {
-        currentVelocity = intakeMotor.getVelocity();
+        currentVelocity = -intakeMotor.getVelocity();
         intakeMotor.setVelocity(targetVelocity);
-
     }
 
     public void stop() {
@@ -72,12 +74,14 @@ public class RollerFSM {
     }
 
     public void intake() {
+        if (State != State.INTAKING) {
+            State = State.RAMPING_UP_TO_INTAKE;
+        }
         targetVelocity = intakingTargetVelocity;
     }
 
     public void eject() {
         targetVelocity = ejectingTargetVelocity;
-
     }
 
     public boolean STOPPED() {
@@ -92,4 +96,7 @@ public class RollerFSM {
         return State == State.EJECTING;
     }
 
+    public boolean JAMMED() {
+        return State == State.JAMMED;
+    }
 }

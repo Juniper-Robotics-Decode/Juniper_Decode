@@ -42,7 +42,7 @@ public class TurretFSM {
     Telemetry telemetry;
 
     public TurretFSM(HWMap hwMap, Telemetry telemetry) {
-        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio);
+        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio, false);
         turretMotor.resetEncoder();
         state = States.ALIGNING;
         pidController = new PIDController(P,I,D);

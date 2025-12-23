@@ -34,7 +34,7 @@ public class FlywheelFSM {
     private boolean stopping = false;
 
     public FlywheelFSM(HWMap hwMap, Telemetry telemetry) {
-        flywheelMotor = new MotorWrapper(hwMap.getFlywheelMotor(),true,1);
+        flywheelMotor = new MotorWrapper(hwMap.getFlywheelMotor(),true,1, false);
         this.telemetry = telemetry;
         state = States.STOPPED;
     }
