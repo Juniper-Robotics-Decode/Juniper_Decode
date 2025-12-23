@@ -26,7 +26,7 @@ public class ShooterFSM {
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry);
         turretFSM = new TurretFSM(hardwareMap,telemetry);
         pitchFSM = new PitchFSM(hardwareMap,telemetry);
-        positionFSM = new PositionFSM(hardwareMap,telemetry, pinpoint);
+        positionFSM = new PositionFSM(hardwareMap,telemetry, pinpoint, turretFSM::getCurrentAngle);
         this.telemetry = telemetry;
         state = States.PREPARING_TO_SHOOT;
     }

@@ -65,7 +65,7 @@ public class FlywheelFSM {
         flywheelMotor.readVelocity();
         flywheelMotor.setVelocityConstants(vP,vI,vD,ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
-        targetVelocityTicks = -targetVelocityTicks;
+        targetVelocityTicks = targetVelocityTicks;
         flywheelMotor.setVelocity(targetVelocityTicks);
     }
 

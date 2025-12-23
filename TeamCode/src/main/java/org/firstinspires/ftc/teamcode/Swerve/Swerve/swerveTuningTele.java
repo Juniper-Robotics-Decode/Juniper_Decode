@@ -25,7 +25,7 @@ public class swerveTuningTele extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     private HWMap hwMap;
-    private swerveDrivetrain swerveDrivetrain;
+    private SwerveDrivetrain swerveDrivetrain;
 
     public double x, y, heading;
     public double BotHeading;
@@ -66,7 +66,7 @@ public class swerveTuningTele extends LinearOpMode{
         odo.recalibrateIMU();
 
         hwMap = new HWMap(hardwareMap);
-        swerveDrivetrain = new swerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

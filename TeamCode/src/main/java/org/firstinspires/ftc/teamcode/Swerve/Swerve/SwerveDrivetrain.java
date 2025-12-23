@@ -9,16 +9,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.MathUtils;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveModule;
-import org.firstinspires.ftc.teamcode.core.HWMap;
 
 import java.util.Locale;
 
 @Config
-public class swerveDrivetrain {
+public class SwerveDrivetrain {
 
-    public swerveModule frontLeftModule, frontRightModule, backRightModule, backLeftModule;
-    public swerveModule[] modules;
+    public SwerveModule frontLeftModule, frontRightModule, backRightModule, backLeftModule;
+    public SwerveModule[] modules;
 
     private double[] ws = new double[4];
     private double MotorScaling[] = new double[]{1,1,1,1};
@@ -34,14 +32,14 @@ public class swerveDrivetrain {
 
     private boolean locked = false;
 
-    public swerveDrivetrain(HWMap hwMap) {
-        frontLeftModule = new swerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false);
-        frontRightModule = new swerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, offsets[1], false);
-        backRightModule = new swerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, offsets[2], false);
-        backLeftModule = new swerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, offsets[3], false);
+    public SwerveDrivetrain(HWMap hwMap) {
+        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false);
+        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, offsets[1], false);
+        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, offsets[2], false);
+        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, offsets[3], false);
 
-        modules = new swerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
-        for (swerveModule m : modules) m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        modules = new SwerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
+        for (SwerveModule m : modules) m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         R = hypot(trackwidth, wheelbase);
     }
@@ -69,14 +67,14 @@ public class swerveDrivetrain {
 
     public void updateModules() {
         for (int i = 0; i < 4; i++) {
-            swerveModule m = modules[i];
+            SwerveModule m = modules[i];
             if (Math.abs(max) > 1) ws[i] /= max;
             m.update(wa[i], (ws[i]*MotorScaling[i]));
         }
     }
 
     public void updateModule(int i) {
-        swerveModule m = modules[i];
+        SwerveModule m = modules[i];
         if (Math.abs(max) > 1) ws[i] /= max;
         m.update(wa[i], ws[i]);
     }

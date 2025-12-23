@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.Locale;
 
 @Config
-public class swerveModule {
+public class SwerveModule {
 
     private double MAX_SERVO = 1, MAX_MOTOR = 1;
 
@@ -36,7 +36,7 @@ public class swerveModule {
     private double k_static = 0.02, p = 0.8, i = 0.0, d = 0.002;
     private double offset;
 
-    public swerveModule(DcMotorEx m, CRServoImplEx s, AnalogInput e, Double o, Boolean inv) {
+    public SwerveModule(DcMotorEx m, CRServoImplEx s, AnalogInput e, Double o, Boolean inv) {
         motor = m;
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
         motorConfigurationType.setAchieveableMaxRPMFraction(MAX_MOTOR);

@@ -7,12 +7,13 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
 @TeleOp
 public class FlywheelPIDTest extends LinearOpMode {
 
-    MotorEx motor;
+    MotorEx motor1;
     public static double vP=3, vI=0, vD=0, vF = 0;
 
     public static double ks=0, kv=1.7, ka=0;
@@ -25,16 +26,17 @@ public class FlywheelPIDTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
+        motor1 = new MotorEx(hardwareMap,"FM1", Motor.GoBILDA.BARE);
+        motor1.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        motor.setRunMode(Motor.RunMode.VelocityControl);
+        motor1.setRunMode(Motor.RunMode.VelocityControl);
 
         waitForStart();
         while (opModeIsActive()) {
             updatePID();
             telemetry.addData("Voltage", hardwareMap.voltageSensor.iterator().next().getVoltage());
-            telemetry.addData("accel", motor.getAcceleration());
+            telemetry.addData("accel", motor1.getAcceleration());
             telemetry.update();
         }
     }
@@ -58,15 +60,15 @@ public class FlywheelPIDTest extends LinearOpMode {
         */
 
 
-        motor.setVeloCoefficients(vP,vI,vD);
-        motor.setFeedforwardCoefficients(ks,kv,ka);
+        motor1.setVeloCoefficients(vP,vI,vD);
+        motor1.setFeedforwardCoefficients(ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
         targetVelocityTicks = -targetVelocityTicks;
-        motor.setVelocity(targetVelocityTicks);
+        motor1.setVelocity(targetVelocityTicks);
         telemetry.addData("Target Velocity RPM", targetVelocityRPM);
         telemetry.addData("Target Velocity Ticks", targetVelocityTicks);
-        telemetry.addData("Current Velocity Corrected", motor.getCorrectedVelocity());
-        telemetry.addData("Current Velocity Get", motor.getVelocity());
+        telemetry.addData("Current Velocity Corrected", motor1.getCorrectedVelocity());
+        telemetry.addData("Current Velocity Get", motor1.getVelocity());
 
         //motor.setVelocity(targetVelocity,RADIANS);
     }

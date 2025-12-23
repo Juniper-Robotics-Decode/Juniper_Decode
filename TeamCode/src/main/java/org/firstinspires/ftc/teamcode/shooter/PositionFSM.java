@@ -3,10 +3,15 @@ package org.firstinspires.ftc.teamcode.shooter;
 import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
+
+import java.util.function.DoubleSupplier;
 
 public class PositionFSM {
 
@@ -31,7 +36,13 @@ public class PositionFSM {
         }
     }
 
+    public enum Sensor{
+        LIMELIGHT,
+        PINPOINT
+    }
+
     private States state;
+    public static Sensor sensor;
     private LimelightCamera limelightCamera;
     private Pinpoint pinpoint;
     private InterpLUT velocityMap;
@@ -41,25 +52,35 @@ public class PositionFSM {
     private double pitchTargetAngle;
     private double turretError;
 
-    private double LIMELIGHT_FORWARD_OFFSET = 0;
+    private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: add offset for pinpoint instead
+    private double PINPOINT_OFFSET = 0;
     private double threshold1 = 2.5, threshold2 = 3;
+
+    private double SENSOR_CHOICE_THRESHOLD = 2;
+    private double RELOCALIZATION_TRHESHOLD = 0.1;
+    private boolean rumbleNotification = false;
+    public static double CAMERA_DISTANCE_FROM_CENTER = 0.1;
+
+    private DoubleSupplier turretAngleProvider;
 
     private Telemetry telemetry;
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint) {
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider) {
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry);
         this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
+        sensor = Sensor.PINPOINT;
+        this.turretAngleProvider = turretAngleProvider;
         createVelocityMap();
         this.telemetry = telemetry;
     }
 
     public void updateState() {
         limelightCamera.update();
-        pinpoint.update();
+        chooseSensor();
 
-        if(limelightCamera.hasTarget() && pinpoint.pinpointReady()) {
-            if(RobotSettings.distanceMethod == RobotSettings.DistanceMethod.LIMELIGHT_ONLY && limelightCamera.hasTarget()) {
+        if(limelightCamera.hasTarget() || pinpoint.pinpointReady()) {
+            if(sensor == Sensor.LIMELIGHT) {
                 if (limelightCamera.getFlatDistance() >= threshold2) {
                     state = States.ZONE_3;
                 } else if (limelightCamera.getFlatDistance() >= threshold1) {
@@ -71,7 +92,7 @@ public class PositionFSM {
                 findPitchTargetAngle();
                 findTurretError(limelightCamera.getTy());
             }
-            else if(RobotSettings.distanceMethod == RobotSettings.DistanceMethod.PINPOINT_ONLY && pinpoint.pinpointReady()) {
+            else if(sensor == Sensor.PINPOINT) {
                 if (pinpoint.getGoalDistance() >= threshold2) {
                     state = States.ZONE_3;
                 } else if (pinpoint.getGoalDistance() >= threshold1) {
@@ -87,6 +108,14 @@ public class PositionFSM {
         else {
             state = States.NO_VALID_TARGET;
         }
+
+        //TODO: add if turret velocity under threshold and drive velocity under threshold then relocalize at all times
+/*
+        if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
+            if(limelightCamera.hasTarget() && pinpoint.pinpointReady()) {
+                relocalize();
+            }
+        }*/
     }
 
     private void createVelocityMap() {
@@ -108,7 +137,12 @@ public class PositionFSM {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {
-            flywheelTargetVelocityRPM = velocityMap.get(distance_m+LIMELIGHT_FORWARD_OFFSET);
+            if(sensor == Sensor.LIMELIGHT) {
+                flywheelTargetVelocityRPM = velocityMap.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
+            }
+            else {
+                flywheelTargetVelocityRPM = velocityMap.get(distance_m + PINPOINT_OFFSET);
+            }
         }
 
     }
@@ -141,6 +175,56 @@ public class PositionFSM {
         return turretError;
     }
 
+    private void chooseSensor() {
+        if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_ONLY)) {
+                sensor = Sensor.LIMELIGHT;
+        }
+        else if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.PINPOINT_ONLY)) {
+            sensor = Sensor.PINPOINT;
+        }
+        else if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
+             if (!pinpoint.pinpointReady()) {
+                sensor = Sensor.LIMELIGHT;
+            }
+            else {
+                sensor = Sensor.PINPOINT;
+            }
+            if(Math.abs(pinpoint.getGoalDistance() - limelightCamera.getFlatDistance()) > 0.1 && pinpoint.pinpointReady() && limelightCamera.hasTarget()) {
+                rumbleNotification = true;
+            }
+            else {
+                rumbleNotification = false;
+            }
+        }
+
+    }
+
+    public void relocalize() {
+        //TODO: add 20 degree pitch and add 90 degree roll
+        double cameraAbsoluteHeading = pinpoint.getHeading() - turretAngleProvider.getAsDouble();
+        double vectorAbsoluteHeading = cameraAbsoluteHeading - limelightCamera.getTy();
+        double vectorMagnitude = limelightCamera.getFlatDistance();
+
+        double xCam = RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
+        double yCam = RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
+
+        double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
+        double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
+
+        Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
+        pinpoint.setPosition(newPos);
+
+        telemetry.addLine("--- RELOCALIZATION ---");
+        telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
+        telemetry.addData("Vector Heading", vectorAbsoluteHeading);
+        telemetry.addData("Vector Dist", vectorMagnitude);
+        telemetry.addData("Cam X", xCam);
+        telemetry.addData("Cam Y", yCam);
+        telemetry.addData("Robot X", xRobot);
+        telemetry.addData("Robot Y", yRobot);
+    }
+
+
     public void log() {
         telemetry.addLine("----------POSITION FSM LOG----------");
         telemetry.addData("position FSM state", state);
@@ -160,12 +244,11 @@ public class PositionFSM {
         telemetry.addLine("----------LIMELIGHT LOG----------");
 
         telemetry.addLine("----------PINPOINT LOG----------");
-
-
-        telemetry.addLine("----------PINPOINT LOG----------");
         telemetry.addData("Goal Distance", pinpoint.getGoalDistance());
         telemetry.addData("pinpoint heading error", pinpoint.getHeadingErrorTrig());
         telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
+        telemetry.addLine("----------PINPOINT LOG----------");
+
         telemetry.addLine("----------POSITION FSM LOG----------");
     }
 
