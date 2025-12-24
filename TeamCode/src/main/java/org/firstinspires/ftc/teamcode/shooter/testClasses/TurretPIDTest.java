@@ -45,7 +45,7 @@ public class TurretPIDTest extends LinearOpMode {
 
         timer = new Timing.Timer(3000000, TimeUnit.MILLISECONDS);
         hwMap = new HWMap(hardwareMap);
-        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio);
+        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio, false);
         turretMotor.resetEncoder();
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         pidController = new PIDController(P,I,D);

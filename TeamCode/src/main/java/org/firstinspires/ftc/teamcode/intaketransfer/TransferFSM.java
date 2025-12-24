@@ -25,7 +25,8 @@ public class TransferFSM {
     private BeltFSM Belt;
     private Telemetry telemetry;
     private TransferServoFSM transferServoFSM;
-    Timing.Timer autoMoveTimer;
+    public static Timing.Timer autoMoveTimer;
+
 
     public TransferFSM(HWMap hardwareMap, Telemetry telemetry) {
         Belt = new BeltFSM(hardwareMap, telemetry);
