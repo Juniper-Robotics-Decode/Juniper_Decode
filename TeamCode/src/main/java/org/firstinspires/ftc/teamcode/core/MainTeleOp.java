@@ -110,8 +110,8 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 
-            telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());
+           /* telemetry.addData("Bot Heading", BotHeading);
+            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*/
             telemetry.addData("loop time", loopTimer.elapsedTime());
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.dpad_right, gamepad1.right_bumper);

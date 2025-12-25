@@ -47,7 +47,7 @@ public class PositionFSM {
     private Pinpoint pinpoint;
     private InterpLUT velocityMap;
 
-    private double defaultFlywheelVelocity;
+    private double defaultFlywheelVelocity = 2500;
     private double flywheelTargetVelocityRPM;
     private double pitchTargetAngle;
     private double turretError;
@@ -93,16 +93,21 @@ public class PositionFSM {
                 findTurretError(limelightCamera.getTy());
             }
             else if(sensor == Sensor.PINPOINT) {
-                if (pinpoint.getGoalDistance() >= threshold2) {
-                    state = States.ZONE_3;
-                } else if (pinpoint.getGoalDistance() >= threshold1) {
-                    state = States.ZONE_2;
-                } else {
-                    state = States.ZONE_1;
+                if (pinpoint.pinpointReady()) {
+                    if (pinpoint.getGoalDistance() >= threshold2) {
+                        state = States.ZONE_3;
+                    } else if (pinpoint.getGoalDistance() >= threshold1) {
+                        state = States.ZONE_2;
+                    } else {
+                        state = States.ZONE_1;
+                    }
+                    findFlywheelTargetVelocity(pinpoint.getGoalDistance());
+                    findPitchTargetAngle();
+                    findTurretError(pinpoint.getHeadingErrorTrig());
                 }
-                findFlywheelTargetVelocity(pinpoint.getGoalDistance());
-                findPitchTargetAngle();
-                findTurretError(pinpoint.getHeadingErrorTrig());
+                else {
+                    state = States.NO_VALID_TARGET;
+                }
             }
         }
         else {
@@ -123,17 +128,17 @@ public class PositionFSM {
 
         // distance (m) , velocity (rpm)
 
-        velocityMap.add(1.24, 3500);
-        velocityMap.add(1.6, 3500);
-        velocityMap.add(2.11, 3600);
-        velocityMap.add(2.8, 4000);
+        velocityMap.add(1.24, 3100);
+        velocityMap.add(1.6, 3150);
+        velocityMap.add(2.11, 3300);
+        velocityMap.add(2.8, 3600);
 
         velocityMap.createLUT();
 
     }
 
     public void findFlywheelTargetVelocity(double distance_m) {
-        if(distance_m < 1.24 || distance_m > 2.8) {
+        if(distance_m < 1.24 || distance_m > 2.8 || Double.isNaN(distance_m)) {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {
@@ -155,7 +160,7 @@ public class PositionFSM {
     }
 
     public void findTurretError(double error) {
-        if(state == States.NO_VALID_TARGET) {
+        if(state == States.NO_VALID_TARGET || Double.isNaN(error)) {
             turretError = 0;
         }
         else {
@@ -228,6 +233,7 @@ public class PositionFSM {
     public void log() {
         telemetry.addLine("----------POSITION FSM LOG----------");
         telemetry.addData("position FSM state", state);
+        telemetry.addData("Current shooting Sensor", sensor);
         telemetry.addData("Flywheel Target", flywheelTargetVelocityRPM);
         telemetry.addData("Pitch Target", pitchTargetAngle);
         telemetry.addData("Turret Error", turretError);

@@ -34,6 +34,7 @@ public class FullShooterTest extends LinearOpMode {
         }
         waitForStart();
         while(opModeIsActive()) {
+            pinpoint.update();
             gamepad.readButtons();
             shooterFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.B));
             log();
