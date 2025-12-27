@@ -26,8 +26,8 @@ public class PitchPIDTest extends LinearOpMode {
     public static double P=0.1, I=0, D=0, F=0;
     public static double gearRatio = 1.0/12.0;
 
-    public static double UPPER_HARD_STOP = 29;
-    public static double LOWER_HARD_STOP = 10;
+    public static double UPPER_HARD_STOP = 22;
+    public static double LOWER_HARD_STOP = 13;
 
     @Override
     public void runOpMode() throws InterruptedException {

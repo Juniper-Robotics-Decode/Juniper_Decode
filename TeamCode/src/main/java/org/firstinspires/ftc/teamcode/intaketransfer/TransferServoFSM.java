@@ -22,9 +22,9 @@ public class TransferServoFSM {
     private ServoWrapper transferServo;
     public State currentState;
     public double currentPosition = 0;
-    public static double targetPosition = 0.55;
-    public static double positionUp = .85;
-    public static double positionDown = 0.55;
+    public static double targetPosition = 0.25;
+    public static double positionUp = .50;
+    public static double positionDown = 0.25;
     Timing.Timer timer;
 
 

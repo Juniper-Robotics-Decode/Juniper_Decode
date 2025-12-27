@@ -94,10 +94,11 @@ public class PositionFSM {
 
         // distance (m) , velocity (rpm)
 
-        velocityMap.add(1.24, 3500);
-        velocityMap.add(1.6, 3500);
-        velocityMap.add(2.11, 3600);
-        velocityMap.add(2.8, 4000);
+        velocityMap.add(1.24, 3600);
+        velocityMap.add(1.6, 3600);
+        velocityMap.add(2.11, 4000);
+        velocityMap.add(2.8, 4400);
+        //#5 is 4700 rpm and 18 pitch
 
         velocityMap.createLUT();
 

@@ -27,7 +27,7 @@ public class ServoTest extends LinearOpMode {
         }
 
         if (gamepad2.dpad_down) {
-            transferServo.setPosition(.75);
+            transferServo.setPosition(.50);
         }
 
         waitForStart();
