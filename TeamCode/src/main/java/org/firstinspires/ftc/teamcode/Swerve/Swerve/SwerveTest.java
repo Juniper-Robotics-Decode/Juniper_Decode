@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Swerve.Swerve;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.inverses;
 import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
 import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.scalars;
@@ -13,6 +14,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -44,6 +46,15 @@ public class SwerveTest extends LinearOpMode {
 
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
+
+    private boolean HeadingLocked = false;
+    private double TargetHeading;
+    private PIDFController hController = new PIDFController(0.5, 0, 0.1, 0);
+    public static double P,I,D,F;
+
+    public static double[] MotorScalars = new double[]{1,1,1,1};
+    public static double[] Zeros = new double[]{-0.4, 1.1, 3.2, 0.6};
+
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -81,6 +92,11 @@ public class SwerveTest extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
+
+            hController.setPIDF(P, I, D, F);
+            swerveDrivetrain.setMotorScaling(MotorScalars);
+            swerveDrivetrain.setOffsets(Zeros);
+
             if (gamepad1.options) {
                 odo.resetPosAndIMU();
             }
@@ -89,9 +105,23 @@ public class SwerveTest extends LinearOpMode {
             pos = odo.getPosition();
             BotHeading = -pos.getHeading(RADIANS);
 
-            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
-            drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
+            if (gamepad1.right_stick_y > 0.25){
+                HeadingLocked = true;
+                TargetHeading = Math.PI;
+            }
+            if (gamepad1.right_stick_y < -0.25) {
+                TargetHeading = 0.0;
+            }
 
+            heading = gamepad1.right_stick_x;
+            if (heading > 0.005) {
+                HeadingLocked = false;
+            }
+
+            double error = normalizeRadians(normalizeRadians(TargetHeading) - BotHeading);
+            double HeadingCorrection = -hController.calculate(0, error);
+
+            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(heading, 0.01, 0.66, 4)));
             if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
                 locked = true;
             }

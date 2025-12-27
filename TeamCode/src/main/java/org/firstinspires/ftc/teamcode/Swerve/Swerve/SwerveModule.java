@@ -70,7 +70,7 @@ public class SwerveModule {
         }
         error = normalizeRadians(target - current);
 
-        if (Math.abs(error) < 0.05) {
+        if (Math.abs(error) < 0.02) {
             error = 0;
         }
 

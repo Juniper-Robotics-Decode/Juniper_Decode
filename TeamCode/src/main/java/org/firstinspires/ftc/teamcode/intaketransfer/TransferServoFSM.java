@@ -21,9 +21,9 @@ public class TransferServoFSM {
     private Telemetry telemetry;
     private ServoWrapper transferServo;
     public State currentState;
-    public static double targetPosition = .29;
-    public static double positionUp = .51; // Old transfer .85
-    public static double positionDown = .29; // Old transfer .55
+    public static double targetPosition = .25;
+    public static double positionUp = .5; // Old transfer .85
+    public static double positionDown = .25; // Old transfer .55
     static Timing.Timer postitionTimer;
 
     public TransferServoFSM(HWMap intaketransferhwmap, Telemetry telemetry) {

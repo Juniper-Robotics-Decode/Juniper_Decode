@@ -23,7 +23,7 @@ public class SwerveDrivetrain {
     private double max;
 
     double[] wa = new double[4];
-    private double offsets[] = new double[]{-0.2, 1.1, 3.2, 0.3};
+    private double offsets[] = new double[]{-0.4, 1.1, 3.2, 0.6};
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 13.0; //CC distances of modules //find in CAD
