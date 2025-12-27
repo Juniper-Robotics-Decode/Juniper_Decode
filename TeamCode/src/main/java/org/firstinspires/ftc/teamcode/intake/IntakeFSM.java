@@ -73,7 +73,7 @@ public class IntakeFSM {
             currentState = State.RAMPING_UP_TO_INTAKE;
         }
 
-        if (Roller.JAMMED() && currentState == State.READY_TO_INTAKE || currentState == State.STOPPED) {
+        if (Roller.JAMMED()) {
             currentState = State.REMOVING_JAM;
         }
 

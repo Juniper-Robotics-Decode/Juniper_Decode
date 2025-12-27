@@ -18,7 +18,7 @@ public class RollerFSM {
     public static double stoppingTargetVelocity = 0;
     public static double intakingTargetVelocity = 2790;
     public static double ejectingTargetVelocity = -1400;
-    public static double jammingCurrentThreshold = 3;
+    public static double jammingCurrentThreshold = 5;
     public static double jammingVelocityThreshold = 1000;
 
     public enum State {
@@ -53,8 +53,7 @@ public class RollerFSM {
         if (0 > targetVelocity && currentVelocity < jammingVelocityThreshold && jammingCurrentThreshold > intakeMotor.getCurrent() && State != State.RAMPING_UP_TO_INTAKE) {
             State = State.JAMMED;
         }
-
-
+        
         intakeMotor.readVelocity();
         intakeMotor.setVelocityConstants(p, i, d, kS, kV, kA);
         updatePID();
@@ -65,7 +64,7 @@ public class RollerFSM {
     }
 
     public void updatePID() {
-        currentVelocity = -intakeMotor.getVelocity();
+        currentVelocity = intakeMotor.getVelocity();
         intakeMotor.setVelocity(targetVelocity);
     }
 
