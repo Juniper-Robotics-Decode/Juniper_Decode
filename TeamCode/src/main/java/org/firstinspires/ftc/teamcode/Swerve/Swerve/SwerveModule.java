@@ -62,17 +62,17 @@ public class SwerveModule {
 
         double error = normalizeRadians(target - current);
 
-        if (Math.abs(error) > Math.PI / 2) {
-            target = normalizeRadians(target - Math.PI);
-            wheelFlipped = true;
-        } else {
-            wheelFlipped = false;
-        }
-        error = normalizeRadians(target - current);
-
-        if (Math.abs(error) < 0.02) {
-            error = 0;
-        }
+//        if (Math.abs(error) > Math.PI / 2) {
+//            target = normalizeRadians(target - Math.PI);
+//            wheelFlipped = true;
+//        } else {
+//            wheelFlipped = false;
+//        }
+//        error = normalizeRadians(target - current);
+//
+//        if (Math.abs(error) < 0.02) {
+//            error = 0;
+//        }
 
         double power = Range.clip(rotationController.calculate(error, 0), -MAX_SERVO, MAX_SERVO);
         if (Double.isNaN(power)) power = 0;
