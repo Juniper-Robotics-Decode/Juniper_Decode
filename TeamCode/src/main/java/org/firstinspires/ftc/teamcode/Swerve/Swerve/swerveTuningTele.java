@@ -121,7 +121,6 @@ public class swerveTuningTele extends LinearOpMode{
             swerveDrivetrain.setInverses(inverses);
 
             swerveDrivetrain.setPose(drive);
-            swerveDrivetrain.updateModules();
             swerveDrivetrain.updateModule(i);
 
             telemetry.addData("x", drive.x);

@@ -70,9 +70,9 @@ public class SwerveModule {
 //        }
 //        error = normalizeRadians(target - current);
 //
-//        if (Math.abs(error) < 0.02) {
-//            error = 0;
-//        }
+        if (Math.abs(error) < 0.02) {
+            error = 0;
+        }
 
         double power = Range.clip(rotationController.calculate(error, 0), -MAX_SERVO, MAX_SERVO);
         if (Double.isNaN(power)) power = 0;
@@ -121,6 +121,6 @@ public class SwerveModule {
     }
 
     public String getTele() {
-        return String.format(Locale.ENGLISH, "Motor Power %.2f \nWheel Flipped %b \nTarget Position %.2f \nCurrent Position %.2f", lastMotorPower, wheelFlipped, target, current);
+        return String.format(Locale.ENGLISH, "Motor Power %.2f \nWheel Flipped %b \nTarget Position %.2f \nCurrent Position %.2f", lastMotorPower, wheelFlipped, getTargetRotation(), getCurrentRotation());
     }
 }

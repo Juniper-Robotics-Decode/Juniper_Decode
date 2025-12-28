@@ -14,7 +14,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
@@ -34,7 +33,7 @@ public class MainTeleOp extends LinearOpMode {
     private SwerveDrivetrain swerveDrivetrain;
 
     public double x, y, heading;
-    public double BotHeading;
+   // public double botHeading;
     public boolean locked;
 
     private Pose2D pos;
@@ -80,7 +79,7 @@ public class MainTeleOp extends LinearOpMode {
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
 
-        waitForStart();
+        waitForStart(); //Start command from the driver station. physical press of the button
 
         while (opModeIsActive()) {
             loopTimer.start();
@@ -93,11 +92,10 @@ public class MainTeleOp extends LinearOpMode {
 
             pinpoint.update();
             pos = pinpoint.getPos();
-            BotHeading = -pos.getHeading(RADIANS);
-
+            double botHeading = -pos.getHeading(RADIANS);
 
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
-            drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
+            drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(botHeading), HeadingRate.calculate(drive.heading));
 
             if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
                 locked = true;
@@ -110,7 +108,7 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 
-           /* telemetry.addData("Bot Heading", BotHeading);
+           /* telemetry.addData("Bot Heading", botHeading);
             telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*/
             telemetry.addData("loop time", loopTimer.elapsedTime());
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
