@@ -53,7 +53,12 @@ public class RollerFSM {
         if (0 > targetVelocity && currentVelocity < jammingVelocityThreshold && jammingCurrentThreshold > intakeMotor.getCurrent() && State != State.RAMPING_UP_TO_INTAKE) {
             State = State.JAMMED;
         }
-        
+
+        if (State == State.JAMMED && intakeMotor.getCurrent() > 5){
+            State = State.EJECTING;
+        }
+
+
         intakeMotor.readVelocity();
         intakeMotor.setVelocityConstants(p, i, d, kS, kV, kA);
         updatePID();
