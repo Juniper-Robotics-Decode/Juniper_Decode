@@ -6,8 +6,11 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 
 public class HWMap {
     // shooter
@@ -24,6 +27,14 @@ public class HWMap {
     private final MotorEx transferMotor;
     private final Servo transferServo;
 
+    //Spindex
+    private MotorEx spindexMotor;
+    private RevColorSensorV3 colorSensor1;
+    private RevColorSensorV3 colorSensor2;
+    private RevColorSensorV3 colorSensor3;
+    private RevTouchSensor TCS1;
+    private RevTouchSensor TCS2;
+    private RevTouchSensor TCS3;
 
     private GoBildaPinpointDriver odo;
 
@@ -41,6 +52,14 @@ public class HWMap {
         transferServo.setDirection(Servo.Direction.REVERSE);
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+
+        colorSensor1 = hardwareMap.get(RevColorSensorV3.class, "colorSensor1");
+        colorSensor2 = hardwareMap.get(RevColorSensorV3.class, "colorSensor2");
+        colorSensor3 = hardwareMap.get(RevColorSensorV3.class, "colorSensor3");
+        TCS1 = hardwareMap.get(RevTouchSensor.class, "TCS1");
+        TCS2 = hardwareMap.get(RevTouchSensor.class, "TCS2");
+        TCS3 = hardwareMap.get(RevTouchSensor.class, "TCS3");
+        spindexMotor = new MotorEx(hardwareMap,"spindexMotor");
     }
 
 
@@ -79,5 +98,34 @@ public class HWMap {
 
     public GoBildaPinpointDriver getOdo() {
         return odo;
+    }
+
+
+    public MotorEx getSpindexMotor() {
+        return spindexMotor;
+    }
+
+    public RevColorSensorV3 getColorSensor1() {
+        return colorSensor1;
+    }
+
+    public RevColorSensorV3 getColorSensor2() {
+        return colorSensor2;
+    }
+
+    public RevColorSensorV3 getColorSensor3() {
+        return colorSensor3;
+    }
+
+    public RevTouchSensor getTouchSensor1() {
+        return TCS1;
+    }
+
+    public RevTouchSensor getTouchSensor2() {
+        return TCS2;
+    }
+
+    public RevTouchSensor getTouchSensor3() {
+        return TCS3;
     }
 }
