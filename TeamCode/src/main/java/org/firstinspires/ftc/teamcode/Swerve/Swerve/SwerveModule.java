@@ -122,6 +122,10 @@ public class SwerveModule {
         inveresed = inv;
     }
 
+    public void setMotorPower(double power){motor.setPower(power);}
+
+    public void setPID(double P, double I, double D){p = P; I = I; d = D;}
+
     public void setMode(DcMotor.RunMode runMode) {
         motor.setMode(runMode);
     }
