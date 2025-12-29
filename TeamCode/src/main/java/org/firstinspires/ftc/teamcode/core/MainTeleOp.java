@@ -33,7 +33,6 @@ public class MainTeleOp extends LinearOpMode {
     private SwerveDrivetrain swerveDrivetrain;
 
     public double x, y, heading;
-   // public double botHeading;
     public boolean locked;
 
     private Pose2D pos;
@@ -79,7 +78,7 @@ public class MainTeleOp extends LinearOpMode {
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
 
-        waitForStart(); //Start command from the driver station. physical press of the button
+        waitForStart();
 
         while (opModeIsActive()) {
             loopTimer.start();
@@ -108,8 +107,8 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 
-           /* telemetry.addData("Bot Heading", botHeading);
-            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*/
+            telemetry.addData("Bot Heading", botHeading);
+            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());
             telemetry.addData("loop time", loopTimer.elapsedTime());
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.dpad_right, gamepad1.right_bumper);

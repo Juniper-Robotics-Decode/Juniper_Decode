@@ -36,7 +36,7 @@ public class SwerveTest extends LinearOpMode {
     private HWMap hwMap;
     private SwerveDrivetrain swerveDrivetrain;
 
-    public double x, y, heading;
+    public static double x, y, heading;
     public double BotHeading;
     public boolean locked;
 
@@ -48,7 +48,7 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{0.1, 1.1, 3.2, 0.6};
+    public static double[] Zeros = new double[]{0.1, 0.3, -0.3, 0.6};
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -107,7 +107,7 @@ public class SwerveTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setLocked(locked);
+            //swerveDrivetrain.setLocked(locked);
             swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 

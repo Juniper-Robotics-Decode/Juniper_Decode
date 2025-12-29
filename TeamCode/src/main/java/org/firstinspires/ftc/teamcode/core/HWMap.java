@@ -11,9 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-/*
- Holds hard ware port names. this has to match the robot config.
- */
 public class HWMap {
     // shooter
     private final MotorEx flywheelMotor;

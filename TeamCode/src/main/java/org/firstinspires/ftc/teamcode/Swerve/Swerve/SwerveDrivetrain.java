@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Swerve.Swerve;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static java.lang.Math.atan2;
 import static java.lang.Math.hypot;
 
@@ -23,7 +24,8 @@ public class SwerveDrivetrain {
     private double max;
 
     double[] wa = new double[4];
-    private double offsets[] = new double[]{0.1, 1.1, 3.2, 0.6};
+    double[] cwa = new double[4];
+    private double offsets[] = new double[]{0.1, 0.3, -0.3, 0.6};
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 13.0; //CC distances of modules //find in CAD
@@ -60,6 +62,19 @@ public class SwerveDrivetrain {
             //FL, BL, BR, FR
             ws = new double[]{hypot(b,c), hypot(a, d), hypot(b, d), hypot(a, c)};
             wa = new double[]{atan2(b,c), atan2(a,d), atan2(b,d), atan2(a,c)};
+
+//            for (int i = 0; i < 4; i++){
+//                SwerveModule m = modules[i];
+//                cwa[i] = normalizeRadians(m.getCurrentRotation());
+//            }
+//
+//            for (int i = 0; i < 4; i++){
+//                double error = wa[i] - cwa[i];
+//                if (Math.abs(error) > Math.PI/2) {
+//                    wa[i] = normalizeRadians(wa[i] - Math.PI);
+//                    ws[i] *= -1;
+//                }
+//            }
         }
 
         max = MathUtils.max(ws);

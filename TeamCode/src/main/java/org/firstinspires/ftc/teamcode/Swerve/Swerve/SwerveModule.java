@@ -32,6 +32,8 @@ public class SwerveModule {
     private double current = 0.0;
     private boolean inveresed = false;
     double lastMotorPower;
+    double lastServoPower;
+    double lastTargetPosition;
 
     private double k_static = 0.02, p = 0.8, i = 0.0, d = 0.002;
     private double offset;
@@ -69,25 +71,29 @@ public class SwerveModule {
 //            wheelFlipped = false;
 //        }
 //        error = normalizeRadians(target - current);
-//
+
         if (Math.abs(error) < 0.02) {
             error = 0;
         }
+
+        lastTargetPosition = target;
 
         double power = Range.clip(rotationController.calculate(error, 0), -MAX_SERVO, MAX_SERVO);
         if (Double.isNaN(power)) power = 0;
         servo.setPower(power + (Math.abs(error) > 0.02 ? signum(power) * k_static : 0));
 
         double motorPower = ws;
-        if (wheelFlipped) {
-            motorPower = -motorPower;
-        }
-        else {
-            motorPower = motorPower;
-        }
+//        if (wheelFlipped) {
+//            motorPower = -motorPower;
+//        }
+//        else {
+//            motorPower = motorPower;
+//        }
 
         motor.setPower(motorPower);
         lastMotorPower = motorPower;
+
+        lastServoPower = power;
     }
 
     public double getCurrentRotation() {
@@ -121,6 +127,6 @@ public class SwerveModule {
     }
 
     public String getTele() {
-        return String.format(Locale.ENGLISH, "Motor Power %.2f \nWheel Flipped %b \nTarget Position %.2f \nCurrent Position %.2f", lastMotorPower, wheelFlipped, getTargetRotation(), getCurrentRotation());
+        return String.format(Locale.ENGLISH, "Motor Power %.2f \nWheel Flipped %b \nTarget Position %.2f \nCurrent Position %.2f \nServo Power %.2f", lastMotorPower, wheelFlipped, lastTargetPosition, getCurrentRotation(), lastServoPower);
     }
 }
