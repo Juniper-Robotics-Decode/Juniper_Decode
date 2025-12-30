@@ -35,7 +35,7 @@ public class SwerveModule {
     double lastServoPower;
     double lastTargetPosition;
 
-    private double k_static = 0.02, p = 0.8, i = 0.0, d = 0.002;
+    private double k_static = 0.02, p = 0.6, i = 0.0, d = 0.002;
     private double offset;
 
     public SwerveModule(DcMotorEx m, CRServoImplEx s, AnalogInput e, Double o, Boolean inv) {
@@ -60,54 +60,45 @@ public class SwerveModule {
     public void update(double wa, double ws) {
         rotationController.setPID(p, i, d);
 
-        double target = normalizeRadians(wa), current = normalizeRadians(getCurrentRotation());
+        double current = normalizeRadians(getCurrentRotation());
+        double target = normalizeRadians(wa);
 
         double error = normalizeRadians(target - current);
 
-//        if (Math.abs(error) > Math.PI / 2) {
-//            target = normalizeRadians(target - Math.PI);
-//            wheelFlipped = true;
-//        } else {
-//            wheelFlipped = false;
-//        }
-//        error = normalizeRadians(target - current);
+        if (Math.abs(error) > Math.PI / 2) {
+            target = normalizeRadians(target + Math.PI);
+            error = normalizeRadians(target - current);
+            ws *= -1;
+            wheelFlipped = true;
+        } else {
+            wheelFlipped = false;
+        }
+
+        lastTargetPosition = target < 0 ? target + 2 * Math.PI : target;
 
         if (Math.abs(error) < 0.02) {
             error = 0;
         }
 
-        lastTargetPosition = target;
-
         double power = Range.clip(rotationController.calculate(error, 0), -MAX_SERVO, MAX_SERVO);
         if (Double.isNaN(power)) power = 0;
+
         servo.setPower(power + (Math.abs(error) > 0.02 ? signum(power) * k_static : 0));
-
-        double motorPower = ws;
-//        if (wheelFlipped) {
-//            motorPower = -motorPower;
-//        }
-//        else {
-//            motorPower = motorPower;
-//        }
-
-        motor.setPower(motorPower);
-        lastMotorPower = motorPower;
-
+        motor.setPower(ws);
+        lastMotorPower = ws;
         lastServoPower = power;
     }
 
     public double getCurrentRotation() {
         double encoderVoltage = MathUtils.clamp(encoder.getVoltage(), 0, 3.3);
-        double pos = 0;
+        double pos;
 
         if (!inveresed) {
-            pos = (encoderVoltage/3.3) * 2*Math.PI - offset;
+            pos = (encoderVoltage / 3.3) * 2 * Math.PI - offset;
+        } else {
+            pos = (1 - encoderVoltage / 3.3) * 2 * Math.PI - offset;
         }
-        else {
-            pos = (1 - encoderVoltage/3.3) * 2*Math.PI - offset;
-        }
-
-        return normalizeRadians(pos);
+        return pos;
     }
 
     public double getTargetRotation() {

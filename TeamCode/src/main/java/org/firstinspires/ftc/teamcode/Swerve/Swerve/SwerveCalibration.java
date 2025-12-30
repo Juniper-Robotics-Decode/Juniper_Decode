@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.core.HWMap;
 
 //this class is to find zeros, inverses,and check each module's coordinate system is in accordance
 @Config
-@TeleOp(name="Swerve Calibration")
+@TeleOp
 public class SwerveCalibration extends LinearOpMode {
 
     // Front Left Module Hardware
@@ -43,8 +43,10 @@ public class SwerveCalibration extends LinearOpMode {
 
     public static double[] zeros = new double[]{0,0,0,0};
     public static boolean[] inverses = new boolean[]{false,false,false,false};
-    public static double motorpower = 0.0;
+    public static double motorpower;
     public static double P, I, D;
+    public static double target;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -69,6 +71,8 @@ public class SwerveCalibration extends LinearOpMode {
         SwerveModule backRightModule = new SwerveModule(BRM, BRS, BRE, 0.0, false);
         SwerveModule backLeftModule = new SwerveModule(BLM, BLS, BLE, 0.0, false);
 
+        int i = 0;
+
         SwerveModule[] modules = new SwerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
 
         telemetry.addData("Status", "Initialized");
@@ -76,23 +80,26 @@ public class SwerveCalibration extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            for (int i = 0; i <4; i++){
+            if (i== 4){
+                i = 0;
+            }
+
+            for (i = 0; i <4; i++){
                 SwerveModule m = modules[i];
                 m.setPID(P, I, D);
                 m.setOffset(zeros[i]);
                 m.setInverse(inverses[i]);
-                m.setMotorPower(motorpower);
-                m.getCurrentRotation();
+                m.update(target, motorpower);
             }
 
             //turning the module counterclockwise should increase the current rotation value
             //all modules must share the same coordinate system
             //all modules when a positive power is applied should go forward and vice versa
 
-            telemetry.addData("frontLeftModule", frontLeftModule.getTele());
-            telemetry.addData("frontRightModule", frontRightModule.getTele());
-            telemetry.addData("backRightModule", backRightModule.getTele());
-            telemetry.addData("backLeftModule", backLeftModule.getTele());
+            telemetry.addData("frontLeftModule", frontLeftModule.getCurrentRotation());
+            telemetry.addData("frontRightModule", frontRightModule.getCurrentRotation());
+            telemetry.addData("backRightModule", backRightModule.getCurrentRotation());
+            telemetry.addData("backLeftModule", backLeftModule.getCurrentRotation());
             telemetry.update();
         }
     }

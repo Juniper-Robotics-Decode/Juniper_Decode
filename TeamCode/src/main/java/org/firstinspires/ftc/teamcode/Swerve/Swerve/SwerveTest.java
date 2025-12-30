@@ -48,7 +48,7 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{0.1, 0.3, -0.3, 0.6};
+    public static double[] Zeros = new double[]{3.3, 3.5, 1.17, 3.4};
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -97,7 +97,7 @@ public class SwerveTest extends LinearOpMode {
             pos = odo.getPosition();
             BotHeading = -pos.getHeading(RADIANS);
 
-            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
+            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
 
             if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
@@ -107,7 +107,7 @@ public class SwerveTest extends LinearOpMode {
                 locked = false;
             }
 
-            //swerveDrivetrain.setLocked(locked);
+            swerveDrivetrain.setLocked(locked);
             swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 

@@ -25,7 +25,7 @@ public class SwerveDrivetrain {
 
     double[] wa = new double[4];
     double[] cwa = new double[4];
-    private double offsets[] = new double[]{0.1, 0.3, -0.3, 0.6};
+    private double offsets[] = new double[]{3.3, 3.5, 1.17, 3.4};
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 13.0; //CC distances of modules //find in CAD
@@ -51,7 +51,7 @@ public class SwerveDrivetrain {
 
         if (locked) {
             ws = new double[]{0,0,0,0};
-            wa = new double[]{atan2(1, -1), atan2(-1, 1), atan2(1, 1), atan2(-1, -1)};
+            wa = new double[]{atan2(-1, -1), atan2(-1, 1), atan2(1, 1), atan2(1, -1)};
         }
         else {
             double  a = x - heading * (wheelbase / R),
@@ -59,22 +59,8 @@ public class SwerveDrivetrain {
                     c = y - heading * (trackwidth / R),
                     d = y + heading * (trackwidth / R);
 
-            //FL, BL, BR, FR
-            ws = new double[]{hypot(b,c), hypot(a, d), hypot(b, d), hypot(a, c)};
-            wa = new double[]{atan2(b,c), atan2(a,d), atan2(b,d), atan2(a,c)};
-
-//            for (int i = 0; i < 4; i++){
-//                SwerveModule m = modules[i];
-//                cwa[i] = normalizeRadians(m.getCurrentRotation());
-//            }
-//
-//            for (int i = 0; i < 4; i++){
-//                double error = wa[i] - cwa[i];
-//                if (Math.abs(error) > Math.PI/2) {
-//                    wa[i] = normalizeRadians(wa[i] - Math.PI);
-//                    ws[i] *= -1;
-//                }
-//            }
+            ws = new double[]{hypot(a,c), hypot(a, d), hypot(b, d), hypot(b, c)};
+            wa = new double[]{atan2(a,c), atan2(a,d), atan2(b,d), atan2(b,c)};
         }
 
         max = MathUtils.max(ws);
@@ -123,6 +109,6 @@ public class SwerveDrivetrain {
     }
 
     public String getTele(){
-        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele());
+        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3]);
     }
 }
