@@ -10,7 +10,10 @@ import com.pedropathing.ftc.drivetrains.SwerveConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -33,7 +36,7 @@ public class Constants {
 
 //            .headingPIDFSwitch(Math.toRadians(15))
 //            .translationalPIDFSwitch(5)
-            .mass(5.362); //TODO: actually weigh the robot, in kg
+            .mass(9.07185); //TODO: actually weigh the robot, in kg
 
     //top left = 1191g
     //top right = 1400g
@@ -45,50 +48,47 @@ public class Constants {
             .velocity(77.45)
 //            .maxPower(.75)
             .useBrakeModeInTeleOp(true)
-            .leftFrontServoName("ss2")
-            .leftFrontEncoderName("se2")
-            .leftFrontMotorName("sm2")
-            .rightFrontServoName("ss1")
-            .rightFrontEncoderName("se1")
-            .rightFrontMotorName("sm1")
-            .leftRearServoName("ss3")
-            .leftRearEncoderName("se3")
-            .leftRearMotorName("sm3")
-            .rightRearServoName("ss0")
-            .rightRearEncoderName("se0")
-            .rightRearMotorName("sm0")
-//            .leftFrontTurnPID(new PIDFCoefficients(0.003, 0.0, 0.001, 0.0))
-//            .rightFrontTurnPID(new PIDFCoefficients(0.003, 0.0, 0.001, 0.0))
-//            .leftRearTurnPID(new PIDFCoefficients(0.003, 0.0, 0.001, 0.0))
-//            .rightRearTurnPID(new PIDFCoefficients(0.003, 0.0, 0.001, 0.0))
-            .leftFrontTurnPID(new PIDFCoefficients(0.005,0, 0.000, 0.0))
-            .rightFrontTurnPID(new PIDFCoefficients(0.005, 0.0, 0.000, 0.0))
-            .leftRearTurnPID(new PIDFCoefficients(0.005, 0.0, 0.000, 0.0))
-            .rightRearTurnPID(new PIDFCoefficients(0.005, 0.0, 0.000, 0.0))
+            .leftFrontServoName("FLS")
+            .leftFrontEncoderName("FLE")
+            .leftFrontMotorName("FLM")
+            .rightFrontServoName("FRS")
+            .rightFrontEncoderName("FRE")
+            .rightFrontMotorName("FRM")
+            .leftRearServoName("BLS")
+            .leftRearEncoderName("BLE")
+            .leftRearMotorName("BLM")
+            .rightRearServoName("BRS")
+            .rightRearEncoderName("BRE")
+            .rightRearMotorName("BRM")
+            .leftFrontTurnPID(new PIDFCoefficients( 0.6, 0.0, 0.002, 0.02))
+            .rightFrontTurnPID(new PIDFCoefficients( 0.6, 0.0, 0.002, 0.02))
+            .leftRearTurnPID(new PIDFCoefficients( 0.6, 0.0, 0.002, 0.02))
+            .rightRearTurnPID(new PIDFCoefficients( 0.6, 0.0, 0.002, 0.02))
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftFrontServoDirection(CRServo.Direction.FORWARD)
             .rightFrontServoDirection(CRServo.Direction.FORWARD)
             .leftRearServoDirection(CRServo.Direction.FORWARD)
             .rightRearServoDirection(CRServo.Direction.FORWARD)
-            .leftFrontPodAngleOffsetDeg(-81.38)
-            .rightFrontPodAngleOffsetDeg(-11.0182)
-            .leftRearPodAngleOffsetDeg(34.16)
-            .rightRearPodAngleOffsetDeg(-71.6727)
-            .leftFrontPodXYOffsets(new double[] { -174.5, 143.8745 })
-            .rightFrontPodXYOffsets(new double[] { 174.5, 143.8745 })
-            .leftRearPodXYOffsets(new double[] { -174.5, -143.8745 })
-            .rightRearPodXYOffsets(new double[] { 174.5, -143.8745 });
+            .leftFrontPodAngleOffsetDeg(Math.toDegrees(3.3))
+            .rightFrontPodAngleOffsetDeg(Math.toDegrees(3.5))
+            .leftRearPodAngleOffsetDeg(Math.toDegrees(3.4))
+            .rightRearPodAngleOffsetDeg(Math.toDegrees(1.17))
+            .leftFrontPodXYOffsets(new double[] {126.075, 126})
+            .rightFrontPodXYOffsets(new double[] {126.075, -126})
+            .leftRearPodXYOffsets(new double[] {-126.075, 126})
+            .rightRearPodXYOffsets(new double[] {-126.075, -126});
+
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(2.3622) //60mm
-            .strafePodX(-0.0001968) //-0.005mm
+            .forwardPodY(-5.2165354) // -132.5 mm
+            .strafePodX(0.554133858) // 14.074 mm
             .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
+            .hardwareMapName("odo")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);

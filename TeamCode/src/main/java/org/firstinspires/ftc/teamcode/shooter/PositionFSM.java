@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.shooter;
 
 import com.arcrobotics.ftclib.util.InterpLUT;
@@ -115,12 +116,14 @@ public class PositionFSM {
         }
 
         //TODO: add if turret velocity under threshold and drive velocity under threshold then relocalize at all times
+*/
 /*
         if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
             if(limelightCamera.hasTarget() && pinpoint.pinpointReady()) {
                 relocalize();
             }
-        }*/
+        }*//*
+
     }
 
     private void createVelocityMap() {
@@ -259,3 +262,4 @@ public class PositionFSM {
     }
 
 }
+*/

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.core;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -47,8 +46,6 @@ public class HWMap {
     public AnalogInput BLE;
 
 
-    private GoBildaPinpointDriver odo;
-
     public HWMap (HardwareMap hardwareMap) {
         flywheelMotor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         flywheelMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
@@ -77,7 +74,6 @@ public class HWMap {
         BLE = hardwareMap.get(AnalogInput.class, "BLE");
         BRE = hardwareMap.get(AnalogInput.class, "BRE");
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     }
 
 
@@ -114,7 +110,4 @@ public class HWMap {
         return transferServo;
     }
 
-    public GoBildaPinpointDriver getOdo() {
-        return odo;
-    }
 }

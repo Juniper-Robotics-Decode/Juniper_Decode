@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -83,3 +84,4 @@ public class ShooterFSM {
         positionFSM.log();
     }
 }
+*/

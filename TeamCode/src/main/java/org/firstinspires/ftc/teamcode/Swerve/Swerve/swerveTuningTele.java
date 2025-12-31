@@ -6,7 +6,8 @@ import static java.lang.Math.abs;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,8 +31,7 @@ public class swerveTuningTele extends LinearOpMode{
     public double x, y, heading;
     public double BotHeading;
     public boolean locked;
-
-    GoBildaPinpointDriver odo;
+    private Follower follower;
     private double Xoffset, Yoffset;
     private Pose2D pos;
 
