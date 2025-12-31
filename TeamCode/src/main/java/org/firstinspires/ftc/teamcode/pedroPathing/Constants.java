@@ -39,11 +39,6 @@ public class Constants {
 //            .translationalPIDFSwitch(5)
             .mass(9.07185); //TODO: actually weigh the robot, in kg
 
-    //top left = 1191g
-    //top right = 1400g
-    //bottom left = 1376g
-    //bottom right = 1395g
-    //total = 5362g
 
     public static SwerveConstants driveConstants = new SwerveConstants()
             .velocity(77.45)
