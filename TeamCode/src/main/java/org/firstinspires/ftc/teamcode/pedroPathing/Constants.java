@@ -5,9 +5,11 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
+import com.pedropathing.ftc.drivetrains.CoaxialPod;
 import com.pedropathing.ftc.drivetrains.Swerve;
 import com.pedropathing.ftc.drivetrains.SwerveConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -23,60 +25,73 @@ import org.opencv.core.Mat;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .forwardZeroPowerAcceleration(-138.72)
-            .lateralZeroPowerAcceleration(-138.72)
+            .forwardZeroPowerAcceleration(-117.118)
+            .lateralZeroPowerAcceleration(-117.118)
             .useSecondaryDrivePIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryTranslationalPIDF(true)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.01, 0, 0.005 , 0))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.12, 0, 0.005 , 0))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.003, 0.01))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.25, 0 , 0.003, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0 , 0.003, 0))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.63, 0, 0.035, 0))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0035, 0, 0.00001, 0.6, 0.13))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(1, 0, 0.00001, 0.6, 0.13))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.000005, 0.6, 0.13))
+            .centripetalScaling(0.005)
+
+
 
 //            .headingPIDFSwitch(Math.toRadians(15))
 //            .translationalPIDFSwitch(5)
             .mass(9.07185); //TODO: actually weigh the robot, in kg
 
 
-    public static SwerveConstants driveConstants = new SwerveConstants()
-            .velocity(77.45)
-//            .maxPower(.75)
-            .useBrakeModeInTeleOp(true)
-            .leftFrontServoName("FLS")
-            .leftFrontEncoderName("FLE")
-            .leftFrontMotorName("FLM")
-            .rightFrontServoName("FRS")
-            .rightFrontEncoderName("FRE")
-            .rightFrontMotorName("FRM")
-            .leftRearServoName("BLS")
-            .leftRearEncoderName("BLE")
-            .leftRearMotorName("BLM")
-            .rightRearServoName("BRS")
-            .rightRearEncoderName("BRE")
-            .rightRearMotorName("BRM")
 
-            .leftFrontTurnPID(new PIDFCoefficients(0.015, 0.0, 0.005, 0))
-            .rightFrontTurnPID(new PIDFCoefficients(0.015, 0.0, 0.005, 0))
-            .leftRearTurnPID(new PIDFCoefficients(0.015, 0.0, 0.005, 0))
-            .rightRearTurnPID(new PIDFCoefficients(0.015, 0.0, 0.005, 0))
-            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftFrontServoDirection(CRServo.Direction.FORWARD)
-            .rightFrontServoDirection(CRServo.Direction.FORWARD)
-            .leftRearServoDirection(CRServo.Direction.FORWARD)
-            .rightRearServoDirection(CRServo.Direction.FORWARD)
-            .leftFrontPodAngleOffsetDeg(Math.toDegrees(2.7))
-            .rightFrontPodAngleOffsetDeg(Math.toDegrees(3.5))
-            .leftRearPodAngleOffsetDeg(Math.toDegrees(3.4))
-            .rightRearPodAngleOffsetDeg(Math.toDegrees(1.17))
-            .leftFrontPodXYOffsets(new double[] {-126, 126.075})
-            .rightFrontPodXYOffsets(new double[] {126, 126.075})
-            .leftRearPodXYOffsets(new double[] {-126, -126.075})
-            .rightRearPodXYOffsets(new double[] {126, -126.075});
+
+
+    public static SwerveConstants driveConstants = new SwerveConstants()
+            .velocity(48) // in per sec
+//            .maxPower(.75)
+            .staticFrictionCoefficient(0.02);
+
+    private static CoaxialPod leftFront(HardwareMap hardwareMap) {
+        return new CoaxialPod(hardwareMap,"FLM","FLS","FLE",
+                new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+                Math.toDegrees(2.7),
+                new Pose(4.963582677,4.96063),
+                0,3.3,
+                false);
+    }
+
+    private static CoaxialPod rightFront(HardwareMap hardwareMap) {
+        return new CoaxialPod(hardwareMap,"FRM","FRS","FRE",
+                new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+                Math.toDegrees(3.5),
+                new Pose(4.963582677,-4.96063),
+                0,3.3,
+                false);
+    }
+
+    private static CoaxialPod leftBack(HardwareMap hardwareMap) {
+        return new CoaxialPod(hardwareMap,"BLM","BLS","BLE",
+                new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+                Math.toDegrees(3.4),
+                new Pose(-4.963582677,4.96063),
+                0,3.3,
+                false);
+    }
+
+    private static CoaxialPod rightBack(HardwareMap hardwareMap) {
+        return new CoaxialPod(hardwareMap,"BRM","BRS","BRE",
+                new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+                Math.toDegrees(1.17),
+                new Pose(-4.963582677,-4.96063),
+                0,3.3,
+                false);
+    }
 
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
@@ -94,7 +109,7 @@ public class Constants {
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
-                .swerveDrivetrain(driveConstants)
+                .swerveDrivetrain(driveConstants, leftFront(hardwareMap),rightFront(hardwareMap),leftBack(hardwareMap),rightBack(hardwareMap))
                 .pinpointLocalizer(localizerConstants)
                 .build();
     }
