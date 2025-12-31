@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.opencv.core.Mat;
 
 
 public class Constants {
@@ -60,10 +61,10 @@ public class Constants {
             .rightRearServoName("BRS")
             .rightRearEncoderName("BRE")
             .rightRearMotorName("BRM")
-            .leftFrontTurnPID(new PIDFCoefficients( 0.4, 0.0, 0.002, 0.02))
-            .rightFrontTurnPID(new PIDFCoefficients( 0.4, 0.0, 0.002, 0.02))
-            .leftRearTurnPID(new PIDFCoefficients( 0.4, 0.0, 0.002, 0.02))
-            .rightRearTurnPID(new PIDFCoefficients( 0.4, 0.0, 0.002, 0.02))
+            .leftFrontTurnPID(new PIDFCoefficients( 0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0), 0.02*(Math.PI/180.0)))
+            .rightFrontTurnPID(new PIDFCoefficients( 0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0), 0.02*(Math.PI/180.0)))
+            .leftRearTurnPID(new PIDFCoefficients( 0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0), 0.02*(Math.PI/180.0)))
+            .rightRearTurnPID(new PIDFCoefficients( 0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0), 0.02*(Math.PI/180.0)))
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
@@ -76,10 +77,10 @@ public class Constants {
             .rightFrontPodAngleOffsetDeg(Math.toDegrees(3.5))
             .leftRearPodAngleOffsetDeg(Math.toDegrees(3.4))
             .rightRearPodAngleOffsetDeg(Math.toDegrees(1.17))
-            .leftFrontPodXYOffsets(new double[] {126.075, 126})
-            .rightFrontPodXYOffsets(new double[] {126.075, -126})
-            .leftRearPodXYOffsets(new double[] {-126.075, 126})
-            .rightRearPodXYOffsets(new double[] {-126.075, -126});
+            .leftFrontPodXYOffsets(new double[] {-126, 126.075})
+            .rightFrontPodXYOffsets(new double[] {126, 126.075})
+            .leftRearPodXYOffsets(new double[] {-126, -126.075})
+            .rightRearPodXYOffsets(new double[] {126, -126.075});
 
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);

@@ -71,7 +71,7 @@ public class PedroTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             double forward = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
+            double strafe = -gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
 
             follower.setTeleOpDrive(forward,strafe,turn,false);
