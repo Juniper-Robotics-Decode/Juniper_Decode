@@ -42,7 +42,7 @@ public class Constants {
 
 //            .headingPIDFSwitch(Math.toRadians(15))
 //            .translationalPIDFSwitch(5)
-            .mass(9.07185); //TODO: actually weigh the robot, in kg
+            .mass(7.801789); //TODO: actually weigh the robot, in kg
 
 
 
