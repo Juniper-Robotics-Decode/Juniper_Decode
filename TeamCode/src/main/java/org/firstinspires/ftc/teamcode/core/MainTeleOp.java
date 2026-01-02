@@ -42,6 +42,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
     private HWMap hwMap;
+    private HWMapTest hwMapTest;
     private Pinpoint pinpoint;
     private RobotSettings robotSettings;
     private GamepadEx gamepad;
@@ -57,6 +58,7 @@ public class MainTeleOp extends LinearOpMode {
 
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
+
         HeadingRate = new SlewRateLimiter(headingrate);
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
@@ -72,8 +74,8 @@ public class MainTeleOp extends LinearOpMode {
         swerveDrivetrain.setInverses(inverses);
         swerveDrivetrain.setMotorScaling(scalars);
 
-        intakeFSM = new IntakeFSM(hwMap, telemetry);
-        transferFSM = new TransferFSM(hwMap, telemetry);
+        intakeFSM = new IntakeFSM(hwMapTest, telemetry);
+        transferFSM = new TransferFSM(hwMapTest, telemetry);
         shooterFSM = new ShooterFSM(hwMap,telemetry, pinpoint);
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);

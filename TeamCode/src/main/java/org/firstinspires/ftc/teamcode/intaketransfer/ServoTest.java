@@ -20,7 +20,7 @@ public class ServoTest extends LinearOpMode {
         Timing.Timer timer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         transferServo = hardwareMap.get(Servo.class, "TS");
-        transferServo.setDirection(Servo.Direction.REVERSE);
+        transferServo.setDirection(Servo.Direction.FORWARD);
 
         if (gamepad2.dpad_up) {
             transferServo.setPosition(.25);

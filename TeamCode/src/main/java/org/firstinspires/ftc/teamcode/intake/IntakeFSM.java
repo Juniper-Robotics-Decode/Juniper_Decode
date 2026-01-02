@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.intake;
 
 import com.arcrobotics.ftclib.util.Timing;
 
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.HWMapTest;
+import org.firstinspires.ftc.teamcode.intaketransfer.IntakeServoFSM;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,22 +18,27 @@ public class IntakeFSM {
         READY_TO_INTAKE,
         EJECTING,
         STOPPED,
-        REMOVING_JAM
+        AT_DOWN,
+        AT_UP
     }
 
     private RollerFSM Roller;
+    private IntakeServoFSM Servo;
+    private IntakeServoFSM States;
     private State currentState = State.RAMPING_UP_TO_INTAKE;
     private Telemetry telemetry;
     Timing.Timer autoReverseTimer;
 
-    public IntakeFSM(HWMap hardwareMap, Telemetry telemetry) {
+    public IntakeFSM(HWMapTest hardwareMap, Telemetry telemetry) {
         autoReverseTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
         Roller = new RollerFSM(hardwareMap, telemetry);
+        Servo = new IntakeServoFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
     }
 
     public void updateState(boolean YPress, boolean D_Pad_Left_Press) {
         Roller.updateState();
+
         findTargetState(YPress, D_Pad_Left_Press);
         switch (currentState) {
 
@@ -39,6 +46,9 @@ public class IntakeFSM {
                 Roller.intake();
                 if (Roller.INTAKING()) {
                     currentState = State.READY_TO_INTAKE;
+                    if (Servo.AT_UP()) {
+                        Servo.MoveDown();
+                    }
                 }
                 break;
 
@@ -46,46 +56,51 @@ public class IntakeFSM {
                 Roller.stop();
                 if (Roller.STOPPED()) {
                     currentState = State.STOPPED;
+                    if (Servo.AT_UP()) {
+                        Servo.MoveDown();
+                    }
                 }
+
                 break;
 
             case RAMPING_UP_TO_EJECT:
                 Roller.eject();
                 if (Roller.EJECTING()) {
                     currentState = State.EJECTING;
+                    Servo.MoveUp();
+                    if (Servo.AT_UP()) {
+                        Servo.MoveDown();
+                    }
                 }
                 break;
 
-            case REMOVING_JAM:
-                Roller.eject();
-                if (Roller.EJECTING()) {
-                    currentState = State.RAMPING_UP_TO_INTAKE;
-                }
+
         }
         telemetry.addData("Intake Current State ", currentState);
     }
 
     public void findTargetState(boolean YPress, boolean D_Pad_Left_Press) {
 
-        if (YPress && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED)) {
+        if (YPress && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED || currentState == State.AT_UP)) {
             currentState = State.RAMPING_UP_TO_EJECT;
-        } else if (YPress && currentState == State.EJECTING) {
+            Servo.MoveUp();
+        } else if (YPress && (currentState == State.EJECTING || currentState == State.AT_DOWN)) {
             currentState = State.RAMPING_UP_TO_INTAKE;
+            Servo.MoveDown();
         }
 
-        if (Roller.JAMMED()) {
-            currentState = State.REMOVING_JAM;
-        }
+        /*if (Roller.RAMPING_UP_TO_INTAKE() && currentState == State.EJECTING){
+            currentState = State.RAMPING_UP_TO_INTAKE;
+        }*/
 
-        if ((Roller.STOPPED() && currentState == State.READY_TO_INTAKE)) {
+       /* if (Roller.JAMMED()) {
             currentState = State.RAMPING_UP_TO_EJECT;
-        }
+        }*/
 
         if (D_Pad_Left_Press && (currentState == State.READY_TO_INTAKE || currentState == State.EJECTING)) {
             currentState = State.STOPPING;
         } else if (D_Pad_Left_Press && currentState == State.STOPPED) {
             currentState = State.RAMPING_UP_TO_INTAKE;
-
         }
     }
 }

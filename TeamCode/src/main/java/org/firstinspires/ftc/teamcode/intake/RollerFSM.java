@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.intake;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.HWMapTest;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 @Config
@@ -25,14 +25,15 @@ public class RollerFSM {
         STOPPED,
         INTAKING,
         EJECTING,
-        JAMMED,
-        RAMPING_UP_TO_INTAKE
+//        JAMMED,
+//        RAMPING_UP_TO_INTAKE,
+//        RAMPING_UP_TO_EJECT
     }
 
-    public RollerFSM(HWMap hwMap, Telemetry telemetry) {
+    public RollerFSM(HWMapTest hwMap, Telemetry telemetry) {
         intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, true);
         this.telemetry = telemetry;
-        State = State.RAMPING_UP_TO_INTAKE;
+        State = State.INTAKING;
 
     }
 
@@ -46,18 +47,13 @@ public class RollerFSM {
             State = State.INTAKING;
         }
 
-        if (currentVelocity < 0) {
+        if (currentVelocity < -500) {
             State = State.EJECTING;
         }
 
-        if (0 > targetVelocity && currentVelocity < jammingVelocityThreshold && jammingCurrentThreshold > intakeMotor.getCurrent() && State != State.RAMPING_UP_TO_INTAKE) {
+      /*  if (0 > targetVelocity && currentVelocity < jammingVelocityThreshold && jammingCurrentThreshold > intakeMotor.getCurrent() && State != State.RAMPING_UP_TO_INTAKE) {
             State = State.JAMMED;
-        }
-
-        if (State == State.JAMMED && intakeMotor.getCurrent() > 5){
-            State = State.EJECTING;
-        }
-
+        }*/
 
         intakeMotor.readVelocity();
         intakeMotor.setVelocityConstants(p, i, d, kS, kV, kA);
@@ -78,14 +74,17 @@ public class RollerFSM {
     }
 
     public void intake() {
-        if (State != State.INTAKING) {
+       /* if (State != State.INTAKING) {
             State = State.RAMPING_UP_TO_INTAKE;
-        }
+        }*/
         targetVelocity = intakingTargetVelocity;
     }
 
     public void eject() {
         targetVelocity = ejectingTargetVelocity;
+        /*if (State != State.EJECTING) {
+            State = State.RAMPING_UP_TO_EJECT;
+        }*/
     }
 
     public boolean STOPPED() {
@@ -100,7 +99,10 @@ public class RollerFSM {
         return State == State.EJECTING;
     }
 
-    public boolean JAMMED() {
+    /*public boolean JAMMED() {
         return State == State.JAMMED;
     }
+    public boolean RAMPING_UP_TO_INTAKE(){
+        return State == State.RAMPING_UP_TO_INTAKE;
+    }*/
 }
