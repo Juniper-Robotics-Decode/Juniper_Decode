@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
@@ -73,24 +74,24 @@ public class TurretPIDTest extends LinearOpMode {
         pidController.setTolerance(TOLERANCE);
         turretMotor.readPosition();
 
+/*
         if(targetAngle > UPPER_HARD_STOP) {
             targetAngle = UPPER_HARD_STOP;
         }
         else if (targetAngle < LOWER_HARD_STOP) {
             targetAngle = LOWER_HARD_STOP;
-        }
+        }*/
 /*
         double delta = angleDelta(turretMotor.getScaledPos(), targetAngle);
         double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);*/
-        double error = targetAngle - turretMotor.getScaledPos();
+        double currentPos = turretMotor.getScaledPos();
+        double error = AngleUnit.normalizeDegrees(targetAngle - currentPos);
         telemetry.addData("Error", error);
 
-        /*F = F*Math.signum(error);
-        */
-
-        double power = pidController.calculate(turretMotor.getScaledPos(),targetAngle);
-        error = targetAngle - turretMotor.getScaledPos();
-        power = power + (F*error);
+        double power = pidController.calculate(error,0);
+        if(Math.abs(error) >= TOLERANCE) {
+            power = power + (F * Math.signum(error));
+        }
         if(Math.abs(power) > POWER_CAP) {
             double signPower = Math.signum(power);
             power = signPower*POWER_CAP;
