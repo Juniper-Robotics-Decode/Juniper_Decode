@@ -11,14 +11,14 @@ public class MotorWrapper {
     private double ratio;
     private final double TICK_PER_REVOLUTION;
 
-    public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio) {
+    public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio, double TICK_PER_REVOLUTION) {
         this.motorEx = motorEx;
+        this.TICK_PER_REVOLUTION = TICK_PER_REVOLUTION;
         if (velocityControl) {
             motorEx.setRunMode(Motor.RunMode.VelocityControl);
         }
 
         this.ratio = ratio;
-        TICK_PER_REVOLUTION = 145.1;
     }
 
     // POWER

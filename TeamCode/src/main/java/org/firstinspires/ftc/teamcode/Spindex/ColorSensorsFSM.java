@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.motorWrapperSpindex;
+import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 @TeleOp
 public class ColorSensorsFSM {
     public enum states{
@@ -81,9 +81,6 @@ public class ColorSensorsFSM {
         d3 = CS3.getDistance(DistanceUnit.MM);
 
 
-        telemetry.addData("CS1 State", state1);
-        telemetry.addData("CS2 State", state2);
-        telemetry.addData("CS3 State", state3);
 
     }
     public String colorDetector (RevColorSensorV3 cs){
