@@ -17,6 +17,7 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
 
 
     private HWMap hwmap;
+    private HWMapTest hwMapTest;
     private GamepadEx gamepad;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
@@ -26,10 +27,10 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        hwmap = new HWMap(hardwareMap);
+        hwMapTest = new HWMapTest(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
-        intakeFSM = new IntakeFSM(hwmap, telemetry);
-        transferFSM = new TransferFSM(hwmap, telemetry);
+        intakeFSM = new IntakeFSM(hwMapTest, telemetry);
+        transferFSM = new TransferFSM(hwMapTest, telemetry);
 
         waitForStart();
         while (opModeIsActive()) {
