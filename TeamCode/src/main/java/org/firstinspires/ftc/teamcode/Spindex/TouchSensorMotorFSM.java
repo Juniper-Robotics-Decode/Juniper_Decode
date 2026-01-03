@@ -19,6 +19,7 @@ public class TouchSensorMotorFSM {
     public static states state;
     private Telemetry telemetry;
     int currentIndex;
+    public int offset = 0;
 
 
     public TouchSensorMotorFSM(HWMap hwMap, Telemetry telemetry) {
@@ -44,10 +45,10 @@ public class TouchSensorMotorFSM {
     }
     public void spindexOffset(modes mode){
         if(mode == modes.SHOOTING){
-            int offset = 60;
+             offset = 60;
         }
         if(mode == modes.INTAKNG){
-            int offset = 0;
+             offset = 0;
         }
     }
 

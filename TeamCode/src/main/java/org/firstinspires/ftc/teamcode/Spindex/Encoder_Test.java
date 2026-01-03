@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Encoder_Test extends LinearOpMode {
 
     public DcMotor EncoderTest;
-
+    int target;
     @Override
     public void runOpMode() {
          EncoderTest = hardwareMap.get(DcMotor.class, "EM");
 
-        int target = 538;
+
 
         EncoderTest.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 

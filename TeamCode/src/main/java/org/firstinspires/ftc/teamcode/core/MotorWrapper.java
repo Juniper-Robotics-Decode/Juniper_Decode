@@ -92,5 +92,9 @@ public class MotorWrapper {
         motorEx.stopAndResetEncoder();
     }
 
+    public void setTarget(int target){
+        motorEx.setTargetPosition(target);
+    }
+
 }
 
