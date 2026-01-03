@@ -11,13 +11,11 @@ public class SpindexTeleOp extends LinearOpMode {
     private SpindexFSM spindexFSM;
     private HWMap hwMap;
 
-        public SpindexTeleOp(HWMap hwMap, Telemetry telemetry) {
-            spindexFSM = new SpindexFSM(hwMap, telemetry);
-            this.telemetry = telemetry;
-        }
+
 @Override
     public void runOpMode(){
-
+        hwMap = new HWMap(hardwareMap);
+        spindexFSM = new SpindexFSM(hwMap, telemetry);
         waitForStart();
         while (opModeIsActive()){
             spindexFSM.updateState(hwMap,telemetry);
