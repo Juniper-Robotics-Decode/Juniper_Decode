@@ -33,9 +33,6 @@ public class HWMap {
     private RevColorSensorV3 colorSensor2;
     private RevColorSensorV3 colorSensor3;
     private RevTouchSensor TCS1;
-    private RevTouchSensor TCS2;
-    private RevTouchSensor TCS3;
-
     private GoBildaPinpointDriver odo;
 
     public HWMap (HardwareMap hardwareMap) {
@@ -57,8 +54,6 @@ public class HWMap {
         colorSensor2 = hardwareMap.get(RevColorSensorV3.class, "colorSensor2");
         colorSensor3 = hardwareMap.get(RevColorSensorV3.class, "colorSensor3");
         TCS1 = hardwareMap.get(RevTouchSensor.class, "TCS1");
-        TCS2 = hardwareMap.get(RevTouchSensor.class, "TCS2");
-        TCS3 = hardwareMap.get(RevTouchSensor.class, "TCS3");
         spindexMotor = new MotorEx(hardwareMap,"spindexMotor");
     }
 
@@ -121,11 +116,4 @@ public class HWMap {
         return TCS1;
     }
 
-    public RevTouchSensor getTouchSensor2() {
-        return TCS2;
-    }
-
-    public RevTouchSensor getTouchSensor3() {
-        return TCS3;
-    }
 }

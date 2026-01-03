@@ -60,19 +60,23 @@ public class SpindexFSM {
          detectedMotif[1] = cs2.getDetectedMotif();
          detectedMotif[2] = cs3.getDetectedMotif();
 
-        switch (state) {
-            case STOPPING_AT_TARGET:
-                if (gamepad1.square || gamepad1.circle || gamepad1.triangle){
-                    targetAngleCalculation(hwMap);
-                    touchSensorMotorFSM.spindexOffset(mode);
-                    spindexMotor.setTarget(target);
-                    spindexMotor.set(0.5);
-                    //spindex motor run to position command thing
-                }
-            case STOPPED_AT_TARGET:
-                break;
-        }
-    }
+         switch (state) {
+             case STOPPING_AT_TARGET:
+                 state = states.STOPPING_AT_TARGET;
+                 telemetry.addData("State:", state);
+                 if (gamepad1.square || gamepad1.circle || gamepad1.triangle){
+                     //   targetAngleCalculation(hwMap);
+                     //   touchSensorMotorFSM.spindexOffset(mode);
+                     //   spindexMotor.setTarget(target);
+                     spindexMotor.set(0.5);
+                     //spindex motor run to position command thing
+                 }
+             case STOPPED_AT_TARGET:
+                 state = states.STOPPED_AT_TARGET;
+                 telemetry.addData("State:", state);
+                 break;
+         }
+     }
     //target angle calculation methods and stuff will be added into the switch statement
     //the offset will also be there like after finding target, add offset, then move
 // need to add the actual motor movement code here with the offset and stuff
