@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.intaketransfer;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMapTest;
+import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 
@@ -25,7 +25,7 @@ public class BeltFSM {
 
     public State State;
 
-    public BeltFSM(HWMapTest intaketransferhwmap, Telemetry telemetry) {
+    public BeltFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
         transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1, true);
         this.telemetry = telemetry;
         State = State.STOPPED;

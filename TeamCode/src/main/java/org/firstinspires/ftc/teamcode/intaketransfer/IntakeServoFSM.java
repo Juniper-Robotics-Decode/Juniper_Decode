@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMapTest;
+import org.firstinspires.ftc.teamcode.core.HWMap;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +26,7 @@ public class IntakeServoFSM {
     public static double positionDown = .6;
     static Timing.Timer transferPostitionTimer;
 
-    public IntakeServoFSM(HWMapTest intaketransferhwmap, Telemetry telemetry) {
+    public IntakeServoFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
         intakeServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
         transferPostitionTimer = new Timing.Timer(1, TimeUnit.SECONDS); // Original length 1000
         this.telemetry = telemetry;
