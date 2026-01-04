@@ -49,13 +49,6 @@ public class IntakeServoFSM {
             transferPostitionTimer.start();
         }
 
-        if (transferPostitionTimer.done()) {
-            transferPostitionTimer.pause();
-            if (currentState == State.AT_UP){
-                targetPosition = positionDown;
-            }
-        }
-
         if (targetPosition == positionUp) {
             currentState = State.AT_UP;
         }
@@ -63,7 +56,6 @@ public class IntakeServoFSM {
         if (targetPosition == positionDown) {
             currentState = State.AT_DOWN;
         }
-        // else if(currentState = A)
     }
 
     public boolean AT_DOWN() {
@@ -74,7 +66,9 @@ public class IntakeServoFSM {
         return currentState == State.AT_UP;
     }
 
-    public void MoveUp() {targetPosition = positionUp;
+
+    public void MoveUp() {
+        targetPosition = positionUp;
     }
 
     public void MoveDown() {

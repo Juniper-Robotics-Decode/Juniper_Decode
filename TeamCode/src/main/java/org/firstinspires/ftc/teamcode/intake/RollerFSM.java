@@ -69,24 +69,6 @@ public class RollerFSM {
         intakeMotor.setVelocity(targetVelocity);
     }
 
-    public void stop() {
-        targetVelocity = stoppingTargetVelocity;
-    }
-
-    public void intake() {
-       /* if (State != State.INTAKING) {
-            State = State.RAMPING_UP_TO_INTAKE;
-        }*/
-        targetVelocity = intakingTargetVelocity;
-    }
-
-    public void eject() {
-        targetVelocity = ejectingTargetVelocity;
-        /*if (State != State.EJECTING) {
-            State = State.RAMPING_UP_TO_EJECT;
-        }*/
-    }
-
     public boolean STOPPED() {
         return State == State.STOPPED;
     }
@@ -99,10 +81,29 @@ public class RollerFSM {
         return State == State.EJECTING;
     }
 
-    /*public boolean JAMMED() {
+    public void stop() {
+        targetVelocity = stoppingTargetVelocity;
+    }
+
+    public void intake() {
+        targetVelocity = intakingTargetVelocity;
+        /* if (State != State.INTAKING) {
+            State = State.RAMPING_UP_TO_INTAKE;
+        }*/
+    }
+
+    public void eject() {
+        targetVelocity = ejectingTargetVelocity;
+        /*if (State != State.EJECTING) {
+            State = State.RAMPING_UP_TO_EJECT;
+        }*/
+
+         /*public boolean JAMMED() {
         return State == State.JAMMED;
     }
     public boolean RAMPING_UP_TO_INTAKE(){
         return State == State.RAMPING_UP_TO_INTAKE;
     }*/
+
+    }
 }

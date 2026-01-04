@@ -92,6 +92,10 @@ public class TransferFSM {
             currentState = State.MOVING_DOWN;
         }
 
+        if (currentState == State.AT_UP && transferServoFSM.AT_DOWN()){
+            currentState = State.AT_DOWN;
+        }
+
         if (Right_Bumper && transferServoFSM.AT_DOWN()) {
             currentState = State.MOVING_UP;
         }
