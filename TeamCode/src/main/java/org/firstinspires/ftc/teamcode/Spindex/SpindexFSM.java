@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 @TeleOp
@@ -33,7 +33,7 @@ public class SpindexFSM {
     public int ball, noBall, x, y, currentIndex, target;
     public MotorWrapper spindexMotor;
 
-    public SpindexFSM(HWMap hwMap, Telemetry telemetry) {
+    public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
         this.telemetry = telemetry;

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 @TeleOp
 public class ColorSensorFSM{
@@ -27,10 +27,8 @@ public class ColorSensorFSM{
     private final String greenStr = "Green";
     private final String purpleStr = "Purple";
     private final String emptyStr = "Empty";
-    private double d;
-    public int ball, noBall, x, y, currentIndex, target;
 
-    public ColorSensorFSM(HWMap hwMap, Telemetry telemetry) {
+    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
 
         CS = hwMap.getColorSensor1();
 ;       this.CS = CS;
@@ -54,8 +52,7 @@ public class ColorSensorFSM{
             state = states.EMPTY;
         }
 
-        d = CS.getDistance(DistanceUnit.MM);
- 
+
 
 
 

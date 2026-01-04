@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 import org.firstinspires.ftc.teamcode.Spindex.SpindexFSM.modes;
 @TeleOp
@@ -23,7 +23,7 @@ public class TouchSensorMotorFSM {
     public int offset = 0;
 
 
-    public TouchSensorMotorFSM(HWMap hwMap, Telemetry telemetry) {
+    public TouchSensorMotorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
 
         AI1 = hwMap.getAnalogInput1();
