@@ -64,7 +64,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
         hwMap = new HWMap(hardwareMap);
-        robotSettings = new RobotSettings();
+        robotSettings = RobotSettings.load();
         pinpoint = new Pinpoint(hwMap, robotSettings);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap);
@@ -75,7 +75,7 @@ public class MainTeleOp extends LinearOpMode {
 
         intakeFSM = new IntakeFSM(hwMap, telemetry);
         transferFSM = new TransferFSM(hwMap, telemetry);
-        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint);
+        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings);
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
 
@@ -83,8 +83,8 @@ public class MainTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             loopTimer.start();
-            telemetry.addData("ALLIANCE", MainAuto.ALLIANCE);
-            telemetry.addData("distance method", RobotSettings.distanceMethod);
+            telemetry.addData("ALLIANCE", robotSettings.alliance);
+            telemetry.addData("distance method", robotSettings.distanceMethod);
 
             if (gamepad1.options) {
                 pinpoint.resetPosAndIMU();
