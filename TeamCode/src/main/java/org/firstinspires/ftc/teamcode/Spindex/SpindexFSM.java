@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
@@ -40,16 +41,13 @@ public class SpindexFSM {
         this.cs2 = cs2;
         this.cs3 = cs3;
         state = states.STOPPING_AT_TARGET;
+        mode = modes.INTAKNG;
+
     }
 
 
-     public void updateState(HWMap hwMap, Telemetry telemetry){
-         if (gamepad1.square || gamepad1.circle || gamepad1.triangle){
-             mode = modes.SHOOTING;
-         } else {
-             mode = modes.INTAKNG;
-         }
-         targetAngleCalculation(hwMap);
+     public void updateState(boolean shooting){ //Gamepad gamepad1,
+         targetAngleCalculation();
          touchSensorMotorFSM.updateState();
          colorSensorsFSM.updateState();
          cs1.updateState();
@@ -64,10 +62,11 @@ public class SpindexFSM {
              case STOPPING_AT_TARGET:
                  state = states.STOPPING_AT_TARGET;
                  telemetry.addData("State:", state);
-                 if (gamepad1.square || gamepad1.circle || gamepad1.triangle){
+                 if (shooting){//boolean replace:gamepad1.square || gamepad1.circle || gamepad1.triangle
                      //   targetAngleCalculation(hwMap);
                      //   touchSensorMotorFSM.spindexOffset(mode);
                      //   spindexMotor.setTarget(target);
+                     mode = modes.SHOOTING;
                      spindexMotor.set(0.5);
                      //spindex motor run to position command thing
                  }
@@ -82,9 +81,8 @@ public class SpindexFSM {
 // need to add the actual motor movement code here with the offset and stuff
 
     //telemetry
-    public void targetAngleCalculation(HWMap hwMap) {
+    public void targetAngleCalculation() {
         touchSensorMotorFSM.spindexOffset(mode);
-        spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
         double a = Math.abs(spindexMotor.getAngle());
         double relativePositionInRotation = a % 360;
 

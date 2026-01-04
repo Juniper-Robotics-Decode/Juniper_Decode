@@ -24,7 +24,7 @@ public class BeltFSM {
     public State State;
 
     public BeltFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1);
+        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1,537.7);
         this.telemetry = telemetry;
         State = State.STOPPED;
     }

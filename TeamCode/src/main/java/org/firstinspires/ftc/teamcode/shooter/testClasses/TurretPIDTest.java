@@ -35,7 +35,7 @@ public class TurretPIDTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hwMap = new HWMap(hardwareMap);
-        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio);
+        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio,0);
         turretMotor.resetEncoder();
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         pidfController = new PIDFController(P,I,D,F);

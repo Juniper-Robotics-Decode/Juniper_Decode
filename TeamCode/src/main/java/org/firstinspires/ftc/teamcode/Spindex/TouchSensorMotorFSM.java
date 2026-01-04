@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
@@ -14,7 +15,7 @@ public class TouchSensorMotorFSM {
         POSITION_3,
     }
 
-    public static RevTouchSensor TCS1;
+    public static AnalogInput AI1;
     public final MotorWrapper spindexMotor;
     public static states state;
     private Telemetry telemetry;
@@ -25,7 +26,7 @@ public class TouchSensorMotorFSM {
     public TouchSensorMotorFSM(HWMap hwMap, Telemetry telemetry) {
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
 
-        TCS1 = hwMap.getTouchSensor1();
+        AI1 = hwMap.getAnalogInput1();
 
         double a = Math.abs(spindexMotor.getAngle());
 

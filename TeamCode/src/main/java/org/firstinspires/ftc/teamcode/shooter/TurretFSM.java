@@ -38,7 +38,7 @@ public class TurretFSM {
     Telemetry telemetry;
 
     public TurretFSM(HWMap hwMap, Telemetry telemetry) {
-        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio);
+        turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio,0);
         turretMotor.resetEncoder();
         state = States.ALIGNING;
         pidfController = new PIDFController(P,I,D,F);

@@ -31,7 +31,7 @@ public class RollerFSM {
 
 
     public RollerFSM(HWMap hwMap, Telemetry telemetry) {
-        intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1);
+        intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, 537.7);
         this.telemetry = telemetry;
         State = State.STOPPED;
     }
