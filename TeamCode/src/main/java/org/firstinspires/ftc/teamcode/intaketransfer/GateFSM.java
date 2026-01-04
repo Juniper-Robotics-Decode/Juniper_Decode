@@ -22,9 +22,9 @@ public class GateFSM {
     private Telemetry telemetry;
     private ServoWrapper transferServo;
     public State currentState;
-    public static double targetPosition = .25;
-    public static double positionUp = .5;
-    public static double positionDown = .25;
+    public static double targetPosition = .7;
+    public static double positionUp = 1;
+    public static double positionDown = .7;
     static Timing.Timer transferPostitionTimer;
 
     public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
@@ -57,7 +57,7 @@ public class GateFSM {
             }
         }
 
-        if (targetPosition != positionUp) {
+        if (targetPosition == positionUp) {
             currentState = State.AT_UP;
         }
 

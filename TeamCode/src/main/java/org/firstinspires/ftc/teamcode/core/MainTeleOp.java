@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
-import org.firstinspires.ftc.teamcode.shooter.ShooterFSM;
+import org.firstinspires.ftc.teamcode.shooter.LauncherFSM;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
@@ -47,7 +47,7 @@ public class MainTeleOp extends LinearOpMode {
     private GamepadEx gamepad;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
-    private ShooterFSM shooterFSM;
+    private LauncherFSM launcherFSM;
 
     private Timing.Timer loopTimer;
 
@@ -75,7 +75,7 @@ public class MainTeleOp extends LinearOpMode {
 
         intakeFSM = new IntakeFSM(hwMap, telemetry);
         transferFSM = new TransferFSM(hwMap, telemetry);
-        shooterFSM = new ShooterFSM(hwMap,telemetry, pinpoint);
+        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint);
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
 
@@ -113,8 +113,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("loop time", loopTimer.elapsedTime());
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.dpad_right, gamepad1.right_bumper);
-            shooterFSM.updateState(gamepad1.b);
-            shooterFSM.log();
+            launcherFSM.updateState(gamepad1.b);
+            launcherFSM.log();
 
             telemetry.update();
         }
