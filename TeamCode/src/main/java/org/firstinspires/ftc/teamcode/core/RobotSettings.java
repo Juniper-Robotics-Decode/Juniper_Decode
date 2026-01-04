@@ -52,7 +52,7 @@ public class RobotSettings {
 
     public RobotSettings () {
         alliance = Alliance.RED;
-        distanceMethod = DistanceMethod.PINPOINT_ONLY;
+        distanceMethod = DistanceMethod.LIMELIGHT_ONLY;
         startPosState = StartPos.CLOSE_RED;
     }
 

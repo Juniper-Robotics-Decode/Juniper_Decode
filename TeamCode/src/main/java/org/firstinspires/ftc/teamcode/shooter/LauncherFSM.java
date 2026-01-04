@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
-public class ShooterFSM {
+public class LauncherFSM {
 
     public enum States{
         PREPARING_TO_SHOOT,
@@ -22,7 +21,7 @@ public class ShooterFSM {
     private boolean flywheelStopping = false;
 
     private Telemetry telemetry;
-    public ShooterFSM (HWMap hardwareMap, Telemetry telemetry, Pinpoint pinpoint) {
+    public LauncherFSM(HWMap hardwareMap, Telemetry telemetry, Pinpoint pinpoint) {
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry);
         turretFSM = new TurretFSM(hardwareMap,telemetry);
         pitchFSM = new PitchFSM(hardwareMap,telemetry);

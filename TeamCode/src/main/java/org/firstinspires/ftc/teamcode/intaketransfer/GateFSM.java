@@ -5,7 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMapTest;
+import org.firstinspires.ftc.teamcode.core.HWMap;
+
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,17 +22,17 @@ public class GateFSM {
     private Telemetry telemetry;
     private ServoWrapper transferServo;
     public State currentState;
-    public static double targetPosition = .6;
+    public static double targetPosition = .7;
     public static double positionUp = 1;
-    public static double positionDown = .6;
+    public static double positionDown = .7;
     static Timing.Timer transferPostitionTimer;
 
-    public GateFSM(HWMapTest intaketransferhwmap, Telemetry telemetry) {
+    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
         transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
         transferPostitionTimer = new Timing.Timer(1, TimeUnit.SECONDS); // Original length 1000
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
-        transferServo.setPosition(.6);
+        transferServo.setPosition(positionDown);
     }
 
     public void updateState() {
@@ -56,7 +57,6 @@ public class GateFSM {
                 targetPosition = positionDown;
             }
         }
-
 
         if (targetPosition == positionUp) {
             currentState = State.AT_UP;

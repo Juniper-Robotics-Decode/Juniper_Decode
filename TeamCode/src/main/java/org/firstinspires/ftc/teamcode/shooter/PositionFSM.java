@@ -128,10 +128,10 @@ public class PositionFSM {
 
         // distance (m) , velocity (rpm)
 
-        velocityMap.add(1.24, 3600);
-        velocityMap.add(1.6, 3600);
-        velocityMap.add(2.11, 4000);
-        velocityMap.add(2.8, 4400);
+        velocityMap.add(1.24, 3100);
+        velocityMap.add(1.6, 3100);
+        velocityMap.add(2.11, 3500);
+        velocityMap.add(2.8, 3900);
 
         velocityMap.createLUT();
 

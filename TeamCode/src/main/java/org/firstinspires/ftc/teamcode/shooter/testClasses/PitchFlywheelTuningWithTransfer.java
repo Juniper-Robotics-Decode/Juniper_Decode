@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.HWMapTest;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
@@ -25,7 +24,6 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     MotorEx motor;
 
     HWMap hwMap;
-    HWMapTest hwMapTest;
     private NewAxonServo pitchServo;
     private LimelightCamera limelightCamera;
     public static double targetAngle;
@@ -52,8 +50,8 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hwMap = new HWMap(hardwareMap);
-        intakeFSM = new IntakeFSM(hwMapTest,telemetry);
-        transferFSM = new TransferFSM(hwMapTest, telemetry);
+        intakeFSM = new IntakeFSM(hwMap,telemetry);
+        transferFSM = new TransferFSM(hwMap, telemetry);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

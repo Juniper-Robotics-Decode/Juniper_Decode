@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.intake;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMapTest;
+import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 @Config
@@ -11,7 +11,7 @@ public class RollerFSM {
     private Telemetry telemetry;
     public static State State;
     private final MotorWrapper intakeMotor;
-    public static double kS = 0, kV = 1.2, kA = 0;
+    public static double kS = 0, kV = 2, kA = 0;
     public static double p = 0.15, i = 0, d = 0;
     private double currentVelocity;
     public static double targetVelocity = 2790;
@@ -30,7 +30,7 @@ public class RollerFSM {
 //        RAMPING_UP_TO_EJECT
     }
 
-    public RollerFSM(HWMapTest hwMap, Telemetry telemetry) {
+    public RollerFSM(HWMap hwMap, Telemetry telemetry) {
         intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, true);
         this.telemetry = telemetry;
         State = State.INTAKING;

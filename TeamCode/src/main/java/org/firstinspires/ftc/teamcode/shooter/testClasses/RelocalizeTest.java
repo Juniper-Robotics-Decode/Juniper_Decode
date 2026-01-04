@@ -133,7 +133,7 @@ public class RelocalizeTest extends LinearOpMode {
                 double xCam = RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
                 double yCam = RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
 
-                double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
+                double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*  (Math.cos(Math.toRadians(cameraAbsoluteHeading))));
                 double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
 
 

@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.util.Timing;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMapTest;
+import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.intaketransfer.IntakeServoFSM;
 
 import java.util.concurrent.TimeUnit;
@@ -27,7 +27,7 @@ public class IntakeFSM {
     private Telemetry telemetry;
     Timing.Timer autoReverseTimer;
 
-    public IntakeFSM(HWMapTest hardwareMap, Telemetry telemetry) {
+    public IntakeFSM(HWMap hardwareMap, Telemetry telemetry) {
         autoReverseTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
         Roller = new RollerFSM(hardwareMap, telemetry);
         Servo = new IntakeServoFSM(hardwareMap, telemetry);
