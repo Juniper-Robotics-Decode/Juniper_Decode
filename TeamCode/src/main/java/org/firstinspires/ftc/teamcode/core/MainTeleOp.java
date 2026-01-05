@@ -103,8 +103,7 @@ public class MainTeleOp extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setLocked(locked);
-            swerveDrivetrain.setPose(drive);
+            swerveDrivetrain.setPose(drive, botHeading);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", botHeading);

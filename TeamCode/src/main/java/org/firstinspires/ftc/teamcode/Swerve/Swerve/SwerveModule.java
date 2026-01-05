@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Swerve.Swerve;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+import static java.lang.Math.cos;
 import static java.lang.Math.signum;
 
 import androidx.core.math.MathUtils;
@@ -84,7 +85,7 @@ public class SwerveModule {
         if (Double.isNaN(power)) power = 0;
 
         servo.setPower(power + (Math.abs(error) > 0.02 ? signum(power) * k_static : 0));
-        motor.setPower(ws);
+        motor.setPower((ws)*cos(error));
         lastMotorPower = ws;
         lastServoPower = power;
     }
@@ -115,7 +116,7 @@ public class SwerveModule {
 
     public void setMotorPower(double power){motor.setPower(power);}
 
-    public void setPID(double P, double I, double D){p = P; I = I; d = D;}
+    public void setPID(double P, double I, double D){p = P; i = I; d = D;}
 
     public void setMode(DcMotor.RunMode runMode) {
         motor.setMode(runMode);

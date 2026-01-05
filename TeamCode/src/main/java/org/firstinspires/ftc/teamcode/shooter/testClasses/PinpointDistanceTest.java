@@ -86,13 +86,11 @@ public class PinpointDistanceTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setLocked(locked);
-            swerveDrivetrain.setPose(drive);
+            swerveDrivetrain.setPose(drive, BotHeading);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
             telemetry.addData("Swerve Tele \n", swerveDrivetrain.getTele());
-
 
             telemetry.addData("RAW X", pinpoint.getX());
             telemetry.addData("RAW Y", pinpoint.getY());
