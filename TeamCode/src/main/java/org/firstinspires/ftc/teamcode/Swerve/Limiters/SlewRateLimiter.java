@@ -34,7 +34,7 @@ public class SlewRateLimiter {
                 NegativeRateLimit * ElapsedTime,
                 PositiveRateLimit * ElapsedTime);
 
-        // 2. Quintic Polynomial Mapping: 6t^5 - 15t^4 + 10t^3
+        //Quintic Polynomial Mapping: 6t^5 - 15t^4 + 10t^3
         double t = MathUtils.clamp(Math.abs(target), 0, 1);
         double quinticVal = (6 * Math.pow(t, 5)) - (15 * Math.pow(t, 4)) + (10 * Math.pow(t, 3));
 
