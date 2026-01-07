@@ -197,13 +197,13 @@ public class SwerveDrivetrain {
     // todo add encoders to swerve motors and update module code to use them
     // todo test encoder noise
     // all dynamic motor scaling methods may require perfect zeros and much lower levels of backlash
-    /* public void calculateVelocityBasedScalers() {
+    public void calculateVelocityBasedScalers() {
         double[] actualVelocities = new double[4];
         double minVelocityRatio = 1.0;
 
         for (int i = 0; i < 4; i++) {
             modules[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            actualVelocities[i] = Math.abs(modules[i].getVelocity());
+            actualVelocities[i] = 0;//Math.abs(modules[i].getVelocity());
         }
 
         double maxObservedVel = 0;
@@ -230,7 +230,7 @@ public class SwerveDrivetrain {
                 MotorScaling[i] = Math.min(1.0, Math.max(0.7, MotorScaling[i]));
             }
         }
-    } */
+    }
 
     public void setOffsets(double[] offsets) {
         frontLeftModule.setOffset(offsets[0]);

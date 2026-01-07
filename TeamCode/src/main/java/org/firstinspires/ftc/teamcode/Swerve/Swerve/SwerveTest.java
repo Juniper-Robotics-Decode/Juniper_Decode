@@ -100,6 +100,7 @@ public class SwerveTest extends LinearOpMode {
             swerveDrivetrain.setlockdelay(lockdelay);
 
             //swerveDrivetrain.calculateCurrentBasedScalers();
+            //swerveDrivetrain.calculateVelocityBasedScalers();
 
             if (gamepad1.options) {
                 odo.resetPosAndIMU();
