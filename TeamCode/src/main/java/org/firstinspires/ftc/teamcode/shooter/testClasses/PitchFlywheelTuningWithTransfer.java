@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
@@ -24,6 +25,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     MotorEx motor;
 
     HWMap hwMap;
+    RobotSettings robotSettings;
     private NewAxonServo pitchServo;
     private LimelightCamera limelightCamera;
     public static double targetAngle;
@@ -50,6 +52,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hwMap = new HWMap(hardwareMap);
+        robotSettings = RobotSettings.load();
         intakeFSM = new IntakeFSM(hwMap,telemetry);
         transferFSM = new TransferFSM(hwMap, telemetry);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
@@ -59,7 +62,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry);
+        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
 

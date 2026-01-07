@@ -68,7 +68,7 @@ public class PositionFSM {
     private RobotSettings robotSettings;
 
     public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings) {
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry);
+        limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
         this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
         sensor = Sensor.PINPOINT;
@@ -209,25 +209,34 @@ public class PositionFSM {
 
     public void relocalize() {
         //TODO: add 20 degree pitch and add 90 degree roll
-        double cameraAbsoluteHeading = pinpoint.getHeading() - turretAngleProvider.getAsDouble();
-        double vectorAbsoluteHeading = cameraAbsoluteHeading - limelightCamera.getTy();
-        double vectorMagnitude = limelightCamera.getFlatDistance();
+        double turretHeading = -turretAngleProvider.getAsDouble();
+        double CamOffsetHeadingFromTurret = 180+48.064;
+        double robotHeading = pinpoint.getHeading();
+        double cameraAbsoluteHeading = robotHeading + turretHeading + CamOffsetHeadingFromTurret;
 
-        double xCam = robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
-        double yCam = robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
+        double camX = limelightCamera.getxField();
+        double camY = limelightCamera.getyField();
+        double distanceCamToTurretCenter = 0.07207114;
 
-        double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
-        double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
+        double distanceTurretCenterToRobotCenter = 0.04;
+
+        double xTurret =  camX - (distanceCamToTurretCenter*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
+        double yTurret = camY - (distanceCamToTurretCenter*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
+
+        double xRobot = xTurret - (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading + 180))));
+        double yRobot = yTurret - (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading + 180))));
 
         Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
         pinpoint.setPosition(newPos);
 
         telemetry.addLine("--- RELOCALIZATION ---");
         telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
-        telemetry.addData("Vector Heading", vectorAbsoluteHeading);
-        telemetry.addData("Vector Dist", vectorMagnitude);
-        telemetry.addData("Cam X", xCam);
-        telemetry.addData("Cam Y", yCam);
+        telemetry.addData("Robot Heading", robotHeading);
+        telemetry.addData("Turret Heading", turretHeading);
+        telemetry.addData("Turret X", xTurret);
+        telemetry.addData("Turret Y", yTurret);
+        telemetry.addData("Cam X", camX);
+        telemetry.addData("Cam Y", camY);
         telemetry.addData("Robot X", xRobot);
         telemetry.addData("Robot Y", yRobot);
     }

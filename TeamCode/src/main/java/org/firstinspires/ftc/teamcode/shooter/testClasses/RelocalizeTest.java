@@ -34,7 +34,6 @@ public class RelocalizeTest extends LinearOpMode {
     Pinpoint pinpoint;
     TurretFSM turretFSM;
     RobotSettings robotSettings;
-    double CAMERA_DISTANCE_FROM_CENTER = 0.07207114;
 
     private SwerveDrivetrain swerveDrivetrain;
 
@@ -52,7 +51,7 @@ public class RelocalizeTest extends LinearOpMode {
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry);
+        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pinpoint = new Pinpoint(hwMap,robotSettings);
         turretFSM = new TurretFSM(hwMap,telemetry);
 
@@ -123,36 +122,39 @@ public class RelocalizeTest extends LinearOpMode {
             telemetry.addData("Limelight y", limelightCamera.getY());
             telemetry.addData("Limelight Ty", limelightCamera.getTy());
 
+            double turretHeading = -turretFSM.getCurrentAngle();
+            double CamOffsetHeadingFromTurret = 180+48.064;
+            double robotHeading = pinpoint.getHeading();
+            double cameraAbsoluteHeading = robotHeading + turretHeading + CamOffsetHeadingFromTurret;
 
-            //TODO: add 20 degree pitch and add 90 degree roll
-                double cameraAbsoluteHeading = pinpoint.getHeading() - turretFSM.getCurrentAngle();
-                double vectorAbsoluteHeading = cameraAbsoluteHeading - limelightCamera.getTy();
-                double vectorMagnitude = limelightCamera.getFlatDistance();
+            double camX = limelightCamera.getxField();
+            double camY = limelightCamera.getyField();
+            double distanceCamToTurretCenter = 0.07207114;
 
-                double xCam = robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
-                double yCam = robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
+            double distanceTurretCenterToRobotCenter = 0.04;
 
-                double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*  (Math.cos(Math.toRadians(cameraAbsoluteHeading))));
-                double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
+            double xTurret =  camX - (distanceCamToTurretCenter*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
+            double yTurret = camY - (distanceCamToTurretCenter*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
 
 
+            double xRobot = xTurret - (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading + 180))));
+            double yRobot = yTurret - (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading + 180))));
+            Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
 
-                if(gamepad1.a) {
-                    Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot, yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
-                    pinpoint.setPosition(newPos);
-                }
-
-                telemetry.addLine("--- RELOCALIZATION ---");
-                telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
-                telemetry.addData("Pinpoint heading", pinpoint.getHeading());
-                telemetry.addData("turret current angle", turretFSM.getCurrentAngle());
-                telemetry.addData("Vector Heading", vectorAbsoluteHeading);
-                telemetry.addData("Vector Dist", vectorMagnitude);
-                telemetry.addData("Cam X", xCam);
-                telemetry.addData("Cam Y", yCam);
-                telemetry.addData("Robot X", xRobot);
-                telemetry.addData("Robot Y", yRobot);
-                telemetry.update();
+            if(gamepad1.a) {
+                pinpoint.setPosition(newPos);
+            }
+            telemetry.addLine("--- RELOCALIZATION ---");
+            telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
+            telemetry.addData("Robot Heading", robotHeading);
+            telemetry.addData("Turret Heading", turretHeading);
+            telemetry.addData("Turret X", xTurret);
+            telemetry.addData("Turret Y", yTurret);
+            telemetry.addData("Cam X", camX);
+            telemetry.addData("Cam Y", camY);
+            telemetry.addData("Robot X", xRobot);
+            telemetry.addData("Robot Y", yRobot);
+            telemetry.update();
 
         }
     }
