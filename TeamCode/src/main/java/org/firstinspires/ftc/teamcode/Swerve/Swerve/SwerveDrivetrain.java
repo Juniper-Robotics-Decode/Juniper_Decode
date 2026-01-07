@@ -21,7 +21,7 @@ public class SwerveDrivetrain {
     public SwerveModule[] modules;
 
     private double[] ws = new double[4];
-    private double MotorScaling[] = new double[]{1,1,1,1}; //use SwerveCalibration //run with encoder and use ratio of velocities to find
+    private double MotorScaling[] = new double[]{1,1,1,1};
     private double max;
 
     double[] wa = new double[4];
@@ -30,8 +30,8 @@ public class SwerveDrivetrain {
     private double offsets[] = new double[]{2, 2.6, 1.17, 3.4}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
-    private double trackwidth = 13.0; //CC distances of modules //find in CAD
-    private double wheelbase = 13.0;  // trackwidth is along the width of the robot wheel base is along the length
+    private double trackwidth = 9.921;
+    private double wheelbase = 9.927;  // trackwidth is along the width of the robot wheel base is along the length
     private double R;
 
     double targetheading = 0.0;
