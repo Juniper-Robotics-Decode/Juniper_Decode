@@ -57,7 +57,7 @@ public class SwerveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException{
-        P = 0.2;
+        P = 0.25;
         kgain = 2;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

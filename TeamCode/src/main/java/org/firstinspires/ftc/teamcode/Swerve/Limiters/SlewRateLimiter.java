@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Swerve.Limiters;
 
 import androidx.core.math.MathUtils;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class SlewRateLimiter {
@@ -19,20 +18,32 @@ public class SlewRateLimiter {
         Timer = new ElapsedTime();
     }
 
-    public SlewRateLimiter(double RateLimit, double IntialValue) {
-        this(RateLimit, -RateLimit, IntialValue);
+    public SlewRateLimiter(double RateLimit, double InitialValue) {
+        this(RateLimit, -RateLimit, InitialValue);
     }
 
     public SlewRateLimiter(double RateLimit) {
         this(RateLimit, -RateLimit, 0);
     }
 
-    public double calculate(double input){
+    public double calculate(double input) {
         double CurrentTime = Timer.seconds();
         double ElapsedTime = CurrentTime - PrevTime;
-        PrevVal += MathUtils.clamp(input - PrevVal, NegativeRateLimit * ElapsedTime, PositiveRateLimit * ElapsedTime);
+
+        double target = PrevVal + MathUtils.clamp(input - PrevVal,
+                NegativeRateLimit * ElapsedTime,
+                PositiveRateLimit * ElapsedTime);
+
+        // 2. Quintic Polynomial Mapping: 6t^5 - 15t^4 + 10t^3
+        double t = MathUtils.clamp(Math.abs(target), 0, 1);
+        double quinticVal = (6 * Math.pow(t, 5)) - (15 * Math.pow(t, 4)) + (10 * Math.pow(t, 3));
+
+        double finalOutput = (target < 0) ? -quinticVal : quinticVal;
+
+        PrevVal = target;
         PrevTime = CurrentTime;
-        return PrevVal;
+
+        return finalOutput;
     }
 
     public void setPositiveRateLimit(double PositiveRateLimit) {
