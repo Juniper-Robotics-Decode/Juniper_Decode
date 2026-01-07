@@ -14,11 +14,13 @@ public class Pinpoint {  // TODO: add junit
     Pose2D pos;
     public double x, y, heading;
     public static double Xoffset, Yoffset;
+    private RobotSettings robotSettings;
 
 
 
     public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
         odo = hwMap.getOdo();
+        this.robotSettings = robotSettings;
         Xoffset = -132.5; Yoffset = 14.075;
         odo.setOffsets(Xoffset, Yoffset);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -71,7 +73,7 @@ public class Pinpoint {  // TODO: add junit
     }
 
     public double getGoalDistance() {
-        return Math.sqrt(Math.pow((RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));
+        return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));
     }
 
     public void setPosition(Pose2D pose2D) {
@@ -96,7 +98,7 @@ public class Pinpoint {  // TODO: add junit
 */
     public double getHeadingErrorTrig() {
         double targetAngle;
-        targetAngle = Math.toDegrees(Math.atan2((RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), (RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x)));
+        targetAngle = Math.toDegrees(Math.atan2((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), (robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x)));
 
         double error = targetAngle - heading;
 

@@ -50,7 +50,7 @@ public class RelocalizeTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hwMap = new HWMap(hardwareMap);
-        robotSettings = new RobotSettings();
+        robotSettings = RobotSettings.load();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry);
         pinpoint = new Pinpoint(hwMap,robotSettings);
@@ -129,10 +129,10 @@ public class RelocalizeTest extends LinearOpMode {
                 double vectorAbsoluteHeading = cameraAbsoluteHeading - limelightCamera.getTy();
                 double vectorMagnitude = limelightCamera.getFlatDistance();
 
-                double xCam = RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
-                double yCam = RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
+                double xCam = robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
+                double yCam = robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
 
-                double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
+                double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*  (Math.cos(Math.toRadians(cameraAbsoluteHeading))));
                 double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
 
 

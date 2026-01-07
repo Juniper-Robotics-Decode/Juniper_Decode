@@ -17,17 +17,17 @@ public class FullShooterTest extends LinearOpMode {
     HWMap hwMap;
     RobotSettings robotSettings;
     GamepadEx gamepad;
-    ShooterFSM shooterFSM;
+    LauncherFSM launcherFSM;
     Pinpoint pinpoint;
     @Override
     public void runOpMode() throws InterruptedException {
         try {
             this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             hwMap = new HWMap(hardwareMap);
-            robotSettings = new RobotSettings();
+            robotSettings = RobotSettings.load();
             pinpoint = new Pinpoint(hwMap, robotSettings);
             gamepad = new GamepadEx(gamepad1);
-            shooterFSM = new ShooterFSM(hwMap,telemetry, pinpoint);
+            launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint,robotSettings);
         }catch (Exception e) {
             telemetry.addData("Exception", e.getMessage());
             telemetry.update();
@@ -36,13 +36,13 @@ public class FullShooterTest extends LinearOpMode {
         while(opModeIsActive()) {
             pinpoint.update();
             gamepad.readButtons();
-            shooterFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.B));
+            launcherFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.B));
             log();
         }
     }
 
     private void log() {
-        shooterFSM.log();
+        launcherFSM.log();
         telemetry.update();
     }
 }

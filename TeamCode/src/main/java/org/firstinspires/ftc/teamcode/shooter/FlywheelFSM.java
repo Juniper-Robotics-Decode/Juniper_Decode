@@ -16,7 +16,7 @@ public class FlywheelFSM {
 
     public static double vP=3, vI=0, vD=0, vF = 0; // 0.3 p for just the first half
 
-    public static double ks=0, kv=1.7, ka=0;  // 1.37 for just the first half
+    public static double ks=0, kv=2, ka=0;  // 1.37 for just the first half
 
     public static double TOLERANCE = 100; // ticks
 

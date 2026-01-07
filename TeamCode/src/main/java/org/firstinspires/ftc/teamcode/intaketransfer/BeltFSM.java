@@ -6,8 +6,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
-import java.util.Objects;
-
 
 @Config
 public class BeltFSM {
@@ -28,7 +26,7 @@ public class BeltFSM {
     public State State;
 
     public BeltFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1, false);
+        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1, true);
         this.telemetry = telemetry;
         State = State.STOPPED;
     }

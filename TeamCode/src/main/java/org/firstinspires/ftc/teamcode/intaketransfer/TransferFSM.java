@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 
+
 import java.util.concurrent.TimeUnit;
 
 public class TransferFSM {
@@ -24,14 +25,14 @@ public class TransferFSM {
     private State currentState = State.START_TO_MOVE;
     private BeltFSM Belt;
     private Telemetry telemetry;
-    private TransferServoFSM transferServoFSM;
+    private GateFSM transferServoFSM;
     public static Timing.Timer autoMoveTimer;
 
 
     public TransferFSM(HWMap hardwareMap, Telemetry telemetry) {
         Belt = new BeltFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
-        transferServoFSM = new TransferServoFSM(hardwareMap, telemetry);
+        transferServoFSM = new GateFSM(hardwareMap, telemetry);
         autoMoveTimer = new Timing.Timer(3, TimeUnit.SECONDS);
     }
 
@@ -90,6 +91,10 @@ public class TransferFSM {
         }
         if (Right_Bumper && transferServoFSM.AT_UP()) {
             currentState = State.MOVING_DOWN;
+        }
+
+        if (currentState == State.AT_UP && transferServoFSM.AT_DOWN()){
+            currentState = State.AT_DOWN;
         }
 
         if (Right_Bumper && transferServoFSM.AT_DOWN()) {

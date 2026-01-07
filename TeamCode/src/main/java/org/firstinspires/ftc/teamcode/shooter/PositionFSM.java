@@ -52,7 +52,7 @@ public class PositionFSM {
     private double pitchTargetAngle;
     private double turretError;
 
-    private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: add offset for pinpoint instead
+    private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: x: 60.05 mm, y: 53.845 mm, distance: 80.656 mm
     private double PINPOINT_OFFSET = 0;
     private double threshold1 = 2.5, threshold2 = 3;
 
@@ -65,7 +65,9 @@ public class PositionFSM {
 
     private Telemetry telemetry;
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider) {
+    private RobotSettings robotSettings;
+
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings) {
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry);
         this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
@@ -73,6 +75,7 @@ public class PositionFSM {
         this.turretAngleProvider = turretAngleProvider;
         createVelocityMap();
         this.telemetry = telemetry;
+        this.robotSettings = robotSettings;
     }
 
     public void updateState() {
@@ -128,10 +131,10 @@ public class PositionFSM {
 
         // distance (m) , velocity (rpm)
 
-        velocityMap.add(1.24, 3600);
-        velocityMap.add(1.6, 3600);
-        velocityMap.add(2.11, 4000);
-        velocityMap.add(2.8, 4400);
+        velocityMap.add(1.24, 3100);
+        velocityMap.add(1.6, 3100);
+        velocityMap.add(2.11, 3500);
+        velocityMap.add(2.8, 3900);
 
         velocityMap.createLUT();
 
@@ -181,13 +184,13 @@ public class PositionFSM {
     }
 
     private void chooseSensor() {
-        if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_ONLY)) {
+        if(robotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_ONLY)) {
                 sensor = Sensor.LIMELIGHT;
         }
-        else if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.PINPOINT_ONLY)) {
+        else if(robotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.PINPOINT_ONLY)) {
             sensor = Sensor.PINPOINT;
         }
-        else if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
+        else if(robotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
              if (!pinpoint.pinpointReady()) {
                 sensor = Sensor.LIMELIGHT;
             }
@@ -210,8 +213,8 @@ public class PositionFSM {
         double vectorAbsoluteHeading = cameraAbsoluteHeading - limelightCamera.getTy();
         double vectorMagnitude = limelightCamera.getFlatDistance();
 
-        double xCam = RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
-        double yCam = RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
+        double xCam = robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
+        double yCam = robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
 
         double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
         double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));

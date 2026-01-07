@@ -30,16 +30,16 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     private PIDFController pidfController;
     public static double TOLERANCE = 1;
-    public static double P=0.07, I=0, D=0, F=0;
+    public static double P=0.1, I=0, D=0, F=0;
     public static double gearRatio = 1.0/12.0;
 
-    public static double UPPER_HARD_STOP = 22;
-    public static double LOWER_HARD_STOP = 12.5;
+    public static double UPPER_HARD_STOP = 28;
+    public static double LOWER_HARD_STOP = 10;
 
 
     public static double vP=3, vI=0, vD=0, vF = 0;
 
-    public static double ks=0, kv=1.55, ka=0;
+    public static double ks=0, kv=2, ka=0;
 
     public static double defaultVelocity = 0;  // RPM
 
