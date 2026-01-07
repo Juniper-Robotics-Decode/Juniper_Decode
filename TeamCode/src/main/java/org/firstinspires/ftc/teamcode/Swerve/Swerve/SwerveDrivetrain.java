@@ -147,6 +147,43 @@ public class SwerveDrivetrain {
         m.update(wa[i], ws[i]);
     }
 
+    /// calculates motor scalers based on current draw
+    public void calculateCurrentScalers() { // todo get real min values for current draw
+        double[] currentDraws = new double[4];
+        double maxObservedCurrent = 0;
+        boolean[] isModuleValid = new boolean[]{true, true, true, true};
+
+        double[] currentMovingAverage = new double[]{0,0,0,0};
+        double alpha = 0.1;
+
+        for (int i = 0; i < 4; i++) {
+            double instantCurrent = modules[i].getMotorCurrent();
+            currentMovingAverage[i] = (alpha * instantCurrent) + (1.0 - alpha) * currentMovingAverage[i];
+
+            if (Math.abs(ws[i]) > 0.5 && currentMovingAverage[i] < 2) {
+                isModuleValid[i] = false;
+            }
+
+            if (isModuleValid[i] && currentMovingAverage[i] > maxObservedCurrent) {
+                maxObservedCurrent = currentMovingAverage[i];
+            }
+        }
+
+        if (maxObservedCurrent > 2) {
+            for (int i = 0; i < 4; i++) {
+                if (isModuleValid[i]) {
+                    MotorScaling[i] = currentMovingAverage[i] / maxObservedCurrent;
+                } else {
+                    MotorScaling[i] = 1.0;
+                }
+
+                MotorScaling[i] = Math.max(MotorScaling[i], 0.7);
+            }
+        } else {
+            for (int i = 0; i < 4; i++) MotorScaling[i] = 1.0;
+        }
+    }
+
     public void setOffsets(double[] offsets) {
         frontLeftModule.setOffset(offsets[0]);
         frontRightModule.setOffset(offsets[1]);

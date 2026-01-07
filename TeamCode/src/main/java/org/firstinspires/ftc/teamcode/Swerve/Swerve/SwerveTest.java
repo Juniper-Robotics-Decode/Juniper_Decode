@@ -46,7 +46,7 @@ public class SwerveTest extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
-    public static double[] MotorScalars = new double[]{1,1,1,1};
+    //public static double[] MotorScalars = new double[]{1,1,1,1};
     public static double[] Zeros = new double[]{2, 2.6, 1.17, 3.4};
 
     public static double kgain = 1;
@@ -93,11 +93,13 @@ public class SwerveTest extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
-            swerveDrivetrain.setMotorScaling(MotorScalars);
+            //swerveDrivetrain.setMotorScaling(MotorScalars);
             swerveDrivetrain.setOffsets(Zeros);
             swerveDrivetrain.setKgain(kgain);
             swerveDrivetrain.setHeadingControllerPIDF(P, I, D, F);
             swerveDrivetrain.setlockdelay(lockdelay);
+
+            swerveDrivetrain.calculateCurrentScalers();
 
             if (gamepad1.options) {
                 odo.resetPosAndIMU();

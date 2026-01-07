@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 import java.util.Locale;
 
 @Config
@@ -102,25 +104,29 @@ public class SwerveModule {
         return pos;
     }
 
-    public double getTargetRotation() {
-        return target;
-    }
+    public double getTargetRotation() { return target;}
 
-    public void setOffset(double o) {
-        offset = o;
-    }
+    public void setTargetRotation(double target) { this.target = target;}
 
-    public void setInverse(boolean inv) {
-        inveresed = inv;
-    }
+    public void setOffset(double o) {offset = o; }
+
+    public double getOffset(){return offset;}
+
+    public void setInverse(boolean inveresed) { this.inveresed = inveresed;}
+
+    public boolean getInverse() { return inveresed;}
 
     public void setMotorPower(double power){motor.setPower(power);}
 
-    public void setPID(double P, double I, double D){p = P; i = I; d = D;}
+    public double getMotorPower(){ return lastMotorPower;}
 
-    public void setMode(DcMotor.RunMode runMode) {
-        motor.setMode(runMode);
-    }
+    public void setPID(double p, double i, double d){ this.p = p; this.i = i; this.d = d;}
+
+    public double getP(){ return p;} public double getI(){ return i;} public double getD(){ return d;}
+
+    public void setMode(DcMotor.RunMode runMode) { motor.setMode(runMode);}
+
+    public double getMotorCurrent() {return motor.getCurrent(CurrentUnit.AMPS); }
 
     public String getTele() {
         return String.format(Locale.ENGLISH, "Motor Power %.2f \nWheel Flipped %b \nTarget Position %.2f \nCurrent Position %.2f \nServo Power %.2f", lastMotorPower, wheelFlipped, lastTargetPosition, getCurrentRotation(), lastServoPower);
