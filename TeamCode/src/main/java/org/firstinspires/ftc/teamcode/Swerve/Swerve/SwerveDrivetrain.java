@@ -6,7 +6,6 @@ import static java.lang.Math.hypot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsAnalogOpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Swerve.Geo.MathUtils;
@@ -59,7 +58,7 @@ public class SwerveDrivetrain {
         R = hypot(trackwidth, wheelbase);
     }
 
-    /// method to calculate swerve modules motor powers and wheel angles from gamepad inputs and robot current heading
+    /// calculates swerve modules motor powers and wheel angles from gamepad inputs and robot current heading as according to 2nd order swerve kinematics
     public void setPose (Pose pose, Double botheading){
         double x = pose.x;
         double y = pose.y;
@@ -148,7 +147,18 @@ public class SwerveDrivetrain {
     }
 
     /// calculates motor scalers based on current draw
-    public void calculateCurrentScalers() { // todo get real min values for current draw
+    // todo test
+    // todo improve alpha filter to ignore values that are not probable
+        /* insane idea that would be way to much loop time for ftc
+        * simulate the current draw of each motor using robots accel, target velocity, actual velocity, voltage, and position on field
+        * to predict motor current and compare this against actual current to scale motors
+        * also consider previous inputs and robot's physical state as to make sure high current spikes when changing
+        * direction suddenly are still considered probable
+        * target and actual current can then be used to calculate a residual and
+        * detect low preforming modules which can then be normalized to*/ /// might be ideal for ml
+        // create a look up table or 3d surface using accel, velocity, and voltage to compare current to a list of predicted currents so the robot can be simulated offline
+    //current sensing may be too noisy to use
+    public void calculateCurrentBasedScalers() { // todo get real min values for current draw
         double[] currentDraws = new double[4];
         double maxObservedCurrent = 0;
         boolean[] isModuleValid = new boolean[]{true, true, true, true};
@@ -184,6 +194,44 @@ public class SwerveDrivetrain {
         }
     }
 
+    // todo add encoders to swerve motors and update module code to use them
+    // todo test encoder noise
+    // all dynamic motor scaling methods may require perfect zeros and much lower levels of backlash
+    /* public void calculateVelocityBasedScalers() {
+        double[] actualVelocities = new double[4];
+        double minVelocityRatio = 1.0;
+
+        for (int i = 0; i < 4; i++) {
+            modules[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            actualVelocities[i] = Math.abs(modules[i].getVelocity());
+        }
+
+        double maxObservedVel = 0;
+        for (double v : actualVelocities) {
+            if (v > maxObservedVel) {maxObservedVel = v;}
+        }
+
+        if (maxObservedVel < 50) {
+            for (int i = 0; i < 4; i++) MotorScaling[i] = 1.0;
+            return;
+        }
+
+        double lowestActual = maxObservedVel;
+        for (int i = 0; i < 4; i++) {
+            if (actualVelocities[i] < lowestActual && actualVelocities[i] > 10) {
+                lowestActual = actualVelocities[i];
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (actualVelocities[i] > 0) {
+                MotorScaling[i] = lowestActual / actualVelocities[i];
+
+                MotorScaling[i] = Math.min(1.0, Math.max(0.7, MotorScaling[i]));
+            }
+        }
+    } */
+
     public void setOffsets(double[] offsets) {
         frontLeftModule.setOffset(offsets[0]);
         frontRightModule.setOffset(offsets[1]);
@@ -206,7 +254,7 @@ public class SwerveDrivetrain {
 
     public double getKgain() { return kgain;}
 
-    public void setMotorScaling(double[] scalars){ //todo (far future) run with encoder and make these dynamic
+    public void setMotorScaling(double[] scalars){ //todo (far future) run with encoder and compare to current based motor scaling
         for (int i = 0; i < 4; i++){
             MotorScaling[i] = scalars[i];
         }

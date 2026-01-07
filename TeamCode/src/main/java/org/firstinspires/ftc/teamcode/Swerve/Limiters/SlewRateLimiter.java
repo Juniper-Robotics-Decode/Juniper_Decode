@@ -26,6 +26,9 @@ public class SlewRateLimiter {
         this(RateLimit, -RateLimit, 0);
     }
 
+    ///calculates transformed input first limits gamepad velocity
+    ///then transforms the limited input based on a quintic hermit curve defined by points of (0,0) and (1,1)
+    //todo tune
     public double calculate(double input) {
         double CurrentTime = Timer.seconds();
         double ElapsedTime = CurrentTime - PrevTime;
@@ -34,7 +37,7 @@ public class SlewRateLimiter {
                 NegativeRateLimit * ElapsedTime,
                 PositiveRateLimit * ElapsedTime);
 
-        //Quintic Polynomial Mapping: 6t^5 - 15t^4 + 10t^3
+        //coefficents are fixed due to wanting to achieve max power at input of 1
         target = MathUtils.clamp(Math.abs(target), 0, 1);
         double quinticVal = (6 * Math.pow(target, 5)) - (15 * Math.pow(target, 4)) + (10 * Math.pow(target, 3));
 
