@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static java.lang.Math.atan2;
@@ -21,14 +21,14 @@ public class SwerveDrivetrain {
     public SwerveModule[] modules;
 
     private double[] ws = new double[4];
-    private double MotorScaling[] = new double[]{1,1,1,1};
+    private double[] MotorScaling = new double[]{1,1,1,1};
     private double max;
 
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{2, 2.6, 1.17, 3.4}; //use SwerveCalibration to find
-    private boolean inverses[] = new boolean[]{false,false,false,false};
+    private double[] offsets = new double[]{2, 2.6, 1.17, 3.4}; //use SwerveCalibration to find
+    private boolean[] inverses = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;
     private double wheelbase = 9.927;  // trackwidth is along the width of the robot wheel base is along the length
@@ -58,8 +58,12 @@ public class SwerveDrivetrain {
         R = hypot(trackwidth, wheelbase);
     }
 
+    public enum centerofRotation{
+        robot,
+        intake
+    }
     /// calculates swerve modules motor powers and wheel angles from gamepad inputs and robot current heading as according to 2nd order swerve kinematics
-    public void setPose (Pose pose, Double botheading){
+    public void setPose (Pose pose, Double botheading, Double voltage){
         double x = pose.x;
         double y = pose.y;
         double heading = pose.heading;
@@ -78,9 +82,10 @@ public class SwerveDrivetrain {
 
             double error = targetheading - botheading;
             headingController.setPIDF(P,I,D,F);
-            heading = -headingController.calculate(error,0);
-        }
 
+            double voltagecompensation = 12.4/voltage;
+            heading = -headingController.calculate(error,0) * voltagecompensation;
+        }
         /// locking logic
         long currentTime = System.currentTimeMillis();
         if (x != 0 || y != 0 || heading != 0) {
@@ -110,7 +115,7 @@ public class SwerveDrivetrain {
                 double dt = (lastUpdateTime == 0) ? 30 : (currentTime - lastUpdateTime); //finds last loop time
                 lastUpdateTime = currentTime;
 
-                double rotationCorrection = heading * (dt / 1000) / 2.0 * kgain;
+                double rotationCorrection = heading * (dt / 1000) / 2.0;
                 double cos = Math.cos(rotationCorrection);
                 double sin = Math.sin(rotationCorrection);
 
@@ -149,14 +154,7 @@ public class SwerveDrivetrain {
     /// calculates motor scalers based on current draw
     // todo test
     // todo improve alpha filter to ignore values that are not probable
-        /* insane idea that would be way to much loop time for ftc
-        * simulate the current draw of each motor using robots accel, target velocity, actual velocity, voltage, and position on field
-        * to predict motor current and compare this against actual current to scale motors
-        * also consider previous inputs and robot's physical state as to make sure high current spikes when changing
-        * direction suddenly are still considered probable
-        * target and actual current can then be used to calculate a residual and
-        * detect low preforming modules which can then be normalized to*/ /// might be ideal for ml
-        // create a look up table or 3d surface using accel, velocity, and voltage to compare current to a list of predicted currents so the robot can be simulated offline
+        /* make a kalman filter to compare actual current to predicted current */
     //current sensing may be too noisy to use
     public void calculateCurrentBasedScalers() { // todo get real min values for current draw
         double[] currentDraws = new double[4];
@@ -284,7 +282,11 @@ public class SwerveDrivetrain {
 
     public void setHeadingLocked(boolean headingLocked){ this.headingLocked = headingLocked;}
 
-    public String getTele(){
+    public String getDrivetrainTele() {  //debug tele with exception to target heading, locked, and heading locked
+        return String.format(Locale.ENGLISH,"Offsets %s \n Inverses %s \n kgain %s \n Motor scaling %s \n Lock delay %s \n Target heading %s \n Locked? %s \n Heading Locked? %s", (Object) offsets, (Object) inverses, getKgain(), (Object) MotorScaling, getLockdelay(), getTargetheading(), getLocked(), getheadingLocked());
+    }
+
+    public String getModulesTele(){ //debug tele
         return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3]);
     }
 }

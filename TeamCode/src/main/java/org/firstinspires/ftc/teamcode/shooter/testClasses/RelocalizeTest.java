@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.shooter.testClasses;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.inverses;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.scalars;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.xrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.yrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.offsets;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scalars;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
@@ -99,11 +99,11 @@ public class RelocalizeTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setPose(drive, BotHeading);
+            swerveDrivetrain.setPose(drive, BotHeading, 12.4);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getTele());
+            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getModulesTele());
 
 
             telemetry.addData("RAW X", pinpoint.getX());

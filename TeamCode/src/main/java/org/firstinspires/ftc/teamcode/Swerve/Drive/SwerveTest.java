@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.inverses;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.scalars;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.xrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.yrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.offsets;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scalars;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -93,6 +93,8 @@ public class SwerveTest extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
+            double voltage = hwMap.getVoltageSensor().getVoltage();
+
             swerveDrivetrain.setMotorScaling(MotorScalars);
             swerveDrivetrain.setOffsets(Zeros);
             swerveDrivetrain.setKgain(kgain);
@@ -120,11 +122,11 @@ public class SwerveTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setPose(drive, BotHeading);
+            swerveDrivetrain.setPose(drive, BotHeading, voltage);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Tele Module \n",swerveDrivetrain.getTele());
+            telemetry.addData("Tele Module \n",swerveDrivetrain.getModulesTele());
             telemetry.update();
         }
 

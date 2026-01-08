@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static java.lang.Math.abs;
@@ -121,13 +121,13 @@ public class swerveTuningTele extends LinearOpMode{
             swerveDrivetrain.setOffsets(offsets);
             swerveDrivetrain.setInverses(inverses);
 
-            swerveDrivetrain.setPose(drive, BotHeading);
+            swerveDrivetrain.setPose(drive, BotHeading, 12.4);
             swerveDrivetrain.updateModule(i);
 
             telemetry.addData("x", drive.x);
             telemetry.addData("y", drive.y);
             telemetry.addData("heading", drive.heading);
-            telemetry.addData("tele \n", swerveDrivetrain.getTele());
+            telemetry.addData("tele \n", swerveDrivetrain.getModulesTele());
             telemetry.addData("locked", locked);
             telemetry.update();
         }

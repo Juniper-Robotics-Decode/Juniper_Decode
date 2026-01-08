@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
-
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -9,11 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
-import org.firstinspires.ftc.teamcode.core.HWMap;
 
 
 //this class is to find zeros, inverses,and check each module's coordinate system is in accordance

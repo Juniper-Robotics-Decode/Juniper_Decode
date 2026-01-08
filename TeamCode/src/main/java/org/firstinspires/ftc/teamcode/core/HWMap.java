@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class HWMap {
     // shooter
@@ -46,6 +47,7 @@ public class HWMap {
     public CRServoImplEx BLS;
     public AnalogInput BLE;
 
+    private VoltageSensor voltageSensor;
 
     private GoBildaPinpointDriver odo;
 
@@ -78,8 +80,9 @@ public class HWMap {
         BRE = hardwareMap.get(AnalogInput.class, "BRE");
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-    }
 
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+    }
 
     public Limelight3A getLimelight() {
         return limelight;
@@ -101,7 +104,6 @@ public class HWMap {
         return pitchEncoder;
     }
 
-
     public MotorEx getIntakeMotor() {
         return intakeMotor;
     }
@@ -116,5 +118,9 @@ public class HWMap {
 
     public GoBildaPinpointDriver getOdo() {
         return odo;
+    }
+
+    public VoltageSensor getVoltageSensor() {
+        return voltageSensor;
     }
 }
