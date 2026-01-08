@@ -99,7 +99,7 @@ public class RelocalizeTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setPose(drive, BotHeading);
+            swerveDrivetrain.setPose(drive, BotHeading, 12.4);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);

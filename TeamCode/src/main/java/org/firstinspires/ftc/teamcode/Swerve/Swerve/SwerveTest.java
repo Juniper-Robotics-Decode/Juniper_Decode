@@ -93,6 +93,8 @@ public class SwerveTest extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
+            double voltage = hwMap.getVoltageSensor().getVoltage();
+
             swerveDrivetrain.setMotorScaling(MotorScalars);
             swerveDrivetrain.setOffsets(Zeros);
             swerveDrivetrain.setKgain(kgain);
@@ -120,7 +122,7 @@ public class SwerveTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setPose(drive, BotHeading);
+            swerveDrivetrain.setPose(drive, BotHeading, voltage);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);

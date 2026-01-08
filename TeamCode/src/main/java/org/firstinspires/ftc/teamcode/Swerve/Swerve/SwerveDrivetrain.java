@@ -59,7 +59,7 @@ public class SwerveDrivetrain {
     }
 
     /// calculates swerve modules motor powers and wheel angles from gamepad inputs and robot current heading as according to 2nd order swerve kinematics
-    public void setPose (Pose pose, Double botheading){
+    public void setPose (Pose pose, Double botheading, Double voltage){
         double x = pose.x;
         double y = pose.y;
         double heading = pose.heading;
@@ -78,7 +78,7 @@ public class SwerveDrivetrain {
 
             double error = targetheading - botheading;
             headingController.setPIDF(P,I,D,F);
-            heading = -headingController.calculate(error,0);
+            heading = -headingController.calculate(error,0) * 12.4/voltage;
         }
 
         /// locking logic
@@ -110,7 +110,7 @@ public class SwerveDrivetrain {
                 double dt = (lastUpdateTime == 0) ? 30 : (currentTime - lastUpdateTime); //finds last loop time
                 lastUpdateTime = currentTime;
 
-                double rotationCorrection = heading * (dt / 1000) / 2.0 * kgain;
+                double rotationCorrection = heading * (dt / 1000) / 2.0;
                 double cos = Math.cos(rotationCorrection);
                 double sin = Math.sin(rotationCorrection);
 
@@ -149,14 +149,7 @@ public class SwerveDrivetrain {
     /// calculates motor scalers based on current draw
     // todo test
     // todo improve alpha filter to ignore values that are not probable
-        /* insane idea that would be way to much loop time for ftc
-        * simulate the current draw of each motor using robots accel, target velocity, actual velocity, voltage, and position on field
-        * to predict motor current and compare this against actual current to scale motors
-        * also consider previous inputs and robot's physical state as to make sure high current spikes when changing
-        * direction suddenly are still considered probable
-        * target and actual current can then be used to calculate a residual and
-        * detect low preforming modules which can then be normalized to*/ /// might be ideal for ml
-        // create a look up table or 3d surface using accel, velocity, and voltage to compare current to a list of predicted currents so the robot can be simulated offline
+        /* make a kalman filter to compare actual current to predicted current */
     //current sensing may be too noisy to use
     public void calculateCurrentBasedScalers() { // todo get real min values for current draw
         double[] currentDraws = new double[4];
