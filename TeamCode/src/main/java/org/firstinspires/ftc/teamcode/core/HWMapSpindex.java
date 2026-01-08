@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.core;
 
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.bylazar.lights.RGBIndicator;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -16,6 +17,7 @@ public class HWMapSpindex {
     private RevColorSensorV3 colorSensor3;
     private RevTouchSensor TCS1;
     private AnalogInput AI1;
+    private RGBIndicator rgbIndicator;
 
     public HWMapSpindex(HardwareMap hardwareMap) {
 
@@ -24,7 +26,8 @@ public class HWMapSpindex {
         colorSensor3 = hardwareMap.get(RevColorSensorV3.class, "colorSensor3");
         TCS1 = hardwareMap.get(RevTouchSensor.class, "TCS1");
         AI1 = hardwareMap.get(AnalogInput.class, "AI1");
-        spindexMotor = new MotorEx(hardwareMap,"spindexMotor");
+        spindexMotor = new MotorEx(hardwareMap, "spindexMotor");
+        rgbIndicator = hardwareMap.get(RGBIndicator.class, "rgbIndicator");
     }
 
 
@@ -47,8 +50,12 @@ public class HWMapSpindex {
     public RevTouchSensor getTouchSensor1() {
         return TCS1;
     }
-    public AnalogInput getAnalogInput1(){
+
+    public AnalogInput getAnalogInput1() {
         return AI1;
     }
 
+    public RGBIndicator getRgbIndicator() {
+        return rgbIndicator;
+    }
 }
