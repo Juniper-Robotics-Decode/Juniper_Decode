@@ -16,8 +16,8 @@ public class ColorSensorFSM{
         PURPLE,
     }
 
-    public static RevColorSensorV3 CS;
-    public static states state;
+    public RevColorSensorV3 CS;
+    public states state;
     public  MotorWrapper spindexMotor;
     private Telemetry telemetry;
     private String detectedMotif;
@@ -28,10 +28,12 @@ public class ColorSensorFSM{
     private final String purpleStr = "Purple";
     private final String emptyStr = "Empty";
 
-    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
+    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry, int sensorID) {
 
-        CS = hwMap.getColorSensor1();
-;       this.CS = CS;
+        if (sensorID == 1) CS = hwMap.getColorSensor1();
+        else if (sensorID == 2) CS = hwMap.getColorSensor2();
+        else CS = hwMap.getColorSensor3();
+
         this.state = states.EMPTY;
         this.detectedMotif = emptyStr;
 
@@ -41,6 +43,8 @@ public class ColorSensorFSM{
         state= states.EMPTY; // default
     }
     public void updateState() {
+        // FIX: Ensure sensor exists before reading
+        if (CS == null) return;
 
         detectedMotif = colorDetector(CS);
 

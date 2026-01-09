@@ -28,33 +28,32 @@ public class TouchSensorMotorFSM {
 
         AI1 = hwMap.getAnalogInput1();
 
-        double a = Math.abs(spindexMotor.getAngle());
-
-        double relativePositionInRotation = a % 360;
-
-        if (relativePositionInRotation < 120) {
-            currentIndex = 1;
-        } else if (relativePositionInRotation < 240 && relativePositionInRotation>120) {
-            currentIndex = 2;
-        } else {
-            currentIndex = 3;
-        }
-
         this.telemetry = telemetry;
 
         state = states.POSITION_1; // placeholder
     }
     public void spindexOffset(modes mode){
         if(mode == modes.SHOOTING){
-             offset = 60;
+            offset = 60;
         }
         if(mode == modes.INTAKNG){
-             offset = 0;
+            offset = 0;
         }
     }
 
     public void updateState() {
-         spindexMotor.readPosition();
+        spindexMotor.readPosition();
+        double a = Math.abs(spindexMotor.getAngle());
+        double relativePositionInRotation = a % 360;
+
+        if (relativePositionInRotation < 120) {
+            currentIndex = 1;
+        } else if (relativePositionInRotation < 240 && relativePositionInRotation > 120) {
+            currentIndex = 2;
+        } else {
+            currentIndex = 3;
+        }
+
         if (currentIndex == 1) {
             state = states.POSITION_1;
         } else if (currentIndex == 2) {

@@ -13,14 +13,16 @@ import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 public class SpindexTeleOp extends LinearOpMode {
     private SpindexFSM spindexFSM;
     private HWMapSpindex hwMap;
-    public boolean shooting;
-@Override
+    public static boolean shooting = false;
+    @Override
     public void runOpMode(){
         hwMap = new HWMapSpindex(hardwareMap);
         spindexFSM = new SpindexFSM(hwMap, telemetry);
         waitForStart();
         while (opModeIsActive()){
+     //       shooting = gamepad1.right_bumper;
             spindexFSM.updateState(shooting);
+            telemetry.update();
         }
     }
 
