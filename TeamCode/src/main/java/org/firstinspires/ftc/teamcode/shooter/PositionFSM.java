@@ -45,7 +45,10 @@ public class PositionFSM {
     public static Sensor sensor;
     private LimelightCamera limelightCamera;
     private Pinpoint pinpoint;
-    private InterpLUT velocityMap;
+    private InterpLUT velocityMapLL;
+    private InterpLUT velocityMapPP;
+
+
 
     private double defaultFlywheelVelocity = 2500;
     private double flywheelTargetVelocityRPM;
@@ -127,16 +130,30 @@ public class PositionFSM {
     }
 
     private void createVelocityMap() {
-        velocityMap = new InterpLUT();
+
+        // FOR Limelight
+        velocityMapLL = new InterpLUT();
 
         // distance (m) , velocity (rpm)
 
-        velocityMap.add(1.24, 3100);
-        velocityMap.add(1.6, 3100);
-        velocityMap.add(2.11, 3500);
-        velocityMap.add(2.8, 3900);
+        velocityMapLL.add(1.24, 3100);
+        velocityMapLL.add(1.6, 3100);
+        velocityMapLL.add(2.11, 3500);
+        velocityMapLL.add(2.8, 3900);
+        velocityMapLL.createLUT();
 
-        velocityMap.createLUT();
+
+        // FOR PINPOINT
+
+        velocityMapPP = new InterpLUT();
+
+
+        velocityMapPP.add(1.24, 3100);
+        velocityMapPP.add(1.6, 3100);
+        velocityMapPP.add(2.11, 3500);
+        velocityMapPP.add(2.8, 3900);
+        velocityMapPP.createLUT();
+
 
     }
 
@@ -146,10 +163,10 @@ public class PositionFSM {
         }
         else {
             if(sensor == Sensor.LIMELIGHT) {
-                flywheelTargetVelocityRPM = velocityMap.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
+                flywheelTargetVelocityRPM = velocityMapLL.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
             }
             else {
-                flywheelTargetVelocityRPM = velocityMap.get(distance_m + PINPOINT_OFFSET);
+                flywheelTargetVelocityRPM = velocityMapPP.get(distance_m + PINPOINT_OFFSET);
             }
         }
 
