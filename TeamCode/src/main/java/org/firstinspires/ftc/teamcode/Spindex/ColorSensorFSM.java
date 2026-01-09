@@ -54,7 +54,6 @@ public class ColorSensorFSM{
             state = states.PURPLE;
         } else {
             state = states.EMPTY;
-
         }
 
 
