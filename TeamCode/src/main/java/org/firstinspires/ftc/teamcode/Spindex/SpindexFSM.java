@@ -72,13 +72,20 @@ public class SpindexFSM {
                         spindexMotor.set(1);
                     mode = modes.SHOOTING;
                     spindexMotor.set(1);
+                } else {
+                    spindexMotor.set(0);
                 }
                 break;
             case STOPPED_AT_TARGET:
                 state = states.STOPPED_AT_TARGET;
-                telemetry.addData("State:", state);
                 break;
         }
+        telemetry.addData("State:", state);
+        telemetry.addData("Power:", spindexMotor.get());
+        telemetry.addData("CS1:", detectedMotif[0]);
+        telemetry.addData("CS2:", detectedMotif[1]);
+        telemetry.addData("CS3:", detectedMotif[2]);
+        telemetry.update();
     }
     //target angle calculation methods and stuff will be added into the switch statement
     //the offset will also be there like after finding target, add offset, then move
