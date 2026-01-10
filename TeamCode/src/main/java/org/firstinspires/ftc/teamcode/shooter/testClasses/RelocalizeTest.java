@@ -123,22 +123,26 @@ public class RelocalizeTest extends LinearOpMode {
             telemetry.addData("Limelight Ty", limelightCamera.getTy());
 
             double turretHeading = -turretFSM.getCurrentAngle();
-            double CamOffsetHeadingFromTurret = 180+48.064;
+            double camOffsetHeadingFromTurret = 48.064;
             double robotHeading = pinpoint.getHeading();
-            double cameraAbsoluteHeading = robotHeading + turretHeading + CamOffsetHeadingFromTurret;
+            double cameraAbsoluteHeading = robotHeading + turretHeading;
 
             double camX = limelightCamera.getxField();
             double camY = limelightCamera.getyField();
-            double distanceCamToTurretCenter = 0.07207114;
+            double distanceCamToTurretCenter = 0.080724;
 
-            double distanceTurretCenterToRobotCenter = 0.04;
+            double distanceTurretCenterToRobotCenter = 0.048;
 
-            double xTurret =  camX - (distanceCamToTurretCenter*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
-            double yTurret = camY - (distanceCamToTurretCenter*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
+            double X1 = distanceCamToTurretCenter*Math.cos(Math.toRadians(camOffsetHeadingFromTurret));
+            double Y1 = distanceCamToTurretCenter*Math.sin(Math.toRadians(camOffsetHeadingFromTurret));
 
+            double X2 = Y1*Math.sin(Math.toRadians(camOffsetHeadingFromTurret)) + X1*Math.cos(Math.toRadians(camOffsetHeadingFromTurret));
+            double Y2 = Y1*Math.cos(Math.toRadians(camOffsetHeadingFromTurret)) + X1*Math.sin(Math.toRadians(camOffsetHeadingFromTurret));
+            double xTurret =  camX + X2;
+            double yTurret = camY + Y2;
 
-            double xRobot = xTurret - (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading + 180))));
-            double yRobot = yTurret - (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading + 180))));
+            double xRobot = xTurret + (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading))));
+            double yRobot = yTurret + (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading))));
             Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
 
             if(gamepad1.a) {

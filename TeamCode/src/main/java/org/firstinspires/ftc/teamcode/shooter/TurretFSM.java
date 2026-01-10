@@ -87,7 +87,7 @@ public class TurretFSM {
             double signPower = Math.signum(power);
             power = signPower*POWER_CAP;
         }
-      //  turretMotor.set(power);
+        turretMotor.set(power);
     }
 
     private double angleDelta(double measuredAngle, double targetAngle) {
