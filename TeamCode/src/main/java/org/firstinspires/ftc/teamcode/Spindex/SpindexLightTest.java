@@ -12,78 +12,77 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class SpindexLightTest extends LinearOpMode{
 
     private enum status {
-        VIOLET,
+        PURPLE,
         GREEN,
         WHITE,
         ERROR
     }
+    private HWMapSpindex hwMap;
     private TouchSensorMotorFSM touchSensorMotorFSM;
     private ColorSensorFSM colorSensorsFSM;
     private Telemetry telemetry;
-    private RGBIndicator RI1;
-    private RGBIndicator RI2;
-    private RGBIndicator RI3;
+    private RGBIndicator RI1 = hwMap.getRgbIndicator1();
+    private RGBIndicator RI2 = hwMap.getRgbIndicator2();
+    private RGBIndicator RI3 = hwMap.getRgbIndicator3();
     private status status;
     public status pocket1;
     public status pocket2;
     public status pocket3;
-    public SpindexLightTest(HWMapSpindex hwMap, Telemetry telemetry) {
-         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
-         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry, 1);
-        RI1 = hwMap.getRgbIndicator1();
-        RI2 = hwMap.getRgbIndicator2();
-        RI3 = hwMap.getRgbIndicator3();
-         this.telemetry = telemetry;
+
+
+    public SpindexLightTest() {
      }
 
      public void runOpMode() throws InterruptedException{
         waitForStart();
-        while(opModeIsActive()){
-            indicateTest();
-            colorPocket(touchSensorMotorFSM.currentIndex);
-            telemetry.addData("indicated","done");
-            telemetry.update();
+        int l = 0;
+        while(opModeIsActive() && !isStopRequested()){
+            if(l < 200) {
+                l += 1;
+                indicateTest();
+                colorPocket(touchSensorMotorFSM.currentIndex);
+                telemetry.addData("indicated", "done");
+                telemetry.addData("l",l);
+                telemetry.update();
+            }
         }
     }
 
-     public void indicateTest(){
-        if (indicator() == 1){
-            if (color(1) == status.GREEN){
-                RI1.Companion.getGREEN();
-                telemetry.addData("Indicator","1: GREEN");
-            } else if (color(1) == status.VIOLET){
-                RI1.Companion.getVIOLET();
-                telemetry.addData("Indicator","1: VIOLET");
-            } else {
-                RI1.Companion.getWHITE();
-                telemetry.addData("Indicator","1: WHITE");
-            }
-        } else if (indicator() == 3) {
-            if (color(2) == status.GREEN) {
-                RI2.Companion.getGREEN();
-                telemetry.addData("Indicator","2: GREEN");
-            } else if (color(2) == status.VIOLET) {
-                RI2.Companion.getVIOLET();
-                telemetry.addData("Indicator","2: VIOLET");
-            } else {
-                RI2.Companion.getWHITE();
-                telemetry.addData("Indicator","2: WHITE");
-            }
-        } else if (indicator() == 3) {
-            if (color(3) == status.GREEN) {
-                RI3.Companion.getGREEN();
-                telemetry.addData("Indicator","3: GREEN");
-            } else if (color(3) == status.VIOLET) {
-                RI3.Companion.getVIOLET();
-                telemetry.addData("Indicator","3: VIOLET");
-            } else {
-                RI3.Companion.getWHITE();
-                telemetry.addData("Indicator","3: WHITE");
-            }
-        } else {
-            telemetry.addData("Indicator","NONE");
-        }
-        telemetry.update();
+     public void indicateTest() {
+         int ind = indicator();
+         status col = color(ind);
+         switch (ind) {
+             case 1:
+                 setIndicator(RI1, col);
+                 telemetry.addData("indicateTest", "RI1" + col);
+                 break;
+             case 2:
+                 setIndicator(RI2, col);
+                 telemetry.addData("indicateTest", "RI2" + col);
+                 break;
+             case 3:
+                 setIndicator(RI3, col);
+                 telemetry.addData("indicateTest", "RI3" + col);
+                 break;
+             default:
+                 telemetry.addData("indicateTest", "none");
+         }
+     }
+
+     public void setIndicator(RGBIndicator RI, status color) {
+         if (color == status.GREEN) {
+             RI.Companion.getGREEN();
+             telemetry.addData("companion","got green");
+         } else if (color == status.PURPLE) {
+             RI.Companion.getVIOLET();
+             telemetry.addData("companion","got purple");
+         } else if (color == status.WHITE) {
+             RI.Companion.getWHITE();
+             telemetry.addData("companion","got white");
+         } else{
+             RI.Companion.getAZURE();
+             telemetry.addData("companion","got bwoo");
+         }
      }
 
     private int indicator() {
@@ -99,13 +98,13 @@ public class SpindexLightTest extends LinearOpMode{
     }
     private status color(int sensor) {
             if (colorSensorsFSM.slotIsGreen(sensor)) {
-                return status = status.GREEN;
+                return status.GREEN;
             } else if (colorSensorsFSM.slotIsPurple(sensor)) {
-                return status = status.VIOLET;
+                return status.PURPLE;
             } else if(colorSensorsFSM.slotIsEmpty(sensor)){
-                return status = status.WHITE;
+                return status.WHITE;
             } else{
-                return status = status.ERROR;
+                return status.ERROR;
             }
     }
     private void colorPocket(int pocket) {
