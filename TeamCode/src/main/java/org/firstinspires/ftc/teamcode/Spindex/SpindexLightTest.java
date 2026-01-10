@@ -1,36 +1,28 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
-import androidx.annotation.NonNull;
-
-import com.bylazar.lights.Light;
-import com.bylazar.lights.LightType;
 import com.bylazar.lights.RGBIndicator;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp
 public class SpindexLightTest extends LinearOpMode{
 
-    private enum rgbIndicators{
-        INDICATOR1,
-        INDICATOR2,
-        INDICATOR3,
-        NONE
-    }
     private enum status {
         VIOLET,
         GREEN,
-        WHITE
+        WHITE,
+        ERROR
     }
     private TouchSensorMotorFSM touchSensorMotorFSM;
     private ColorSensorFSM colorSensorsFSM;
     private Telemetry telemetry;
-    private RGBIndicator rgbIndicator1;
-    private SpindexLightTest.rgbIndicators rgbIndicators;
+    private RGBIndicator RI1;
+    private RGBIndicator RI2;
+    private RGBIndicator RI3;
     private status status;
     public status pocket1;
     public status pocket2;
@@ -38,7 +30,9 @@ public class SpindexLightTest extends LinearOpMode{
     public SpindexLightTest(HWMapSpindex hwMap, Telemetry telemetry) {
          touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
          colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry, 1);
-         rgbIndicator1 = hwMap.getRgbIndicator();
+        RI1 = hwMap.getRgbIndicator1();
+        RI2 = hwMap.getRgbIndicator2();
+        RI3 = hwMap.getRgbIndicator3();
          this.telemetry = telemetry;
      }
 
@@ -53,39 +47,37 @@ public class SpindexLightTest extends LinearOpMode{
     }
 
      public void indicateTest(){
-        indicator();
-        color();
-        if (indicator() == rgbIndicators.INDICATOR1){
-            if (color() == status.GREEN){
-                rgbIndicator1.Companion.getGREEN();
+        if (indicator() == 1){
+            if (color(1) == status.GREEN){
+                RI1.Companion.getGREEN();
                 telemetry.addData("Indicator","1: GREEN");
-            } else if (color() == status.VIOLET){
-                rgbIndicator1.Companion.getVIOLET();
+            } else if (color(1) == status.VIOLET){
+                RI1.Companion.getVIOLET();
                 telemetry.addData("Indicator","1: VIOLET");
             } else {
-                rgbIndicator1.Companion.getWHITE();
+                RI1.Companion.getWHITE();
                 telemetry.addData("Indicator","1: WHITE");
             }
-        } else if (indicator() == rgbIndicators.INDICATOR2) {
-            if (color() == status.GREEN) {
-//                rgbIndicator2.Companion.getGREEN();
+        } else if (indicator() == 3) {
+            if (color(2) == status.GREEN) {
+                RI2.Companion.getGREEN();
                 telemetry.addData("Indicator","2: GREEN");
-            } else if (color() == status.VIOLET) {
-//                rgbIndicator2.Companion.getVIOLET();
+            } else if (color(2) == status.VIOLET) {
+                RI2.Companion.getVIOLET();
                 telemetry.addData("Indicator","2: VIOLET");
             } else {
-//                rgbIndicator2.Companion.getWHITE();
+                RI2.Companion.getWHITE();
                 telemetry.addData("Indicator","2: WHITE");
             }
-        } else if (indicator() == rgbIndicators.INDICATOR3) {
-            if (color() == status.GREEN) {
-//                rgbIndicator3.Companion.getGREEN();
+        } else if (indicator() == 3) {
+            if (color(3) == status.GREEN) {
+                RI3.Companion.getGREEN();
                 telemetry.addData("Indicator","3: GREEN");
-            } else if (color() == status.VIOLET) {
-//                rgbIndicator3.Companion.getVIOLET();
+            } else if (color(3) == status.VIOLET) {
+                RI3.Companion.getVIOLET();
                 telemetry.addData("Indicator","3: VIOLET");
             } else {
-//                rgbIndicator3.Companion.getWHITE();
+                RI3.Companion.getWHITE();
                 telemetry.addData("Indicator","3: WHITE");
             }
         } else {
@@ -94,35 +86,37 @@ public class SpindexLightTest extends LinearOpMode{
         telemetry.update();
      }
 
-    private rgbIndicators indicator() {
+    private int indicator() {
         if(touchSensorMotorFSM.atPosition1()){
-            return rgbIndicators = rgbIndicators.INDICATOR1;
+            return 1;
         } else if(touchSensorMotorFSM.atPosition2()){
-            return rgbIndicators = rgbIndicators.INDICATOR2;
+            return 2;
         } else if(touchSensorMotorFSM.atPosition3()){
-            return rgbIndicators = rgbIndicators.INDICATOR3;
+            return 3;
         } else{
-            return rgbIndicators.NONE;
+            return 0;
         }
     }
-    private status color(){
-    if(colorSensorsFSM.slot1IsGreen()){
-        return status = status.GREEN;
-    } else if(colorSensorsFSM.slot1IsPurple()){
-        return status = status.VIOLET;
-    } else{
-        return status = status.WHITE;
-        }
+    private status color(int sensor) {
+            if (colorSensorsFSM.slotIsGreen(sensor)) {
+                return status = status.GREEN;
+            } else if (colorSensorsFSM.slotIsPurple(sensor)) {
+                return status = status.VIOLET;
+            } else if(colorSensorsFSM.slotIsEmpty(sensor)){
+                return status = status.WHITE;
+            } else{
+                return status = status.ERROR;
+            }
     }
     private void colorPocket(int pocket) {
         if(pocket == 1) {
-            pocket1 = color();
+            pocket1 = color(pocket);
             telemetry.addData("colorPocket",pocket1);
         } else if(pocket == 2) {
-            pocket2 = color();
+            pocket2 = color(pocket);
             telemetry.addData("colorPocket",pocket2);
         } else if(pocket == 3) {
-            pocket3 = color();
+            pocket3 = color(pocket);
             telemetry.addData("colorPocket",pocket3);
         }
         telemetry.addData("colorPocket",pocket);

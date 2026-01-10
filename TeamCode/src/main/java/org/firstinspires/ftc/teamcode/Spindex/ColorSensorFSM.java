@@ -27,12 +27,16 @@ public class ColorSensorFSM{
     private final String greenStr = "Green";
     private final String purpleStr = "Purple";
     private final String emptyStr = "Empty";
-
+    public RevColorSensorV3 CS1;
+    public RevColorSensorV3 CS2;
+    public RevColorSensorV3 CS3;
     public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry, int sensorID) {
-
-        if (sensorID == 1) CS = hwMap.getColorSensor1();
-        else if (sensorID == 2) CS = hwMap.getColorSensor2();
-        else CS = hwMap.getColorSensor3();
+        CS1 = hwMap.getColorSensor1();
+        CS2 = hwMap.getColorSensor2();
+        CS3 = hwMap.getColorSensor3();
+        if (sensorID == 1) CS = CS1;
+        else if (sensorID == 2) CS = CS2;
+        else CS = CS3;
 
         this.state = states.EMPTY;
         this.detectedMotif = emptyStr;
@@ -83,15 +87,54 @@ public class ColorSensorFSM{
         return detectedMotif;
     }
     public boolean slot1IsEmpty() {
+        colorDetector(CS1);
+        telemetry.addData("CS1",String.valueOf(CS1));
         return state == states.EMPTY;
     }
 
     public boolean slot1IsGreen() {
+        colorDetector(CS1);
         return state == states.GREEN;
     }
 
     public boolean slot1IsPurple() {
+        colorDetector(CS1);
         return state == states.PURPLE;
     }
-
+    public boolean slotIsEmpty(int sensor) {
+        if(sensor == 1){
+            colorDetector(CS1);
+        } else if(sensor == 2){
+            colorDetector(CS2);
+        } else if(sensor == 3){
+            colorDetector(CS3);
+        } else{
+            state = null;
+        }
+        return state == states.EMPTY;
+    }
+    public boolean slotIsGreen(int sensor) {
+        if(sensor == 1){
+            colorDetector(CS1);
+        } else if(sensor == 2){
+            colorDetector(CS2);
+        } else if(sensor == 3){
+            colorDetector(CS3);
+        } else{
+            state = null;
+        }
+        return state == states.GREEN;
+    }
+    public boolean slotIsPurple(int sensor) {
+        if(sensor == 1){
+            colorDetector(CS1);
+        } else if(sensor == 2){
+            colorDetector(CS2);
+        } else if(sensor == 3){
+            colorDetector(CS3);
+        } else{
+            state = null;
+        }
+        return state == states.PURPLE;
+    }
 }

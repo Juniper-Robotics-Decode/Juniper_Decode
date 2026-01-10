@@ -17,7 +17,9 @@ public class HWMapSpindex {
     private RevColorSensorV3 colorSensor3;
     private RevTouchSensor TCS1;
     private AnalogInput AI1;
-    private RGBIndicator rgbIndicator;
+    private RGBIndicator rgbIndicator1;
+    private RGBIndicator rgbIndicator2;
+    private RGBIndicator rgbIndicator3;
 
     public HWMapSpindex(HardwareMap hardwareMap) {
 
@@ -27,7 +29,9 @@ public class HWMapSpindex {
         TCS1 = hardwareMap.get(RevTouchSensor.class, "TCS1");
         AI1 = hardwareMap.get(AnalogInput.class, "AI1");
         spindexMotor = new MotorEx(hardwareMap, "spindexMotor");
-        rgbIndicator = hardwareMap.get(RGBIndicator.class, "rgbIndicator");
+        rgbIndicator1 = hardwareMap.get(RGBIndicator.class, "RI1");
+        rgbIndicator2 = hardwareMap.get(RGBIndicator.class, "RI2");
+        rgbIndicator3 = hardwareMap.get(RGBIndicator.class, "RI3");
     }
 
 
@@ -55,7 +59,16 @@ public class HWMapSpindex {
         return AI1;
     }
 
-    public RGBIndicator getRgbIndicator() {
-        return rgbIndicator;
+    public RGBIndicator getRgbIndicator1() {
+        return rgbIndicator1;
     }
+
+    public RGBIndicator getRgbIndicator2() {
+        return rgbIndicator2;
+    }
+
+    public RGBIndicator getRgbIndicator3() {
+        return rgbIndicator3;
+    }
+
 }
