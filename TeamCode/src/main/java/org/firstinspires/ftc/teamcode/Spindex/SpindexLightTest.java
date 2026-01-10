@@ -32,9 +32,12 @@ public class SpindexLightTest extends LinearOpMode{
     private RGBIndicator rgbIndicator1;
     private SpindexLightTest.rgbIndicators rgbIndicators;
     private status status;
+    public status pocket1;
+    public status pocket2;
+    public status pocket3;
     public SpindexLightTest(HWMapSpindex hwMap, Telemetry telemetry) {
          touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
-         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
+         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry, 1);
          rgbIndicator1 = hwMap.getRgbIndicator();
          this.telemetry = telemetry;
      }
@@ -43,6 +46,7 @@ public class SpindexLightTest extends LinearOpMode{
         waitForStart();
         while(opModeIsActive()){
             indicateTest();
+            colorPocket(touchSensorMotorFSM.currentIndex);
             telemetry.addData("indicated","done");
             telemetry.update();
         }
@@ -109,6 +113,19 @@ public class SpindexLightTest extends LinearOpMode{
     } else{
         return status = status.WHITE;
         }
+    }
+    private void colorPocket(int pocket) {
+        if(pocket == 1) {
+            pocket1 = color();
+            telemetry.addData("colorPocket",pocket1);
+        } else if(pocket == 2) {
+            pocket2 = color();
+            telemetry.addData("colorPocket",pocket2);
+        } else if(pocket == 3) {
+            pocket3 = color();
+            telemetry.addData("colorPocket",pocket3);
+        }
+        telemetry.addData("colorPocket",pocket);
     }
 
 }

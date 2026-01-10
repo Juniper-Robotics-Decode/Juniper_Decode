@@ -20,6 +20,7 @@ public class TouchSensorMotorFSM {
     public static states state;
     private Telemetry telemetry;
     int currentIndex;
+    double voltage = 4.000;
     public int offset = 0;
 
 
@@ -64,6 +65,29 @@ public class TouchSensorMotorFSM {
 
         telemetry.addData("Spindex State", state);
     }
+
+//    public void spindexIntakingReset_Movement() {
+//        //bassically this would reset to intaking mode so it would move in intaking thirds
+//        //then it will move 1/3 then stop for 1 it second to let ball in then move, it will keep
+//        // going on and on and on
+//        while (!AI1.getVoltage() < ) {
+//            spindexMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            spindexMotor.setPower(1);
+//        }
+//        spindexMotor.setPower(0);
+//        spindexMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        spindexMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        int l=1;
+//        while (!gamepad1.circle || !gamepad1.triangle || !gamepad1.square) {
+//            while (l>0) {
+//                spindexMotor.setTargetPosition(intakingRotation * l);
+//                spindexMotor.setPower(1);
+//                spindexMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                sleep(3000);
+//            }
+//        }
+//    }
+
 
     public boolean atPosition1() {
         return state == states.POSITION_1;
