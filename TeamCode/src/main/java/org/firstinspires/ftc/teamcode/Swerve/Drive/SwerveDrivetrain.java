@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Drive;
+package org.firstinspires.ftc.teamcode.Swerve.Swerve;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static java.lang.Math.atan2;
@@ -21,27 +21,18 @@ public class SwerveDrivetrain {
     public SwerveModule[] modules;
 
     private double[] ws = new double[4];
-    private double[] MotorScaling = new double[]{1,1,1,1};
+    private double MotorScaling[] = new double[]{1,1,1,1};
     private double max;
 
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double[] offsets = new double[]{2, 2.6, 1.17, 3.4}; //use SwerveCalibration to find
-    private boolean[] inverses = new boolean[]{false,false,false,false};
+    private double offsets[] = new double[]{2, 2.6, 1.17, 3.4}; //use SwerveCalibration to find
+    private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;
     private double wheelbase = 9.927;  // trackwidth is along the width of the robot wheel base is along the length
     private double R;
-
-    // --- COR ADDITIONS ---
-    public enum centerofRotation {
-        robot,
-        intake
-    }
-
-    public static double INTAKE_OFFSET_X = 262.661 / 25.4; // 10.341 inches
-    // ---------------------
 
     double targetheading = 0.0;
     private boolean headingLocked = false;
@@ -68,20 +59,12 @@ public class SwerveDrivetrain {
     }
 
     /// calculates swerve modules motor powers and wheel angles from gamepad inputs and robot current heading as according to 2nd order swerve kinematics
-    // Overloaded method to maintain compatibility if you don't pass a COR
-    public void setPose(Pose pose, Double botheading, Double voltage) {
-        setPose(pose, botheading, voltage, centerofRotation.robot);
-    }
-
-    public void setPose (Pose pose, Double botheading, Double voltage, centerofRotation cor){
+    public void setPose (Pose pose, Double botheading, Double voltage){
         double x = pose.x;
         double y = pose.y;
         double heading = pose.heading;
 
-        // Apply COR Offset
-        double pivotX = (cor == centerofRotation.intake) ? INTAKE_OFFSET_X : 0;
-        double pivotY = 0;
-
+        // todo add voltage compensation
         /// heading lock logic
         if (Math.abs(pose.heading) > 0.02){
             headingLocked = false;
@@ -93,11 +76,9 @@ public class SwerveDrivetrain {
                 headingController.reset();
             }
 
-            double error = normalizeRadians(targetheading - botheading);
+            double error = targetheading - botheading;
             headingController.setPIDF(P,I,D,F);
-
-            double voltagecompensation = 12.4/voltage;
-            heading = -headingController.calculate(error,0) * voltagecompensation;
+            heading = -headingController.calculate(error,0) * 12.4/voltage;
         }
 
         /// locking logic
@@ -106,7 +87,7 @@ public class SwerveDrivetrain {
             lastInputTime = currentTime;
             locked = false;
         } else {
-            if (currentTime - lastInputTime > lockdelay) {
+            if (currentTime - lastInputTime > lockdelay) { //subtract last looptime from lock delay time?
                 locked = true;
                 waitingtolock = false;
             }
@@ -122,51 +103,30 @@ public class SwerveDrivetrain {
         else {
             if (waitingtolock && (x == 0 && y == 0 && heading == 0)){
                 ws = new double[]{0,0,0,0};
-                wa = lastwa;
+                for (int i = 0; i < 4; i++){
+                    wa[i] = lastwa[i];
+                }
             }
             /// kinematics
-            else {
-                double dt = (lastUpdateTime == 0) ? 30 : (currentTime - lastUpdateTime);
+            else { //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
+                double dt = (lastUpdateTime == 0) ? 30 : (currentTime - lastUpdateTime); //finds last loop time
                 lastUpdateTime = currentTime;
 
-                double rotationCorrection = heading * (dt / 1000.0) / 2.0;
+                double rotationCorrection = heading * (dt / 1000) / 2.0;
                 double cos = Math.cos(rotationCorrection);
                 double sin = Math.sin(rotationCorrection);
 
                 double xc = x * cos - y * sin;
                 double yc = x * sin + y * cos;
 
-                // Lever arms relative to the chosen COR
-                double fl_x = (wheelbase / 2.0) - pivotX;
-                double fl_y = (trackwidth / 2.0) - pivotY;
+                /// standard first order kinematics
+                double a = xc - heading * (wheelbase / R),
+                        b = xc + heading * (wheelbase / R),
+                        c = yc - heading * (trackwidth / R),
+                        d = yc + heading * (trackwidth / R);
 
-                double fr_x = (wheelbase / 2.0) - pivotX;
-                double fr_y = (-trackwidth / 2.0) - pivotY;
-
-                double bl_x = (-wheelbase / 2.0) - pivotX;
-                double bl_y = (trackwidth / 2.0) - pivotY;
-
-                double br_x = (-wheelbase / 2.0) - pivotX;
-                double br_y = (-trackwidth / 2.0) - pivotY;
-
-                double[] wheel_x = {
-                        xc - heading * fl_y,
-                        xc - heading * fr_y,
-                        xc - heading * bl_y,
-                        xc - heading * br_y
-                };
-
-                double[] wheel_y = {
-                        yc + heading * fl_x,
-                        yc + heading * fr_x,
-                        yc + heading * bl_x,
-                        yc + heading * br_x
-                };
-
-                for (int i = 0; i < 4; i++) {
-                    ws[i] = hypot(wheel_x[i], wheel_y[i]);
-                    wa[i] = atan2(wheel_x[i], wheel_y[i]); // Use X, Y consistency with your specific atan2 logic
-                }
+                ws = new double[]{hypot(a, c), hypot(a, d), hypot(b, d), hypot(b, c)};
+                wa = new double[]{atan2(a, c), atan2(a, d), atan2(b, d), atan2(b, c)};
             }
         }
 
@@ -178,8 +138,8 @@ public class SwerveDrivetrain {
             SwerveModule m = modules[i];
             if (Math.abs(max) > 1) ws[i] /= max;
             m.update(wa[i], (ws[i]*MotorScaling[i]));
+            lastwa[i] = wa[i];
         }
-        System.arraycopy(wa, 0, lastwa, 0, 4);
     }
 
     public void updateModule(int i) {
@@ -188,7 +148,13 @@ public class SwerveDrivetrain {
         m.update(wa[i], ws[i]);
     }
 
-    public void calculateCurrentBasedScalers() {
+    /// calculates motor scalers based on current draw
+    // todo test
+    // todo improve alpha filter to ignore values that are not probable
+        /* make a kalman filter to compare actual current to predicted current */
+    //current sensing may be too noisy to use
+    public void calculateCurrentBasedScalers() { // todo get real min values for current draw
+        double[] currentDraws = new double[4];
         double maxObservedCurrent = 0;
         boolean[] isModuleValid = new boolean[]{true, true, true, true};
 
@@ -223,11 +189,16 @@ public class SwerveDrivetrain {
         }
     }
 
+    // todo add encoders to swerve motors and update module code to use them
+    // todo test encoder noise
+    // all dynamic motor scaling methods may require perfect zeros and much lower levels of backlash
     public void calculateVelocityBasedScalers() {
         double[] actualVelocities = new double[4];
+        double minVelocityRatio = 1.0;
+
         for (int i = 0; i < 4; i++) {
             modules[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            actualVelocities[i] = 0;
+            actualVelocities[i] = 0;//Math.abs(modules[i].getVelocity());
         }
 
         double maxObservedVel = 0;
@@ -250,6 +221,7 @@ public class SwerveDrivetrain {
         for (int i = 0; i < 4; i++) {
             if (actualVelocities[i] > 0) {
                 MotorScaling[i] = lowestActual / actualVelocities[i];
+
                 MotorScaling[i] = Math.min(1.0, Math.max(0.7, MotorScaling[i]));
             }
         }
@@ -277,7 +249,7 @@ public class SwerveDrivetrain {
 
     public double getKgain() { return kgain;}
 
-    public void setMotorScaling(double[] scalars){
+    public void setMotorScaling(double[] scalars){ //todo (far future) run with encoder and compare to current based motor scaling
         for (int i = 0; i < 4; i++){
             MotorScaling[i] = scalars[i];
         }
@@ -307,11 +279,7 @@ public class SwerveDrivetrain {
 
     public void setHeadingLocked(boolean headingLocked){ this.headingLocked = headingLocked;}
 
-    public String getDrivetrainTele() {
-        return String.format(Locale.ENGLISH,"Offsets %s \n Inverses %s \n kgain %s \n Motor scaling %s \n Lock delay %s \n Target heading %s \n Locked? %s \n Heading Locked? %s", (Object) offsets, (Object) inverses, getKgain(), (Object) MotorScaling, getLockdelay(), getTargetheading(), getLocked(), getheadingLocked());
-    }
-
-    public String getModulesTele(){
-        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3]);
+    public String getTele(){
+        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,\nLocked? %s",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3], getLocked());
     }
 }

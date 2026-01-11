@@ -18,7 +18,7 @@ public class FlywheelFSM {
 
     public static double ks=0, kv=2, ka=0;  // 1.37 for just the first half
 
-    public static double TOLERANCE = 100; // ticks
+    public static double TOLERANCE = 75; // ticks
 
 
     public static double targetVelocityRPM;
@@ -63,10 +63,17 @@ public class FlywheelFSM {
             stopping = false;
         }
         flywheelMotor.readVelocity();
+
         flywheelMotor.setVelocityConstants(vP,vI,vD,ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
         targetVelocityTicks = targetVelocityTicks;
-        flywheelMotor.setVelocity(targetVelocityTicks);
+        double error = targetVelocityTicks - flywheelMotor.getVelocity();
+        if(error > TOLERANCE) {
+            flywheelMotor.set(1);
+        }
+        else {
+            flywheelMotor.setVelocity(targetVelocityTicks);
+        }
     }
 
     private boolean atSetPoint() {
