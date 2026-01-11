@@ -39,7 +39,7 @@ public class swerveTuningTele extends LinearOpMode{
     private SlewRateLimiter XRate, YRate, HeadingRate;
     public static double xrate = 4.0, yrate = 4.0, headingrate = 3.0;
 
-    public static double offsets[] = new double[]{2, 2.6, 1.17, 3.4};
+    public static double offsets[] = new double[]{-3.2, 1, 0.9, -1.1};
     public static boolean inverses[] = new boolean[]{false, false, false, false};
     public static double scalars[] = new double[]{1, 1, 1, 1};
 
@@ -127,7 +127,7 @@ public class swerveTuningTele extends LinearOpMode{
             telemetry.addData("x", drive.x);
             telemetry.addData("y", drive.y);
             telemetry.addData("heading", drive.heading);
-            telemetry.addData("tele \n", swerveDrivetrain.getModulesTele());
+            telemetry.addData("tele \n", swerveDrivetrain.getTele());
             telemetry.addData("locked", locked);
             telemetry.update();
         }

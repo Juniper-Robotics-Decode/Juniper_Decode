@@ -33,7 +33,7 @@ public class SwerveTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private HWMap hwMap;
-    private SwerveDrivetrain swerveDrivetrain;
+    private org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain swerveDrivetrain;
 
     public static double x, y, heading;
     public double BotHeading;
@@ -47,9 +47,9 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{2, 2.6, 1.17, 3.4};
+    public static double[] Zeros = new double[]{-1.5, 1.8, 1.3, -0.9};
 
-    public static double kgain = 1;
+    public static double kgain = 2;
 
     public static double P, I, D, F;
 
@@ -59,7 +59,6 @@ public class SwerveTest extends LinearOpMode {
         robot,
         intake
     }
-    SwerveDrivetrain.centerofRotation currentCoR = SwerveDrivetrain.centerofRotation.robot;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -87,7 +86,7 @@ public class SwerveTest extends LinearOpMode {
         odo.recalibrateIMU();
 
         hwMap = new HWMap(hardwareMap);
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain(hwMap);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);
@@ -118,14 +117,6 @@ public class SwerveTest extends LinearOpMode {
             pos = odo.getPosition();
             BotHeading = -pos.getHeading(RADIANS);
 
-            if (gamepad1.dpadLeftWasPressed()) {
-                if (currentCoR == SwerveDrivetrain.centerofRotation.robot) {
-                    currentCoR = SwerveDrivetrain.centerofRotation.intake;
-                } else {
-                    currentCoR = SwerveDrivetrain.centerofRotation.robot;
-                }
-            }
-
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepad1.left_stick_x, gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
 
@@ -136,11 +127,12 @@ public class SwerveTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setPose(drive, BotHeading, voltage, currentCoR);
+            swerveDrivetrain.setPose(drive, BotHeading, voltage);
+            swerveDrivetrain.setLocked(locked);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Tele Module \n",swerveDrivetrain.getModulesTele());
+            telemetry.addData("\n",swerveDrivetrain.getTele());
             telemetry.update();
         }
 

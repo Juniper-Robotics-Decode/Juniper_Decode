@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static java.lang.Math.atan2;
@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveModule;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.MathUtils;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.core.HWMap;
@@ -27,7 +28,7 @@ public class SwerveDrivetrain {
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{2, 2.6, 1.17, 3.4}; //use SwerveCalibration to find
+    private double offsets[] = new double[]{-3.2, 1, 0.9, -1.1}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;
@@ -83,18 +84,19 @@ public class SwerveDrivetrain {
 
         /// locking logic
         long currentTime = System.currentTimeMillis();
-        if (x != 0 || y != 0 || heading != 0) {
-            lastInputTime = currentTime;
-            locked = false;
-        } else {
-            if (currentTime - lastInputTime > lockdelay) { //subtract last looptime from lock delay time?
-                locked = true;
-                waitingtolock = false;
-            }
-            else {
-                waitingtolock = true;
-            }
-        }
+//        if (x != 0 || y != 0 || heading != 0) {
+//            lastUpdateTime = currentTime;
+//            locked = false;
+//        } else {
+//            if ((currentTime - lastUpdateTime < lockdelay) && (!locked))
+//            {
+//                waitingtolock = true;
+//            }
+//            else if ((currentTime - lastUpdateTime) > lockdelay){
+//                waitingtolock = false;
+//                locked = true;
+//            }
+//        }
 
         if (locked) { //locked wheel angles
             ws = new double[]{0,0,0,0};

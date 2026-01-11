@@ -103,7 +103,7 @@ public class RelocalizeTest extends LinearOpMode {
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getModulesTele());
+            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getTele());
 
 
             telemetry.addData("RAW X", pinpoint.getX());

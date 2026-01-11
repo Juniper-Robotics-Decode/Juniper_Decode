@@ -37,16 +37,16 @@ public class SlewRateLimiter {
                 NegativeRateLimit * ElapsedTime,
                 PositiveRateLimit * ElapsedTime);
 
-        //coefficents are fixed due to wanting to achieve max power at input of 1
-        target = MathUtils.clamp(Math.abs(target), 0, 1);
-        double quinticVal = (6 * Math.pow(target, 5)) - (15 * Math.pow(target, 4)) + (10 * Math.pow(target, 3));
-
-        double finalOutput = (target < 0) ? -quinticVal : quinticVal;
+//        //coefficents are fixed due to wanting to achieve max power at input of 1
+//        target = MathUtils.clamp(Math.abs(target), 0, 1);
+//        double quinticVal = (6 * Math.pow(target, 5)) - (15 * Math.pow(target, 4)) + (10 * Math.pow(target, 3));
+//
+//        double finalOutput = (target < 0) ? -quinticVal : quinticVal;
 
         PrevVal = target;
         PrevTime = CurrentTime;
 
-        return finalOutput;
+        return target;
     }
 
     public void setPositiveRateLimit(double PositiveRateLimit) {
