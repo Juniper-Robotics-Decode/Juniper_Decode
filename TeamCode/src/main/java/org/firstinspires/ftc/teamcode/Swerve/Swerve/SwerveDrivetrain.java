@@ -103,7 +103,9 @@ public class SwerveDrivetrain {
         else {
             if (waitingtolock && (x == 0 && y == 0 && heading == 0)){
                 ws = new double[]{0,0,0,0};
-                wa = lastwa;
+                for (int i = 0; i < 4; i++){
+                    wa[i] = lastwa[i];
+                }
             }
             /// kinematics
             else { //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
@@ -136,7 +138,7 @@ public class SwerveDrivetrain {
             SwerveModule m = modules[i];
             if (Math.abs(max) > 1) ws[i] /= max;
             m.update(wa[i], (ws[i]*MotorScaling[i]));
-            lastwa = wa;
+            lastwa[i] = wa[i];
         }
     }
 
@@ -278,6 +280,6 @@ public class SwerveDrivetrain {
     public void setHeadingLocked(boolean headingLocked){ this.headingLocked = headingLocked;}
 
     public String getTele(){
-        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3]);
+        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,\nLocked? %s",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3], getLocked());
     }
 }

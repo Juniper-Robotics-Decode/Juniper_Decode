@@ -16,9 +16,12 @@ import java.util.function.DoubleSupplier;
 public class PositionFSM {
 
     public enum States {
-        ZONE_1(13),   // TODO: check does pitch at 22.5 equal like almost 360?
-        ZONE_2(22.5),
-        ZONE_3(22.5),
+        ZONE_1(29), // TODO: check does pitch at 22.5 equal like almost 360?
+        ZONE_2(27),
+        ZONE_3(24),
+        ZONE_4(15),
+        ZONE_5(30),
+
         NO_VALID_TARGET;
 
         private double targetAngle;
@@ -57,7 +60,10 @@ public class PositionFSM {
 
     private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: x: 60.05 mm, y: 53.845 mm, distance: 80.656 mm
     private double PINPOINT_OFFSET = 0;
-    private double threshold1 = 2.5, threshold2 = 3;
+
+    private double threshold1LL = 1.5, threshold2LL = 2, threshold3LL = 2.5, threshold4LL = 3;
+
+    private double threshold1PP = 1.4, threshold2PP = 2, threshold3PP = 2.5, threshold4PP = 3;
 
     private double SENSOR_CHOICE_THRESHOLD = 2;
     private double RELOCALIZATION_TRHESHOLD = 0.1;
@@ -87,9 +93,15 @@ public class PositionFSM {
 
         if(limelightCamera.hasTarget() || pinpoint.pinpointReady()) {
             if(sensor == Sensor.LIMELIGHT) {
-                if (limelightCamera.getFlatDistance() >= threshold2) {
+                if(limelightCamera.getFlatDistance() >= threshold4LL) {
+                    state = States.ZONE_5;
+                }
+                else if (limelightCamera.getFlatDistance() >= threshold3LL) {
+                    state = States.ZONE_4;
+                }
+                else if (limelightCamera.getFlatDistance() >= threshold2LL) {
                     state = States.ZONE_3;
-                } else if (limelightCamera.getFlatDistance() >= threshold1) {
+                } else if (limelightCamera.getFlatDistance() >= threshold1LL) {
                     state = States.ZONE_2;
                 } else {
                     state = States.ZONE_1;
@@ -100,9 +112,15 @@ public class PositionFSM {
             }
             else if(sensor == Sensor.PINPOINT) {
                 if (pinpoint.pinpointReady()) {
-                    if (pinpoint.getGoalDistance() >= threshold2) {
+                    if(pinpoint.getGoalDistance() >= threshold4PP) {
+                        state = States.ZONE_5;
+                    }
+                    else if (pinpoint.getGoalDistance() >= threshold3PP) {
+                        state = States.ZONE_4;
+                    }
+                    else if (pinpoint.getGoalDistance() >= threshold2PP) {
                         state = States.ZONE_3;
-                    } else if (pinpoint.getGoalDistance() >= threshold1) {
+                    } else if (pinpoint.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_2;
                     } else {
                         state = States.ZONE_1;
@@ -136,10 +154,11 @@ public class PositionFSM {
 
         // distance (m) , velocity (rpm)
 
-        velocityMapLL.add(1.24, 3100);
-        velocityMapLL.add(1.6, 3100);
-        velocityMapLL.add(2.11, 3500);
-        velocityMapLL.add(2.8, 3900);
+        velocityMapLL.add(1.35, 2550);
+        velocityMapLL.add(1.58, 2625);
+        velocityMapLL.add(2.21, 2900);
+        velocityMapLL.add(2.85, 3050);
+        velocityMapLL.add(3.25, 3600);
         velocityMapLL.createLUT();
 
 
@@ -148,12 +167,12 @@ public class PositionFSM {
         velocityMapPP = new InterpLUT();
 
 
-        velocityMapPP.add(1.24, 3100);
-        velocityMapPP.add(1.6, 3100);
-        velocityMapPP.add(2.11, 3500);
-        velocityMapPP.add(2.8, 3900);
+        velocityMapPP.add(1.19, 2550);
+        velocityMapPP.add(1.44, 2625);
+        velocityMapPP.add(2.04, 2900);
+        velocityMapPP.add(2.63, 3050);
+        velocityMapPP.add(3.03, 3600);
         velocityMapPP.createLUT();
-
 
     }
 
