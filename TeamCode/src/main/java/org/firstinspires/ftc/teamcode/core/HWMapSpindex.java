@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.core;
 
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.bylazar.lights.RGBIndicator;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class HWMapSpindex {
 
@@ -17,9 +19,9 @@ public class HWMapSpindex {
     private RevColorSensorV3 colorSensor3;
     private RevTouchSensor TCS1;
     private AnalogInput AI1;
-    private RGBIndicator rgbIndicator1;
-    private RGBIndicator rgbIndicator2;
-    private RGBIndicator rgbIndicator3;
+    private ServoEx rgbIndicator1;
+    private ServoEx rgbIndicator2;
+    private ServoEx rgbIndicator3;
 
     public HWMapSpindex(HardwareMap hardwareMap) {
 
@@ -29,9 +31,9 @@ public class HWMapSpindex {
         TCS1 = hardwareMap.get(RevTouchSensor.class, "TCS1");
         AI1 = hardwareMap.get(AnalogInput.class, "AI1");
         spindexMotor = new MotorEx(hardwareMap, "spindexMotor");
-        rgbIndicator1 = hardwareMap.get(RGBIndicator.class, "RI1");
-        rgbIndicator2 = hardwareMap.get(RGBIndicator.class, "RI2");
-        rgbIndicator3 = hardwareMap.get(RGBIndicator.class, "RI3");
+        rgbIndicator1 = hardwareMap.get(ServoEx.class, "RI1");
+        rgbIndicator2 = hardwareMap.get(ServoEx.class, "RI2");
+        rgbIndicator3 = hardwareMap.get(ServoEx.class, "RI3");
     }
 
 
@@ -59,15 +61,15 @@ public class HWMapSpindex {
         return AI1;
     }
 
-    public RGBIndicator getRgbIndicator1() {
+    public ServoEx getRgbIndicator1() {
         return rgbIndicator1;
     }
 
-    public RGBIndicator getRgbIndicator2() {
+    public ServoEx getRgbIndicator2() {
         return rgbIndicator2;
     }
 
-    public RGBIndicator getRgbIndicator3() {
+    public ServoEx getRgbIndicator3() {
         return rgbIndicator3;
     }
 

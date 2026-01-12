@@ -4,14 +4,25 @@ import com.bylazar.lights.RGBIndicator;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
+import com.arcrobotics.ftclib.hardware.ServoEx;
+
+import com.qualcomm.robotcore.hardware.Servo;
+
+import com.qualcomm.robotcore.hardware.LED;
+import com.qualcomm.robotcore.hardware.Light;
+
+import com.qualcomm.robotcore.hardware.PwmControl;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 @TeleOp
 public class SpindexLightTest extends LinearOpMode{
 
-    private enum status {
+    public enum status {
         PURPLE,
         GREEN,
         WHITE,
@@ -21,16 +32,22 @@ public class SpindexLightTest extends LinearOpMode{
     private TouchSensorMotorFSM touchSensorMotorFSM;
     private ColorSensorFSM colorSensorsFSM;
     private Telemetry telemetry;
-    private RGBIndicator RI1 = hwMap.getRgbIndicator1();
-    private RGBIndicator RI2 = hwMap.getRgbIndicator2();
-    private RGBIndicator RI3 = hwMap.getRgbIndicator3();
-    private status status;
+    private ServoEx RI1;
+    private ServoEx RI2;
+    private ServoEx RI3;
     public status pocket1;
     public status pocket2;
     public status pocket3;
 
 
     public SpindexLightTest() {
+        hwMap = new HWMapSpindex(hardwareMap);
+        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
+        colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry,1);
+        this.telemetry = telemetry;
+        RI1 = hwMap.getRgbIndicator1();
+        RI2 = hwMap.getRgbIndicator2();
+        RI3 = hwMap.getRgbIndicator3();
      }
 
      public void runOpMode() throws InterruptedException{
@@ -69,18 +86,18 @@ public class SpindexLightTest extends LinearOpMode{
          }
      }
 
-     public void setIndicator(RGBIndicator RI, status color) {
+     public void setIndicator(ServoEx RI, status color) {
          if (color == status.GREEN) {
-             RI.Companion.getGREEN();
+             RI.setPosition(0.5);
              telemetry.addData("companion","got green");
          } else if (color == status.PURPLE) {
-             RI.Companion.getVIOLET();
+             RI.setPosition(0.7);
              telemetry.addData("companion","got purple");
          } else if (color == status.WHITE) {
-             RI.Companion.getWHITE();
+             RI.setPosition(1);
              telemetry.addData("companion","got white");
          } else{
-             RI.Companion.getAZURE();
+             RI.setPosition(0.6);
              telemetry.addData("companion","got bwoo");
          }
      }
