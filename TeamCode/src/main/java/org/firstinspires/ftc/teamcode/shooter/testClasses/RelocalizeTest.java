@@ -78,6 +78,7 @@ public class RelocalizeTest extends LinearOpMode {
                 limelightCamera.update();
                 pinpoint.update();
                 turretFSM.updateState();
+                turretFSM.log();
 
             if (gamepad1.options) {
                 pinpoint.resetPosAndIMU();
@@ -122,44 +123,33 @@ public class RelocalizeTest extends LinearOpMode {
             telemetry.addData("Limelight y", limelightCamera.getY());
             telemetry.addData("Limelight Ty", limelightCamera.getTy());
 
-            double turretHeading = -turretFSM.getCurrentAngle();
-            double camOffsetHeadingFromTurret = 48.064;
-            double robotHeading = pinpoint.getHeading();
-            double cameraAbsoluteHeading = robotHeading + turretHeading;
 
-            double camX = limelightCamera.getxField();
-            double camY = limelightCamera.getyField();
-            double distanceCamToTurretCenter = 0.080724;
 
-            double distanceTurretCenterToRobotCenter = 0.048;
-
-            double X1 = distanceCamToTurretCenter*Math.cos(Math.toRadians(camOffsetHeadingFromTurret));
-            double Y1 = distanceCamToTurretCenter*Math.sin(Math.toRadians(camOffsetHeadingFromTurret));
-
-            double X2 = Y1*Math.sin(Math.toRadians(camOffsetHeadingFromTurret)) + X1*Math.cos(Math.toRadians(camOffsetHeadingFromTurret));
-            double Y2 = Y1*Math.cos(Math.toRadians(camOffsetHeadingFromTurret)) + X1*Math.sin(Math.toRadians(camOffsetHeadingFromTurret));
-            double xTurret =  camX + X2;
-            double yTurret = camY + Y2;
-
-            double xRobot = xTurret + (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading))));
-            double yRobot = yTurret + (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading))));
-            Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
 
             if(gamepad1.a) {
-                pinpoint.setPosition(newPos);
+                relocalize();
             }
+
+        }
+    }
+
+    public void relocalize() {
+
+        double robotHeading = pinpoint.getHeading();
+
+        double xRobot = limelightCamera.getxField();
+        double yRobot = limelightCamera.getyField();
+
+        turretFSM.setTargetAngle(0);
+        if(turretFSM.ALIGNED()) {
+
+
+
             telemetry.addLine("--- RELOCALIZATION ---");
-            telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
             telemetry.addData("Robot Heading", robotHeading);
-            telemetry.addData("Turret Heading", turretHeading);
-            telemetry.addData("Turret X", xTurret);
-            telemetry.addData("Turret Y", yTurret);
-            telemetry.addData("Cam X", camX);
-            telemetry.addData("Cam Y", camY);
             telemetry.addData("Robot X", xRobot);
             telemetry.addData("Robot Y", yRobot);
             telemetry.update();
-
         }
     }
 }

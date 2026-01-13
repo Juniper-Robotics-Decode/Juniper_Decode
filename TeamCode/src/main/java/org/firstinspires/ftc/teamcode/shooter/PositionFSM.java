@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.shooter;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,11 +14,13 @@ import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
 import java.util.function.DoubleSupplier;
 
+
+@Config
 public class PositionFSM {
 
     public enum States {
-        ZONE_1(29), // TODO: check does pitch at 22.5 equal like almost 360?
-        ZONE_2(27),
+        ZONE_1(10), // TODO: check does pitch at 22.5 equal like almost 360?
+        ZONE_2(10),
         ZONE_3(24),
         ZONE_4(15),
         ZONE_5(30),
@@ -75,6 +78,10 @@ public class PositionFSM {
     private Telemetry telemetry;
 
     private RobotSettings robotSettings;
+
+    public static double flywheelRPM = 3500;
+
+    private Pose2D newPoseRelocal = null;
 
     public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings) {
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
@@ -167,17 +174,17 @@ public class PositionFSM {
         velocityMapPP = new InterpLUT();
 
 
-        velocityMapPP.add(1.19, 2550);
-        velocityMapPP.add(1.44, 2625);
-        velocityMapPP.add(2.04, 2900);
-        velocityMapPP.add(2.63, 3050);
-        velocityMapPP.add(3.03, 3600);
+        velocityMapPP.add(0.5, flywheelRPM);
+        velocityMapPP.add(1.44, flywheelRPM);
+        velocityMapPP.add(2.04, flywheelRPM);
+        velocityMapPP.add(2.63, flywheelRPM);
+        velocityMapPP.add(3.03, flywheelRPM);
         velocityMapPP.createLUT();
 
     }
 
     public void findFlywheelTargetVelocity(double distance_m) {
-        if(distance_m < 1.24 || distance_m > 2.8 || Double.isNaN(distance_m)) {
+        if(distance_m < 0.5 || distance_m > 2.8 || Double.isNaN(distance_m)) {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {
@@ -185,7 +192,8 @@ public class PositionFSM {
                 flywheelTargetVelocityRPM = velocityMapLL.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
             }
             else {
-                flywheelTargetVelocityRPM = velocityMapPP.get(distance_m + PINPOINT_OFFSET);
+                flywheelTargetVelocityRPM = flywheelRPM;
+               // flywheelTargetVelocityRPM = velocityMapPP.get(distance_m + PINPOINT_OFFSET);
             }
         }
 
@@ -288,6 +296,8 @@ public class PositionFSM {
 
 
         telemetry.addLine("----------LIMELIGHT LOG----------");
+        telemetry.addData("robot x", limelightCamera.getxField());
+        telemetry.addData("robot y", limelightCamera.getyField());
         telemetry.addData("X", limelightCamera.getX());
         telemetry.addData("Y", limelightCamera.getY());
         telemetry.addData("Z", limelightCamera.getZ());
@@ -301,9 +311,22 @@ public class PositionFSM {
         telemetry.addData("Goal Distance", pinpoint.getGoalDistance());
         telemetry.addData("pinpoint heading error", pinpoint.getHeadingErrorTrig());
         telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
+        if(newPoseRelocal != null) {
+            telemetry.addData("Relocalization new Pos x", newPoseRelocal.getX(DistanceUnit.METER));
+            telemetry.addData("Relocalization new Pos y", newPoseRelocal.getY(DistanceUnit.METER));
+        }
+
+
         telemetry.addLine("----------PINPOINT LOG----------");
 
         telemetry.addLine("----------POSITION FSM LOG----------");
+    }
+
+    public Pose2D getRobotPos() {
+        //if(limelightCamera.hasTarget()) {
+            newPoseRelocal = new Pose2D(DistanceUnit.METER, limelightCamera.getxField(), limelightCamera.getyField(), AngleUnit.DEGREES, pinpoint.getHeading());
+        //}
+        return newPoseRelocal;
     }
 
 }

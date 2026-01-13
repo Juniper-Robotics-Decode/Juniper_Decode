@@ -36,7 +36,7 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
             telemetry.update();
             gamepad.readButtons();
             intakeFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.Y), (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)));
-            transferFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),(gamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)));
+            transferFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER));
 
         }
 

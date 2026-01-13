@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
+import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 
 public class LauncherFSM {
 
@@ -11,32 +15,36 @@ public class LauncherFSM {
         PREPARING_TO_SHOOT,
         PREPARED_TO_SHOOT,
         TOGGLING_FLYWHEEL,
-        TOGGLED_FLYWHEEL
+        TOGGLED_FLYWHEEL,
+        RELOCALIZING,
+        RELOCALIZED
     }
 
     private FlywheelFSM flywheelFSM;
     private TurretFSM turretFSM;
     private PitchFSM pitchFSM;
     private PositionFSM positionFSM;
+    private Pinpoint pinpoint;
     private States state;
     private boolean flywheelStopping = false;
 
     private Telemetry telemetry;
     public LauncherFSM(HWMap hardwareMap, Telemetry telemetry, Pinpoint pinpoint, RobotSettings robotSettings) {
+        this.pinpoint = pinpoint;
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry);
         turretFSM = new TurretFSM(hardwareMap,telemetry);
-        pitchFSM = new PitchFSM(hardwareMap,telemetry);
+        pitchFSM = new PitchFSM(hardwareMap,telemetry, flywheelFSM::getError);
         positionFSM = new PositionFSM(hardwareMap,telemetry, pinpoint, turretFSM::getCurrentAngle, robotSettings);
         this.telemetry = telemetry;
         state = States.PREPARING_TO_SHOOT;
     }
 
-    public void updateState(boolean bPress) {
+    public void updateState(boolean bPress, boolean dPadUp, boolean leftBumper) {
         flywheelFSM.updateState();
         turretFSM.updateState();
         pitchFSM.updateState();
         positionFSM.updateState();
-        findTargetState(bPress);
+        findTargetState(bPress, dPadUp);
 
         switch (state) {
             case PREPARING_TO_SHOOT:
@@ -63,16 +71,34 @@ public class LauncherFSM {
                     state = States.TOGGLED_FLYWHEEL;
                 }
                 break;
+            case RELOCALIZING:
+                Pose2D newPos = positionFSM.getRobotPos();
+                turretFSM.setTargetAngle(0);
+                telemetry.addData("-----------------Good to Relocalize-----------", "");
+                telemetry.addData("launcher new pos x", newPos.getX(DistanceUnit.METER));
+                telemetry.addData("launcher new pos y", newPos.getY(DistanceUnit.METER));
+                telemetry.addData("launcher new pos heading", newPos.getHeading(AngleUnit.DEGREES));
+                if(turretFSM.ALIGNED() && leftBumper) {
+                        if(newPos != null) {
+                            pinpoint.setPosition(newPos);
+                            state = States.RELOCALIZED;
+                        }
+                }
+                break;
         }
     }
 
-    public void findTargetState(boolean bPress) {
+    public void findTargetState(boolean bPress, boolean dPadUp) {
         if(bPress) {
             state = States.TOGGLING_FLYWHEEL;
         }
-        else if(!(state == States.TOGGLING_FLYWHEEL)) {
+        else if(dPadUp) {
+            state = States.RELOCALIZING;
+        }
+        else if(!(state == States.TOGGLING_FLYWHEEL || state == States.RELOCALIZING)) {
             state = States.PREPARING_TO_SHOOT;
         }
+
     }
 
     public void log() {
