@@ -16,7 +16,7 @@ public class FlywheelFSM {
 
     public static double vP=3, vI=0, vD=0, vF = 0; // 0.3 p for just the first half
 
-    public static double ks=0, kv=2, ka=0;  // 1.37 for just the first half
+    public static double ks=0, kv=1.75, ka=0;  // 1.37 for just the first half
 
     public static double TOLERANCE = 75; // ticks
 
@@ -94,6 +94,10 @@ public class FlywheelFSM {
 
     public boolean STOPPED() {
         return state == States.STOPPED;
+    }
+
+    public double getError() {
+        return targetVelocityTicks - flywheelMotor.getVelocity();
     }
 
 

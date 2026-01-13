@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
 
+import java.util.function.DoubleSupplier;
+
 @Config
 public class PitchFSM {
     public enum States{
@@ -24,19 +26,22 @@ public class PitchFSM {
     public static double TOLERANCE = 1;
     public static double P=0.05, I=0, D=0, F=0;
     public static double UPPER_HARD_STOP = 29;
-    public static double LOWER_HARD_STOP = 13;
+    public static double LOWER_HARD_STOP = 10;
     public static double gearRatio = 1.0/12.0;
+    public static double pitchReductionFactor = 0.10;
+    private DoubleSupplier flywheelErrorProvider;
 
 
     Telemetry telemetry;
 
-    public PitchFSM(HWMap hwMap, Telemetry telemetry) {
+    public PitchFSM(HWMap hwMap, Telemetry telemetry, DoubleSupplier flywheelErrorProvider) {
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
         state = States.ALIGNING;
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
         this.telemetry = telemetry;
         targetAngle = 11;
+        this.flywheelErrorProvider = flywheelErrorProvider;
     }
 
     public void updateState(){
@@ -50,6 +55,7 @@ public class PitchFSM {
     }
 
     public void updatePID() {
+      //  adjustForFlywheel();
         if(targetAngle > UPPER_HARD_STOP) {
             targetAngle = UPPER_HARD_STOP;
         }
@@ -102,6 +108,13 @@ public class PitchFSM {
         telemetry.addData("pitch state", state);
         telemetry.addData("pitch target angle", targetAngle);
         telemetry.addData("pitch current angle", pitchServo.getScaledPos());
+    }
+
+    private void adjustForFlywheel() {
+        double flywheelError = flywheelErrorProvider.getAsDouble();
+        if(flywheelError > 40) {
+            targetAngle = targetAngle + flywheelError * pitchReductionFactor;
+        }
     }
 
 }

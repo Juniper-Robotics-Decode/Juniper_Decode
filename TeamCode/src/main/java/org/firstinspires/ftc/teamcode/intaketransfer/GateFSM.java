@@ -14,59 +14,43 @@ import java.util.concurrent.TimeUnit;
 public class GateFSM {
 
     public enum State {
-        MOVING_TO_POSITION,
         AT_UP,
         AT_DOWN,
     }
 
     private Telemetry telemetry;
-    private ServoWrapper transferServo;
+    private AxonServoWrapper transferServo;
     public State currentState;
-    public static double targetPosition = .8;
     public static double positionUp = .3;
     public static double positionDown = .8;
-    static Timing.Timer transferPostitionTimer;
+    public static double targetPosition = positionDown;
+
+    public static double UPPER_HARD_STOP = 1;
+    public static double LOWER_HARD_STOP = 0;
+
+    public static double TOLERANCE = 0.05;
+
 
     public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        transferPostitionTimer = new Timing.Timer(1, TimeUnit.SECONDS); // Original length 1000
+        transferServo = new AxonServoWrapper(intaketransferhwmap.getTransferServo(),intaketransferhwmap.getTransferEncoder(),false,false,0);
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
-        transferServo.setPosition(positionDown);
+        transferServo.setPos(targetPosition);
     }
 
     public void updateState() {
-
-        telemetry.addData("Current Position ", transferServo.getPosition());
-        telemetry.addData("Elapsed Time ", transferPostitionTimer.elapsedTime());
-        telemetry.addData("Target Position ", targetPosition);
-        telemetry.addData("ServoFSM State ", currentState);
-
-
-        double percentError = Math.abs((transferServo.getPosition() - targetPosition) / targetPosition);
-        telemetry.addData("Percent Error", percentError);
-        if (!transferPostitionTimer.isTimerOn() && percentError >= 0.001) {
-            currentState = State.MOVING_TO_POSITION;
-            transferServo.setPosition(targetPosition);
-            transferPostitionTimer.start();
+        updatePID();
+        if(transferServo.getLastReadPos() <= positionDown + TOLERANCE && transferServo.getLastReadPos() >= positionDown - TOLERANCE) {
+            currentState = State.AT_DOWN;
         }
-
-        if (transferPostitionTimer.done()) {
-            transferPostitionTimer.pause();
-            if (currentState == State.AT_UP){
-                targetPosition = positionDown;
-            }
-        }
-
-        if (targetPosition == positionUp) {
+        else if (transferServo.getLastReadPos() <= positionUp + TOLERANCE && transferServo.getLastReadPos() >= positionUp - TOLERANCE) {
             currentState = State.AT_UP;
         }
 
-        if (targetPosition == positionDown) {
-            currentState = State.AT_DOWN;
+        telemetry.addData("Transfer Current Position ", transferServo.getLastReadPos());
+        telemetry.addData("Transfer Target Position ", targetPosition);
+        telemetry.addData("ServoFSM State ", currentState);
         }
-        // else if(currentState = A)
-    }
 
     public boolean AT_DOWN() {
         return currentState == State.AT_DOWN;
@@ -83,4 +67,21 @@ public class GateFSM {
     public void MoveDown() {
         targetPosition = positionDown;
     }
+
+    public void updatePID() {
+        if(targetPosition > UPPER_HARD_STOP) {
+            targetPosition = UPPER_HARD_STOP;
+        }
+        else if (targetPosition < LOWER_HARD_STOP) {
+            targetPosition = LOWER_HARD_STOP;
+        }
+        transferServo.readPos();
+
+        double error = targetPosition - transferServo.getLastReadPos();
+
+        telemetry.addData("error", error);
+
+        transferServo.setPos(targetPosition);
+    }
+
 }

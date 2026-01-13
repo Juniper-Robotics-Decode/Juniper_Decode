@@ -47,7 +47,7 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{-1.5, 1.8, 1.3, -0.9};
+    public static double[] Zeros = new double[]{0,0,1.9,-1};
 
     public static double kgain = 2;
 
