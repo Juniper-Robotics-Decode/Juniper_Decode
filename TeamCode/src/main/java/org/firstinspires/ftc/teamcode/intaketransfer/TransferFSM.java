@@ -29,7 +29,7 @@ public class TransferFSM {
     public TransferFSM(HWMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         transferServoFSM = new GateFSM(hardwareMap, telemetry);
-        autoMoveTimer = new Timing.Timer(3, TimeUnit.SECONDS);
+        autoMoveTimer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
     }
 
     public void updateState(boolean Right_Bumper) {
@@ -40,16 +40,25 @@ public class TransferFSM {
             case TRANSFERING:
                 if(transferServoFSM.AT_DOWN()) {
                     hasCountedCurrentCycle = false;
-                    transferServoFSM.MoveUp();
+                    if(autoMoveTimer.done() || counter == 0) {
+                        autoMoveTimer.pause();
+                        transferServoFSM.MoveUp();
+                    }
                     if(counter >= 3) {
                         counter = 0;
                         currentState = State.TRANSFERED;
                     } else {
-                        transferServoFSM.MoveUp();
+                        if(autoMoveTimer.done() || counter == 0) {
+                            autoMoveTimer.pause();
+                            transferServoFSM.MoveUp();
+                        }
                     }
                 }
                 else if(transferServoFSM.AT_UP()) {
                     transferServoFSM.MoveDown();
+                    if(!autoMoveTimer.isTimerOn()) {
+                        autoMoveTimer.start();
+                    }
                     if (!hasCountedCurrentCycle) {
                         counter++;
                         hasCountedCurrentCycle = true;
@@ -76,10 +85,6 @@ public class TransferFSM {
             currentState = State.RESTING;
         }
         lastRightBumper = Right_Bumper;
-/*
-        if (autoMoveTimer.done() && transferServoFSM.AT_UP()) {
-            autoMoveTimer.pause();
-            currentState = State.MOVING_DOWN;
-        }*/
+
     }
 }

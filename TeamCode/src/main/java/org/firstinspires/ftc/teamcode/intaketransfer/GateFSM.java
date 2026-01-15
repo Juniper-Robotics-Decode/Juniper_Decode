@@ -2,13 +2,8 @@ package org.firstinspires.ftc.teamcode.intaketransfer;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import com.arcrobotics.ftclib.util.Timing;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-
-
-import java.util.concurrent.TimeUnit;
 
 @Config
 public class GateFSM {
@@ -22,13 +17,15 @@ public class GateFSM {
     private AxonServoWrapper transferServo;
     public State currentState;
     public static double positionUp = .3;
-    public static double positionDown = .8;
+    public static double positionDown = 0.04;
     public static double targetPosition = positionDown;
 
     public static double UPPER_HARD_STOP = 1;
     public static double LOWER_HARD_STOP = 0;
 
-    public static double TOLERANCE = 0.05;
+    public static double TOLERANCE_DOWN = 0.07;
+
+    public static double TOLERANCE_UP = 0.07;
 
 
     public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
@@ -40,10 +37,10 @@ public class GateFSM {
 
     public void updateState() {
         updatePID();
-        if(transferServo.getLastReadPos() <= positionDown + TOLERANCE && transferServo.getLastReadPos() >= positionDown - TOLERANCE) {
+        if(transferServo.getLastReadPos() <= positionDown + TOLERANCE_DOWN && transferServo.getLastReadPos() >= positionDown - TOLERANCE_DOWN) {
             currentState = State.AT_DOWN;
         }
-        else if (transferServo.getLastReadPos() <= positionUp + TOLERANCE && transferServo.getLastReadPos() >= positionUp - TOLERANCE) {
+        else if (transferServo.getLastReadPos() >= positionUp) {
             currentState = State.AT_UP;
         }
 
