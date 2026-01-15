@@ -30,7 +30,6 @@ public class PedroTeleop extends LinearOpMode {
 
     private Pose pos;
 
-    private HWMap hwMap;
     private RobotSettings robotSettings;
     private GamepadEx gamepad;
     private Follower follower;
@@ -50,7 +49,6 @@ public class PedroTeleop extends LinearOpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        hwMap = new HWMap(hardwareMap);
         robotSettings = new RobotSettings();
 
         /*
