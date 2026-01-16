@@ -41,7 +41,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     public static double vP=3, vI=0, vD=0, vF = 0;
 
-    public static double ks=0, kv=2, ka=0;
+    public static double ks=0, kv=1.7, ka=0;
 
     public static double defaultVelocity = 0;  // RPM
 
