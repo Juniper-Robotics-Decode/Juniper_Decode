@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 @Config
@@ -18,8 +19,11 @@ public class RollerFSM {
     public static double stoppingTargetVelocity = 0;
     public static double intakingTargetVelocity = 2790;
     public static double ejectingTargetVelocity = -1400;
+    public static double INTAKE_SLOW_VELO_FOR_TRANSFER = 500;
     public static double jammingCurrentThreshold = 5;
     public static double jammingVelocityThreshold = 1000;
+
+    private Logger logger;
 
     public enum State {
         STOPPED,
@@ -30,11 +34,11 @@ public class RollerFSM {
 //        RAMPING_UP_TO_EJECT
     }
 
-    public RollerFSM(HWMap hwMap, Telemetry telemetry) {
+    public RollerFSM(HWMap hwMap, Telemetry telemetry, Logger logger) {
         intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, true);
         this.telemetry = telemetry;
         State = State.INTAKING;
-
+        this.logger = logger;
     }
 
     public void updateState() {
@@ -43,7 +47,7 @@ public class RollerFSM {
             State = State.STOPPED;
         }
 
-        if (currentVelocity > 1500) {
+        if (currentVelocity > 50) {
             State = State.INTAKING;
         }
 
@@ -105,5 +109,12 @@ public class RollerFSM {
         return State == State.RAMPING_UP_TO_INTAKE;
     }*/
 
+    }
+
+    public void log() {
+        logger.log("Roller FSM State ", State, Logger.LogLevels.DEBUG);
+        logger.log("Current Velocity ", currentVelocity, Logger.LogLevels.DEBUG);
+        logger.log("Target Velocity ", targetVelocity, Logger.LogLevels.DEBUG);
+        logger.log("Current Amount ", intakeMotor.getCurrent(), Logger.LogLevels.DEBUG);
     }
 }

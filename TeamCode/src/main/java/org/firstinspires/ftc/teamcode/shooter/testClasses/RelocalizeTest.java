@@ -13,8 +13,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
@@ -22,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.TurretFSM;
@@ -46,14 +45,17 @@ public class RelocalizeTest extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
+    private Logger logger;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
-        pinpoint = new Pinpoint(hwMap,robotSettings);
-        turretFSM = new TurretFSM(hwMap,telemetry);
+        pinpoint = new Pinpoint(hwMap,robotSettings,false);
+        turretFSM = new TurretFSM(hwMap,telemetry,logger);
 
 
         XRate = new SlewRateLimiter(xrate);
@@ -81,7 +83,7 @@ public class RelocalizeTest extends LinearOpMode {
                 turretFSM.log();
 
             if (gamepad1.options) {
-                pinpoint.resetPosAndIMU();
+                pinpoint.resetIMU();
             }
 
             pinpoint.update();
@@ -140,7 +142,7 @@ public class RelocalizeTest extends LinearOpMode {
         double xRobot = limelightCamera.getxField();
         double yRobot = limelightCamera.getyField();
 
-        turretFSM.setTargetAngle(0);
+        turretFSM.setTargetAngle(0, gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right, gamepad2.left_bumper);
         if(turretFSM.ALIGNED()) {
 
 

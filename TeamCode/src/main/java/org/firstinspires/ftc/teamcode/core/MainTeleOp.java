@@ -40,7 +40,7 @@ public class MainTeleOp extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
-
+    private Logger logger;
     private HWMap hwMap;
     private Pinpoint pinpoint;
     private RobotSettings robotSettings;
@@ -48,6 +48,7 @@ public class MainTeleOp extends LinearOpMode {
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
     private LauncherFSM launcherFSM;
+
 
     private Timing.Timer loopTimer;
 
@@ -62,10 +63,10 @@ public class MainTeleOp extends LinearOpMode {
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-
+        logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
-        pinpoint = new Pinpoint(hwMap, robotSettings);
+        pinpoint = new Pinpoint(hwMap, robotSettings, false);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap);
 
@@ -73,9 +74,10 @@ public class MainTeleOp extends LinearOpMode {
         swerveDrivetrain.setInverses(inverses);
         swerveDrivetrain.setMotorScaling(scalars);
 
-        intakeFSM = new IntakeFSM(hwMap, telemetry);
-        transferFSM = new TransferFSM(hwMap, telemetry);
-        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings);
+        transferFSM = new TransferFSM(hwMap, telemetry,logger);
+        intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
+        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger);
+
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
 
@@ -83,13 +85,26 @@ public class MainTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             loopTimer.start();
-            telemetry.addData("ALLIANCE", robotSettings.alliance);
-            telemetry.addData("distance method", robotSettings.distanceMethod);
+            logger.log("ALLIANCE", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+            logger.log("distance method", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
 
             double voltage = hwMap.getVoltageSensor().getVoltage();
 
+            logger.updateLoggingLevel(gamepad1.touchpad);
+
             if (gamepad1.options) {
-                pinpoint.resetPosAndIMU();
+                pinpoint.resetIMU();
+            }
+            if(gamepad2.right_bumper) {
+                pinpoint.resetPos();
+            }
+
+            if(gamepad1.back && robotSettings.distanceMethod == RobotSettings.DistanceMethod.PINPOINT_ONLY) {
+                 robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
+            }
+
+            if(gamepad1.back && robotSettings.distanceMethod == RobotSettings.DistanceMethod.LIMELIGHT_ONLY) {
+                robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
             pinpoint.update();
@@ -110,12 +125,15 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setLocked(locked);
             swerveDrivetrain.updateModules();
 
-            telemetry.addData("Bot Heading", botHeading);
-            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());
-            telemetry.addData("loop time", loopTimer.elapsedTime());
+            logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
+            logger.log("Swerve Tele \n",swerveDrivetrain.getTele(), Logger.LogLevels.DEBUG);
+            logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.right_bumper);
-            launcherFSM.updateState(gamepad1.b,gamepad1.dpad_up,gamepad1.left_bumper);
+            launcherFSM.updateState(gamepad1.b,gamepad1.dpad_up,gamepad1.left_bumper,gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right,gamepad2.y,gamepad2.a,gamepad2.b,gamepad2.x, gamepad2.left_bumper, gamepad2.right_bumper);
+
+            intakeFSM.log();
+            transferFSM.log();
             launcherFSM.log();
 
             telemetry.update();

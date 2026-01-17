@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 
 import java.util.concurrent.TimeUnit;
@@ -21,15 +22,21 @@ public class TransferFSM {
     private Telemetry telemetry;
     private GateFSM transferServoFSM;
     public static Timing.Timer autoMoveTimer;
+    public static Timing.Timer upTimer;
     private double counter = 0;
     boolean lastRightBumper;
     private boolean hasCountedCurrentCycle = false;
+    private Logger logger;
 
+    public static long DOWN_TIME = 1000;
+    public static long UP_TIME = 500;
 
-    public TransferFSM(HWMap hardwareMap, Telemetry telemetry) {
+    public TransferFSM(HWMap hardwareMap, Telemetry telemetry, Logger logger) {
+        this.logger = logger;
         this.telemetry = telemetry;
-        transferServoFSM = new GateFSM(hardwareMap, telemetry);
-        autoMoveTimer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
+        transferServoFSM = new GateFSM(hardwareMap, telemetry, logger);
+        autoMoveTimer = new Timing.Timer(DOWN_TIME, TimeUnit.MILLISECONDS);
+        upTimer = new Timing.Timer(UP_TIME,TimeUnit.MILLISECONDS);
     }
 
     public void updateState(boolean Right_Bumper) {
@@ -39,6 +46,10 @@ public class TransferFSM {
         switch (currentState) {
             case TRANSFERING:
                 if(transferServoFSM.AT_DOWN()) {
+                    if(!upTimer.isTimerOn()) {
+                        upTimer.start();
+                    }
+                    upTimer.start();
                     hasCountedCurrentCycle = false;
                     if(autoMoveTimer.done() || counter == 0) {
                         autoMoveTimer.pause();
@@ -54,7 +65,8 @@ public class TransferFSM {
                         }
                     }
                 }
-                else if(transferServoFSM.AT_UP()) {
+                else if(transferServoFSM.AT_UP() && upTimer.done()) {
+                    upTimer.pause();
                     transferServoFSM.MoveDown();
                     if(!autoMoveTimer.isTimerOn()) {
                         autoMoveTimer.start();
@@ -73,8 +85,6 @@ public class TransferFSM {
                 }
                 break;
         }
-        telemetry.addData("Transfer Current State ", currentState);
-        telemetry.addData("Auto Move Timer ", autoMoveTimer.elapsedTime());
     }
 
     public void findTargetState(boolean Right_Bumper) {
@@ -86,5 +96,19 @@ public class TransferFSM {
         }
         lastRightBumper = Right_Bumper;
 
+    }
+
+    public boolean TRANSFERING() {
+        return currentState == State.TRANSFERING;
+    }
+
+    public boolean TRANSFERED() {
+        return currentState == State.TRANSFERED;
+    }
+
+    public void log() {
+        logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
+        transferServoFSM.log();
+        logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
     }
 }

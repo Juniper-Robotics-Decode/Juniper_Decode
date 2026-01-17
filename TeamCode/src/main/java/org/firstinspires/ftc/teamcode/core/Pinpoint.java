@@ -18,18 +18,21 @@ public class Pinpoint {  // TODO: add junit
 
 
 
-    public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
+    public Pinpoint(HWMap hwMap, RobotSettings robotSettings, boolean isAuto) {
         odo = hwMap.getOdo();
         this.robotSettings = robotSettings;
         Xoffset = -132.5; Yoffset = 14.075;
         odo.setOffsets(Xoffset, Yoffset);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections( GoBildaPinpointDriver.EncoderDirection.FORWARD,  GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
        // odo.resetPosAndIMU();
 
        // Pose2D pose2D = new Pose2D(DistanceUnit.METER, 0, 0.0, AngleUnit.DEGREES, 0.0);
-        odo.setPosition(robotSettings.startPosState.getPose2D());
+      //  if (isAuto) {
+            odo.setPosition(robotSettings.startPosState.getPose2D());
+       // }
+
         update();
     }
 
@@ -68,8 +71,12 @@ public class Pinpoint {  // TODO: add junit
         return y;
     }
 
-    public void resetPosAndIMU() {
-        odo.resetPosAndIMU();
+    public void resetIMU() {
+        odo.setPosition(new Pose2D(DistanceUnit.METER,x,y,AngleUnit.DEGREES,0));
+    }
+
+    public void resetPos() {
+        odo.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,heading));
     }
 
     public double getGoalDistance() {

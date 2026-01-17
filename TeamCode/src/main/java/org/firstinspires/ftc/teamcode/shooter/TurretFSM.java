@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
@@ -36,12 +37,22 @@ public class TurretFSM {
 
     public static double TURRET_OFFSET = 3;
 
+    private double MANUAL_OFFSET = 0;
+
+    public boolean isCalibrating = false;
 
     int i = 0;
     
     Telemetry telemetry;
 
-    public TurretFSM(HWMap hwMap, Telemetry telemetry) {
+    private boolean lastUp = false;
+    private boolean lastDown = false;
+    private boolean lastLeft = false;
+    private boolean lastRight = false;
+
+    Logger logger;
+    public TurretFSM(HWMap hwMap, Telemetry telemetry, Logger logger) {
+        this.logger = logger;
         turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio, false);
         turretMotor.resetEncoder();
         state = States.ALIGNING;
@@ -65,11 +76,13 @@ public class TurretFSM {
         pidController.setPID(P,I,D);
         pidController.setTolerance(TOLERANCE);
         turretMotor.readPosition();
-        if(targetAngle > UPPER_HARD_STOP) {
-            targetAngle = UPPER_HARD_STOP;
-        }
-        else if (targetAngle < LOWER_HARD_STOP) {
-            targetAngle = LOWER_HARD_STOP;
+
+        if(!isCalibrating) {
+            if (targetAngle > UPPER_HARD_STOP) {
+                targetAngle = UPPER_HARD_STOP;
+            } else if (targetAngle < LOWER_HARD_STOP) {
+                targetAngle = LOWER_HARD_STOP;
+            }
         }
 
 /*
@@ -98,14 +111,38 @@ public class TurretFSM {
         return -(Math.signum(normalizeDegrees(targetAngle - measuredAngle) - (360 - normalizeDegrees(targetAngle - measuredAngle))));
     }
 
-    public void setTargetAngle(double turretError) {
+    public void setTargetAngle(double turretError, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean leftBumper2) {
+
+        if(leftBumper2) {
+            isCalibrating = !isCalibrating;
+        }
+
+        if(dPadUp2 && !lastUp) {
+            MANUAL_OFFSET = MANUAL_OFFSET + 10;
+        }
+        if(dPadDown2 && !lastDown) {
+            MANUAL_OFFSET = MANUAL_OFFSET - 10;
+        }
+        if(dPadRight2 && !lastRight) {
+            MANUAL_OFFSET = MANUAL_OFFSET + 1;
+        }
+        if(dPadLeft2 && !lastLeft) {
+            MANUAL_OFFSET = MANUAL_OFFSET - 1;
+        }
+
+        lastUp = dPadUp2;
+        lastDown = dPadDown2;
+        lastLeft = dPadLeft2;
+        lastRight = dPadRight2;
+
+
         if(i >= 0) {
             if(PositionFSM.sensor == PositionFSM.Sensor.PINPOINT) {
-                targetAngle = -turretError;
+                targetAngle = -turretError + MANUAL_OFFSET;
             }
             else {
                 if(i >= 50) {
-                    targetAngle = turretMotor.getScaledPos() + turretError + TURRET_OFFSET;
+                    targetAngle = turretMotor.getScaledPos() + turretError + TURRET_OFFSET + MANUAL_OFFSET;
                     i = 0;
                 }
                 else {
@@ -123,13 +160,21 @@ public class TurretFSM {
     }
 
     public void log() {
-        telemetry.addData("turret state", state);
-        telemetry.addData("turret target angle", targetAngle);
-        telemetry.addData("turret current angle", turretMotor.getScaledPos());
+        logger.log("-----------Turret-------", "", Logger.LogLevels.PRODUCTION);
+        logger.log("Turret Manual offset", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
+        logger.log("turret state", state, Logger.LogLevels.DEBUG);
+        logger.log("turret target angle", targetAngle, Logger.LogLevels.PRODUCTION);
+        logger.log("turret current angle", turretMotor.getScaledPos(), Logger.LogLevels.PRODUCTION);
     }
 
     public double getCurrentAngle() {
         return turretMotor.getScaledPos();
+    }
+
+    public void resetTurret() {
+        turretMotor.resetEncoder();
+        MANUAL_OFFSET = 0;
+        targetAngle = 0;
     }
 
 

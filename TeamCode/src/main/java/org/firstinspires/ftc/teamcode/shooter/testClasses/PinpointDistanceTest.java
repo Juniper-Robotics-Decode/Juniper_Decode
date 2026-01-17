@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.MainAuto;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
@@ -40,7 +39,6 @@ public class PinpointDistanceTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MainAuto.ALLIANCE = "RED";
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
         HeadingRate = new SlewRateLimiter(headingrate);
@@ -50,7 +48,7 @@ public class PinpointDistanceTest extends LinearOpMode {
 
         RobotSettings robotSettings = new RobotSettings();
         HWMap hwMap = new HWMap(hardwareMap);
-        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings);
+        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings,false);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap);
@@ -67,7 +65,7 @@ public class PinpointDistanceTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.options) {
-                pinpoint.resetPosAndIMU();
+                pinpoint.resetIMU();
             }
 
             pinpoint.update();

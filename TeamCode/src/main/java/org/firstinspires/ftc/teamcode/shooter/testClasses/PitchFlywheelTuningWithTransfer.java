@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
@@ -49,12 +50,16 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     public static double targetVelocityTicks;
 
+    private Logger logger;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
-        intakeFSM = new IntakeFSM(hwMap,telemetry);
-        transferFSM = new TransferFSM(hwMap, telemetry);
+
+        transferFSM = new TransferFSM(hwMap, telemetry, logger);
+        intakeFSM = new IntakeFSM(hwMap,telemetry, transferFSM,logger);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 @Config
 public class GateFSM {
@@ -16,8 +17,8 @@ public class GateFSM {
     private Telemetry telemetry;
     private AxonServoWrapper transferServo;
     public State currentState;
-    public static double positionUp = .3;
-    public static double positionDown = 0.04;
+    public static double positionUp = .38;
+    public static double positionDown = 0.55;
     public static double targetPosition = positionDown;
 
     public static double UPPER_HARD_STOP = 1;
@@ -27,8 +28,10 @@ public class GateFSM {
 
     public static double TOLERANCE_UP = 0.07;
 
+    private Logger logger;
 
-    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
+    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
+        this.logger = logger;
         transferServo = new AxonServoWrapper(intaketransferhwmap.getTransferServo(),intaketransferhwmap.getTransferEncoder(),false,false,0);
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
@@ -79,6 +82,12 @@ public class GateFSM {
         telemetry.addData("error", error);
 
         transferServo.setPos(targetPosition);
+    }
+
+    public void log(){
+        logger.log("Current Position ", transferServo.getLastReadPos(), Logger.LogLevels.DEBUG);
+        logger.log("Target Position ", targetPosition, Logger.LogLevels.DEBUG);
+        logger.log("ServoFSM State ", currentState, Logger.LogLevels.DEBUG);
     }
 
 }

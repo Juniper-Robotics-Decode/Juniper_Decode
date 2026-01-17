@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
@@ -19,11 +20,11 @@ import java.util.function.DoubleSupplier;
 public class PositionFSM {
 
     public enum States {
-        ZONE_1(10), // TODO: check does pitch at 22.5 equal like almost 360?
-        ZONE_2(10),
+        ZONE_1(30), // TODO: check does pitch at 22.5 equal like almost 360?
+        ZONE_2(26),
         ZONE_3(24),
         ZONE_4(15),
-        ZONE_5(30),
+        ZONE_5(16),
 
         NO_VALID_TARGET;
 
@@ -83,7 +84,13 @@ public class PositionFSM {
 
     private Pose2D newPoseRelocal = null;
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings) {
+    private boolean lastRightBumper = false;
+
+    private Logger logger;
+
+
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings, Logger logger) {
+        this.logger = logger;
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
         this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
@@ -94,7 +101,12 @@ public class PositionFSM {
         this.robotSettings = robotSettings;
     }
 
-    public void updateState() {
+    public void updateState(boolean rightBumper2) {
+        if(rightBumper2 && !lastRightBumper) {
+            resetOdo();
+        }
+
+        lastRightBumper = rightBumper2;
         limelightCamera.update();
         chooseSensor();
 
@@ -161,11 +173,13 @@ public class PositionFSM {
 
         // distance (m) , velocity (rpm)
 
-        velocityMapLL.add(1.35, 2550);
+        velocityMapLL.add(0.5,2500);
+        velocityMapLL.add(1.35, 2600);
         velocityMapLL.add(1.58, 2625);
         velocityMapLL.add(2.21, 2900);
         velocityMapLL.add(2.85, 3050);
-        velocityMapLL.add(3.25, 3600);
+        velocityMapLL.add(3.25, 3250);
+        velocityMapLL.add(3.5,3300);
         velocityMapLL.createLUT();
 
 
@@ -174,17 +188,19 @@ public class PositionFSM {
         velocityMapPP = new InterpLUT();
 
 
-        velocityMapPP.add(0.5, flywheelRPM);
-        velocityMapPP.add(1.44, flywheelRPM);
-        velocityMapPP.add(2.04, flywheelRPM);
-        velocityMapPP.add(2.63, flywheelRPM);
-        velocityMapPP.add(3.03, flywheelRPM);
+        velocityMapPP.add(0.5,2500);
+        velocityMapPP.add(1.19, 2600);
+        velocityMapPP.add(1.44, 2625);
+        velocityMapPP.add(2.04, 2900);
+        velocityMapPP.add(2.63, 3050);
+        velocityMapPP.add(3.03, 3250);
+        velocityMapPP.add(3.5,3350);
         velocityMapPP.createLUT();
 
     }
 
     public void findFlywheelTargetVelocity(double distance_m) {
-        if(distance_m < 0.5 || distance_m > 2.8 || Double.isNaN(distance_m)) {
+        if(distance_m <= 0.5 || distance_m >= 3.5 || Double.isNaN(distance_m)) {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {
@@ -287,39 +303,41 @@ public class PositionFSM {
 
 
     public void log() {
-        telemetry.addLine("----------POSITION FSM LOG----------");
-        telemetry.addData("position FSM state", state);
-        telemetry.addData("Current shooting Sensor", sensor);
-        telemetry.addData("Flywheel Target", flywheelTargetVelocityRPM);
-        telemetry.addData("Pitch Target", pitchTargetAngle);
-        telemetry.addData("Turret Error", turretError);
+        logger.log("----------POSITION FSM LOG----------", "", Logger.LogLevels.PRODUCTION);
+        logger.log("position FSM state", state, Logger.LogLevels.DEBUG);
+        logger.log("Current shooting Sensor", sensor, Logger.LogLevels.PRODUCTION);
+        logger.log("Flywheel Target", flywheelTargetVelocityRPM, Logger.LogLevels.DEBUG);
+        logger.log("Pitch Target", pitchTargetAngle, Logger.LogLevels.DEBUG);
+        logger.log("Turret Error", turretError, Logger.LogLevels.DEBUG);
 
 
-        telemetry.addLine("----------LIMELIGHT LOG----------");
-        telemetry.addData("robot x", limelightCamera.getxField());
-        telemetry.addData("robot y", limelightCamera.getyField());
-        telemetry.addData("X", limelightCamera.getX());
-        telemetry.addData("Y", limelightCamera.getY());
-        telemetry.addData("Z", limelightCamera.getZ());
-        telemetry.addData("Flat Distance", limelightCamera.getFlatDistance());
-        telemetry.addData("tx",limelightCamera.getTx());
-        telemetry.addData("ty", limelightCamera.getTy());
-        telemetry.addData("Has target", limelightCamera.hasTarget());
-        telemetry.addLine("----------LIMELIGHT LOG----------");
+        logger.log("----------LIMELIGHT LOG----------", "", Logger.LogLevels.PRODUCTION);
+        logger.log("X", limelightCamera.getX(), Logger.LogLevels.DEBUG);
+        logger.log("Y", limelightCamera.getY(), Logger.LogLevels.DEBUG);
+        logger.log("Z", limelightCamera.getZ(), Logger.LogLevels.DEBUG);
+        logger.log("Flat Distance", limelightCamera.getFlatDistance(), Logger.LogLevels.DEBUG);
+        logger.log("tx", limelightCamera.getTx(), Logger.LogLevels.DEBUG);
+        logger.log("ty", limelightCamera.getTy(), Logger.LogLevels.DEBUG);
+        logger.log("Has target", limelightCamera.hasTarget(), Logger.LogLevels.PRODUCTION);
+        logger.log("----------LIMELIGHT LOG----------", "", Logger.LogLevels.PRODUCTION);
 
-        telemetry.addLine("----------PINPOINT LOG----------");
-        telemetry.addData("Goal Distance", pinpoint.getGoalDistance());
-        telemetry.addData("pinpoint heading error", pinpoint.getHeadingErrorTrig());
-        telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
+        logger.log("----------PINPOINT LOG----------", "", Logger.LogLevels.PRODUCTION);
+        logger.log("Goal Distance", pinpoint.getGoalDistance(), Logger.LogLevels.PRODUCTION);
+        logger.log("pinpoint heading error", pinpoint.getHeadingErrorTrig(), Logger.LogLevels.PRODUCTION);
+        logger.log("pinpoint ready", pinpoint.pinpointReady(), Logger.LogLevels.PRODUCTION);
+        logger.log("Pinpoint x", pinpoint.getX(), Logger.LogLevels.PRODUCTION);
+        logger.log("Pinpoint y", pinpoint.getY(), Logger.LogLevels.PRODUCTION);
+        logger.log("----------PINPOINT LOG----------", "", Logger.LogLevels.PRODUCTION);
+
+        logger.log("----------POSITION FSM LOG----------", "", Logger.LogLevels.PRODUCTION);
+
+        /*
         if(newPoseRelocal != null) {
             telemetry.addData("Relocalization new Pos x", newPoseRelocal.getX(DistanceUnit.METER));
             telemetry.addData("Relocalization new Pos y", newPoseRelocal.getY(DistanceUnit.METER));
-        }
+        }*/
 
 
-        telemetry.addLine("----------PINPOINT LOG----------");
-
-        telemetry.addLine("----------POSITION FSM LOG----------");
     }
 
     public Pose2D getRobotPos() {
@@ -327,6 +345,10 @@ public class PositionFSM {
             newPoseRelocal = new Pose2D(DistanceUnit.METER, limelightCamera.getxField(), limelightCamera.getyField(), AngleUnit.DEGREES, pinpoint.getHeading());
         //}
         return newPoseRelocal;
+    }
+
+    public void resetOdo() {
+        pinpoint.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,pinpoint.getHeading()));
     }
 
 }

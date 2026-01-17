@@ -5,7 +5,9 @@ import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.intaketransfer.IntakeServoFSM;
+import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +29,17 @@ public class IntakeFSM {
     private Telemetry telemetry;
     Timing.Timer autoReverseTimer;
 
-    public IntakeFSM(HWMap hardwareMap, Telemetry telemetry) {
+    TransferFSM transferFSM;
+
+    Logger logger;
+
+    public IntakeFSM(HWMap hardwareMap, Telemetry telemetry, TransferFSM transferFSM, Logger logger) {
+        this.transferFSM = transferFSM;
         autoReverseTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
-        Roller = new RollerFSM(hardwareMap, telemetry);
+        Roller = new RollerFSM(hardwareMap, telemetry, logger);
         Servo = new IntakeServoFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
+        this.logger = logger;
     }
 
     public void updateState(boolean YPress, boolean D_Pad_Left_Press) {
@@ -74,15 +82,14 @@ public class IntakeFSM {
 
 
         }
-        telemetry.addData("Intake Current State ", currentState);
     }
 
     public void findTargetState(boolean YPress, boolean D_Pad_Left_Press) {
 
-        if (YPress && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED)) {
+        if (YPress && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED || currentState == State.RAMPING_UP_TO_INTAKE)) {
             currentState = State.RAMPING_UP_TO_EJECT;
 
-        } else if (YPress && (currentState == State.EJECTING)) {
+        } else if (YPress && (Roller.EJECTING())) {
             currentState = State.RAMPING_UP_TO_INTAKE;
 
         }
@@ -104,5 +111,11 @@ public class IntakeFSM {
             currentState = State.RAMPING_UP_TO_EJECT;
         }
                                                                                                     */
+    }
+
+    public void log(){
+        logger.log("Intake Current State ", currentState, Logger.LogLevels.DEBUG);
+        Roller.log();
+
     }
 }
