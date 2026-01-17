@@ -32,7 +32,6 @@ public class ColorSensorFSM{
 
         if (sensorID == 1) CS = hwMap.getColorSensor1();
         else if (sensorID == 2) CS = hwMap.getColorSensor2();
-        else CS = hwMap.getColorSensor3();
 
         this.state = states.EMPTY;
         this.detectedMotif = emptyStr;
