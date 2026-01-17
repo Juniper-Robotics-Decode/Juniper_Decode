@@ -174,12 +174,12 @@ public class PositionFSM {
         // distance (m) , velocity (rpm)
 
         velocityMapLL.add(0.5,2500);
-        velocityMapLL.add(1.35, 2600);
+        velocityMapLL.add(1.35, 2550);
         velocityMapLL.add(1.58, 2625);
-        velocityMapLL.add(2.21, 2900);
-        velocityMapLL.add(2.85, 3050);
-        velocityMapLL.add(3.25, 3250);
-        velocityMapLL.add(3.5,3300);
+        velocityMapLL.add(2.21, 3050);
+        velocityMapLL.add(2.85, 3400);
+        velocityMapLL.add(3.25, 3700);
+        velocityMapLL.add(3.5,4000);
         velocityMapLL.createLUT();
 
 
@@ -190,11 +190,11 @@ public class PositionFSM {
 
         velocityMapPP.add(0.5,2500);
         velocityMapPP.add(1.19, 2600);
-        velocityMapPP.add(1.44, 2625);
+        velocityMapPP.add(1.44, 2600);
         velocityMapPP.add(2.04, 2900);
-        velocityMapPP.add(2.63, 3050);
-        velocityMapPP.add(3.03, 3250);
-        velocityMapPP.add(3.5,3350);
+        velocityMapPP.add(2.63, 3250);
+        velocityMapPP.add(3.03, 3700);
+        velocityMapPP.add(3.5,4000);
         velocityMapPP.createLUT();
 
     }

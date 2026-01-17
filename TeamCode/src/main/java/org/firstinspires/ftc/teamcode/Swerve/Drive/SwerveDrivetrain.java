@@ -37,7 +37,7 @@ public class SwerveDrivetrain {
 
     double targetheading = 0.0;
     private boolean headingLocked = false;
-    private PIDFController headingController = new PIDFController(0.55, 0, 0, 0);
+    private PIDFController headingController = new PIDFController(-0.05, 0, 0, 0);
     private double P,I,D,F;
 
     private boolean locked = false;

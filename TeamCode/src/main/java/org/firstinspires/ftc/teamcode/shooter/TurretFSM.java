@@ -138,7 +138,8 @@ public class TurretFSM {
 
         if(i >= 0) {
             if(PositionFSM.sensor == PositionFSM.Sensor.PINPOINT) {
-                targetAngle = -turretError + MANUAL_OFFSET;
+                //targetAngle = -turretError + MANUAL_OFFSET;
+                targetAngle = MANUAL_OFFSET;
             }
             else {
                 if(i >= 50) {

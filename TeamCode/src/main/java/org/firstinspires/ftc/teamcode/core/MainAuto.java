@@ -209,6 +209,7 @@ public class MainAuto extends LinearOpMode {
     }
 
     public void farSide() {
+        telemetry.addData("FAAAAAAAAR", "");
         double voltage = hwMap.getVoltageSensor().getVoltage();
 
         pinpoint.update();
@@ -218,13 +219,13 @@ public class MainAuto extends LinearOpMode {
         launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false, false);
 
         switch (pathState) {
-            case 0:
-                transferFSM.updateState(true);
-                if(transferFSM.TRANSFERED()) {
+            /*case -1:
+                //transferFSM.updateState(true);
+                //if(transferFSM.TRANSFERED()) {
                     pathState = 1;
-                }
-                break;
-            case 1:
+                //}
+                break;*/
+            case 0:
                 transferFSM.updateState(false);
                 if (!pathTimer1_FAR.isTimerOn()) {
                     pathTimer1_FAR.start();
@@ -246,7 +247,8 @@ public class MainAuto extends LinearOpMode {
                 swerveDrivetrain.setLocked(locked);
                 swerveDrivetrain.updateModules();
                 if (pathTimer1_FAR.done()) {
-                    pathState = 2;
+                    pathTimer1_FAR.pause();
+                    pathState = 1;
                 }
                 break;
             case 2:
