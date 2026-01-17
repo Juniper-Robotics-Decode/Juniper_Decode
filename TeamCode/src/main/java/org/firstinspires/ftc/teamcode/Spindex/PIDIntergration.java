@@ -73,7 +73,9 @@ public class PIDIntergration extends LinearOpMode{
                     spindexMotor.set(1);
                 }
             }
-
+//NEED TO DO TESTING OF BALLS AND STUFF IN DIFFERENT POSITIONS FOR STDV and then based of that data see if/what to do for:
+            // //get one color data, run for 25 loops,
+            //    // add the green value each time then find mean(total/25) = mean use for standard deviation
             pidChanges.PIDMoveCalc(getRuntime());
             telemetry.addData("Pocket 1 [0]", pocket1);
             telemetry.addData("P1 RGB", rVals[0] + ", " + gVals[0] + ", " + bVals[0]);
