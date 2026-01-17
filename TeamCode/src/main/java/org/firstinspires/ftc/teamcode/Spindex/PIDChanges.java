@@ -25,6 +25,7 @@ public class PIDChanges{
     double velI = 0.01;
     double velD = 0.0001;
     double velF = 1.0 / 245.0;
+    double currentPosition;
 
     double tolerance = 1.5;
     double CPR = 537.7; // gobilda 5203 series
@@ -46,7 +47,7 @@ public class PIDChanges{
     public void method(double runtime){
         spindexMotor.resetEncoder();
         lastTime = runtime;
-        lastIndexTime = runtime;
+      //  lastIndexTime = runtime;
 //            boolean dpadPressed = gamepad1.dpad_down;
 //            if (dpadPressed && !lastDpadState) {
 //                velocityMode = !velocityMode;
@@ -60,15 +61,13 @@ public class PIDChanges{
 //            if (velocityMode) {
 //                PIDVel(40);
 //            } else {
-
-            telemetry.addData("Mode", velocityMode ? "Velocity" : "Position");
-            telemetry.addData("Pocket", pocket);
-            telemetry.addData("Target Angle", targetAngle);
-            telemetry.update();
+         //   telemetry.addData("Mode", velocityMode ? "Velocity" : "Position");
+         //   telemetry.addData("Pocket", pocket);
+          //  telemetry.addData("Target Angle", targetAngle);
         spindexMotor.set(0);
     }
     public void PIDMoveCalc(double runtime) {
-        double currentPosition = (spindexMotor.readandGetPosTicks() / CPR) * 360.0;
+         currentPosition = (spindexMotor.readandGetPosTicks() / CPR) * 360.0;
 
         double error = targetAngle - currentPosition;
         if (Math.abs(error) <= tolerance && runtime - lastIndexTime > 0.5) {
