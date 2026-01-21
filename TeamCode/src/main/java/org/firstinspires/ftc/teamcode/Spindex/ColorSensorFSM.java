@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
-@TeleOp
 public class ColorSensorFSM{
     public enum states{
         EMPTY,
