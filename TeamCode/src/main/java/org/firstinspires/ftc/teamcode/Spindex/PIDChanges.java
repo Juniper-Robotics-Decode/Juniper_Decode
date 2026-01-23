@@ -1,18 +1,11 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
-public class PIDChanges{
+public class PIDChanges {
     private TouchSensorMotorFSM touchSensorMotorFSM;
     private Telemetry telemetry;
     public int x, y, target;
@@ -25,7 +18,7 @@ public class PIDChanges{
     double velI = 0.01;
     double velD = 0.0001;
     double velF = 1.0 / 245.0;
-    double currentPosition;
+    public double currentPosition;
 
     double tolerance = 1.5;
     double CPR = 537.7; // gobilda 5203 series
@@ -34,7 +27,7 @@ public class PIDChanges{
     double lastTime = 0;
     double lastIndexTime = 0;
     int pocket = 0;
-    double targetAngle = 0;
+    public double targetAngle = 0;
     boolean velocityMode = false;
     boolean lastDpadState = false;
 
@@ -47,7 +40,7 @@ public class PIDChanges{
     public void method(double runtime){
         spindexMotor.resetEncoder();
         lastTime = runtime;
-      //  lastIndexTime = runtime;
+        //  lastIndexTime = runtime;
 //            boolean dpadPressed = gamepad1.dpad_down;
 //            if (dpadPressed && !lastDpadState) {
 //                velocityMode = !velocityMode;
@@ -61,13 +54,14 @@ public class PIDChanges{
 //            if (velocityMode) {
 //                PIDVel(40);
 //            } else {
-         //   telemetry.addData("Mode", velocityMode ? "Velocity" : "Position");
-         //   telemetry.addData("Pocket", pocket);
-          //  telemetry.addData("Target Angle", targetAngle);
+        //   telemetry.addData("Mode", velocityMode ? "Velocity" : "Position");
+        //   telemetry.addData("Pocket", pocket);
+        //  telemetry.addData("Target Angle", targetAngle);
         spindexMotor.set(0);
     }
+
     public void PIDMoveCalc(double runtime) {
-         currentPosition = (spindexMotor.readandGetPosTicks() / CPR) * 360.0;
+        currentPosition = (spindexMotor.readandGetPosTicks() / CPR) * 360.0;
 
         double error = targetAngle - currentPosition;
         if (Math.abs(error) <= tolerance && runtime - lastIndexTime > 0.5) {
@@ -95,9 +89,10 @@ public class PIDChanges{
         telemetry.addData("Vel Target", target);
         telemetry.addData("Vel Actual", currentVelocity);
     }
+
     public void PIDPos(double target) {
-        double currentPosition = (spindexMotor.readandGetPosTicks() / CPR) * 360.0;
-        double error = target - currentPosition;
+        double currentPos = (spindexMotor.readandGetPosTicks() / CPR) * 360.0;
+        double error = target - currentPos;
         double velocity = spindexMotor.getVelocity();
         double correction = (P * error) - (D * velocity);
         double minPower = 0.18;
