@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -135,5 +134,5 @@ public class SpindexFSM {
             target = (y * 120) + touchSensorMotorFSM.offset;
             spindexMotor.setTarget(target);
         }
-    } // not needed anymore as shooting is different now
+    } // The x y and ball no ball thing is currently  not needed anymore as shooting is different now
 }

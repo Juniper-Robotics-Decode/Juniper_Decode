@@ -21,7 +21,7 @@ public class SpindexTeleOp extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
      //       shooting = gamepad1.right_bumper;
-            spindexFSM.updateState(shooting);
+            spindexFSM.updateState(shooting); //WIll be replace my gamepad shoot button later
             telemetry.update();
         }
     }
