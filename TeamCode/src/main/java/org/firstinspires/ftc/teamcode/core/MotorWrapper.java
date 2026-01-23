@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.core;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -11,19 +10,19 @@ public class MotorWrapper {
     private double ratio;
     private final double TICK_PER_REVOLUTION;
 
-    public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio) {
+    public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio, double TICK_PER_REVOLUTION) {
         this.motorEx = motorEx;
+        this.TICK_PER_REVOLUTION = TICK_PER_REVOLUTION;
         if (velocityControl) {
             motorEx.setRunMode(Motor.RunMode.VelocityControl);
         }
 
         this.ratio = ratio;
-        TICK_PER_REVOLUTION = 145.1;
     }
 
     // POWER
 
-/**
+    /**
      Description: The set method is a wrapper of the motor set method
      @param : the power to set the motor at
      */
@@ -37,7 +36,7 @@ public class MotorWrapper {
     }
 
     // VELOCITY
-/**
+    /**
      Description: The following method reads the encoder to get velocity of the motor
      @return: the velocity that is just read
      */
@@ -47,7 +46,7 @@ public class MotorWrapper {
     }
 
 
-/**
+    /**
      Description: The following method gets the velocity of the motor that was last read
      @return: the velocity that was read before
      */
@@ -92,5 +91,10 @@ public class MotorWrapper {
         motorEx.stopAndResetEncoder();
     }
 
+    public void setTarget(int target){
+        motorEx.setTargetPosition(target);
+    }
+
 }
+
 
