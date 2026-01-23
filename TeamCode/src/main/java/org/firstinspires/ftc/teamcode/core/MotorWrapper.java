@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.core;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -16,6 +15,7 @@ public class MotorWrapper {
 
     public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio, boolean inverse) {
         this.motorEx = motorEx;
+        this.TICK_PER_REVOLUTION = 145.1;
         if (velocityControl) {
             motorEx.setRunMode(Motor.RunMode.VelocityControl);
 
@@ -26,7 +26,6 @@ public class MotorWrapper {
         }
 
         this.ratio = ratio;
-        TICK_PER_REVOLUTION = 145.1;
     }
 
     // POWER
