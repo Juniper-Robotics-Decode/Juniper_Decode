@@ -24,7 +24,7 @@ public class SpindexFSM {
 
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
-        colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry, 1);
+        colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
         pidChanges = new PIDChanges(hwMap, telemetry);
         this.telemetry = telemetry;
         this.spindexMotor = touchSensorMotorFSM.spindexMotor;

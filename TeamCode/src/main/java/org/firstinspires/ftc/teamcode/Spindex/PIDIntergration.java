@@ -31,7 +31,7 @@ public class PIDIntergration extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         HWMapSpindex hwMap = new HWMapSpindex(hardwareMap);
 
-        colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry, 1);
+        colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
         spindexFSM = new SpindexFSM(hwMap, telemetry);
         pidChanges = new PIDChanges(hwMap, telemetry);
