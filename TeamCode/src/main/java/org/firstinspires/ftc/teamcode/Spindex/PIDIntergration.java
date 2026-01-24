@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.Spindex;
-
+//1
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.internal.ftdi.VendorAndProductIds;
+
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 import org.firstinspires.ftc.teamcode.Spindex.PIDChanges;

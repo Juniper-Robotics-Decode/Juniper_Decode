@@ -28,6 +28,7 @@ public class SpindexFSM {
     private Telemetry telemetry; private String[] detectedMotif = new String[3];
     public int ball, noBall, x, y, currentIndex, target;
     public MotorWrapper spindexMotor;
+    //1
 
 
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {

@@ -34,7 +34,7 @@ public class ColorSensorFSM{
         this.state = states.EMPTY;
         this.detectedMotif = emptyStr;
         this.telemetry = telemetry;
-
+//1
         state= states.EMPTY; // default
     }
     public void updateState() {
