@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.pedropathing.geometry.Pose;
@@ -315,7 +316,9 @@ public class CustomSwerveConstants {
         lrRotationKD = 0.0;
         rfRotationKD = 0.0;
         rrRotationKD = 0.0;
-        leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
+        leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE;*/
+/**//*
+
         leftRearMotorDirection = DcMotorSimple.Direction.REVERSE;
         rightFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
         rightRearMotorDirection = DcMotorSimple.Direction.REVERSE;
@@ -325,3 +328,4 @@ public class CustomSwerveConstants {
         rightRearServoDirection = DcMotorSimple.Direction.FORWARD;
     }
 }
+*/

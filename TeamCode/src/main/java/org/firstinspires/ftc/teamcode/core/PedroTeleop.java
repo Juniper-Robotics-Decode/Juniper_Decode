@@ -12,15 +12,9 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
-import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
-import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
-import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
-import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.shooter.ShooterFSM;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.concurrent.TimeUnit;
 
