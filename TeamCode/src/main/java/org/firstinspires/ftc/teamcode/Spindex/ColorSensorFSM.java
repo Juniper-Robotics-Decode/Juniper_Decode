@@ -29,18 +29,10 @@ public class ColorSensorFSM{
     public RevColorSensorV3 CS1;
     public RevColorSensorV3 CS2;
     public RevColorSensorV3 CS3;
-    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry, int sensorID) {
-        CS1 = hwMap.getColorSensor1();
-        CS2 = hwMap.getColorSensor2();
-        CS3 = hwMap.getColorSensor3();
-        if (sensorID == 1) CS = CS1;
-        else if (sensorID == 2) CS = CS2;
-        else CS = CS3;
-
+    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
+        this.CS = hwMap.getColorSensor1();
         this.state = states.EMPTY;
         this.detectedMotif = emptyStr;
-
-
         this.telemetry = telemetry;
 
         state= states.EMPTY; // default

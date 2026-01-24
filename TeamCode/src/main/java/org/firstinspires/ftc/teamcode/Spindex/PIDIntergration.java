@@ -29,7 +29,7 @@ public class PIDIntergration extends LinearOpMode{
         EMPTY
     }
     public PIDIntergration(HWMapSpindex hwMap, Telemetry telemetry){
-            colorSensorsFSM = new ColorSensorFSM(hwMap,telemetry,1);
+            colorSensorsFSM = new ColorSensorFSM(hwMap,telemetry);
             touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
             spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
 
