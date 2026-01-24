@@ -25,15 +25,9 @@ public class ColorSensorFSM{
     private final String purpleStr = "Purple";
     private final String emptyStr = "Empty";
 
-    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry, int sensorID) {
-
-        if (sensorID == 1) CS = hwMap.getColorSensor1();
-        else if (sensorID == 2) CS = hwMap.getColorSensor2();
-
+    public ColorSensorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
+        this.CS = hwMap.getColorSensor1();
         this.state = states.EMPTY;
-        this.detectedMotif = emptyStr;
-
-
         this.telemetry = telemetry;
 
         state= states.EMPTY; // default
