@@ -114,9 +114,6 @@ public class HWMap {
         return colorSensor3;
     }
 
-    public RevTouchSensor getTouchSensor1() {
-        return TCS1;
-    }
     public AnalogInput getAnalogInput1(){
         return AI1;
     }

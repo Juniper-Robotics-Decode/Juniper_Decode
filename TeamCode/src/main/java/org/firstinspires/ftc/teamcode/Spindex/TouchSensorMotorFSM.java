@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 import org.firstinspires.ftc.teamcode.Spindex.SpindexFSM.modes;
-@TeleOp
+
 public class TouchSensorMotorFSM {
     public enum states {
         POSITION_1,
