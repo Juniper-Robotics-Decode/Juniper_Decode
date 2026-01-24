@@ -189,9 +189,9 @@ public class PositionFSM {
 
 
         velocityMapPP.add(0.5,2500);
-        velocityMapPP.add(1.19, 2600);
-        velocityMapPP.add(1.44, 2600);
-        velocityMapPP.add(2.04, 2900);
+        velocityMapPP.add(1.19, 2500);
+        velocityMapPP.add(1.44, 2500);
+        velocityMapPP.add(2.04, 2700);
         velocityMapPP.add(2.63, 3250);
         velocityMapPP.add(3.03, 3700);
         velocityMapPP.add(3.5,4000);
@@ -208,8 +208,7 @@ public class PositionFSM {
                 flywheelTargetVelocityRPM = velocityMapLL.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
             }
             else {
-                flywheelTargetVelocityRPM = flywheelRPM;
-               // flywheelTargetVelocityRPM = velocityMapPP.get(distance_m + PINPOINT_OFFSET);
+                flywheelTargetVelocityRPM = velocityMapPP.get(distance_m + PINPOINT_OFFSET);
             }
         }
 

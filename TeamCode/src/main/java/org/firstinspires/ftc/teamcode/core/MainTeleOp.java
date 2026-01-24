@@ -109,7 +109,7 @@ public class MainTeleOp extends LinearOpMode {
 
             pinpoint.update();
             pos = pinpoint.getPos();
-            double botHeading = -pos.getHeading(RADIANS);
+            double botHeading = (-pos.getHeading(RADIANS)) + Math.PI/2; // + Math.PI/2
 
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(botHeading), HeadingRate.calculate(drive.heading));

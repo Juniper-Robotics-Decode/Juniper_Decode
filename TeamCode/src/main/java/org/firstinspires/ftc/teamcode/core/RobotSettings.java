@@ -37,10 +37,10 @@ public class RobotSettings {
         LIMELIGHT_AND_PINPOINT
     }
     public enum StartPos{
-        CLOSE_RED (new Pose2D(DistanceUnit.METER, -1.2, 1.2, AngleUnit.DEGREES, 45)),
-        FAR_RED (new Pose2D(DistanceUnit.METER, 1.64, -0.16, AngleUnit.DEGREES, 180)),
-        CLOSE_BLUE (new Pose2D(DistanceUnit.METER, -1.2, -1.2, AngleUnit.DEGREES, 45)),
-        FAR_BLUE((new Pose2D(DistanceUnit.METER, 1.64, 0.16, AngleUnit.DEGREES, 180)));
+        CLOSE_RED (new Pose2D(DistanceUnit.METER, -1.64, 0.16, AngleUnit.DEGREES, 0)),
+        FAR_RED (new Pose2D(DistanceUnit.METER, 1.64, 0.16, AngleUnit.DEGREES, 180)),
+        CLOSE_BLUE (new Pose2D(DistanceUnit.METER, -1.64, -0.16, AngleUnit.DEGREES, 0)),
+        FAR_BLUE((new Pose2D(DistanceUnit.METER, 1.64, -0.16, AngleUnit.DEGREES, 180)));
 
         private Pose2D pose2D;
 
@@ -59,6 +59,7 @@ public class RobotSettings {
 
     private static final String FILENAME = "RobotSettings.json";
 
+    // Writes file
     public void save() {
         File file = AppUtil.getInstance().getSettingsFile(FILENAME);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -69,6 +70,8 @@ public class RobotSettings {
         }
     }
 
+    // reads file and loads into program
+    // TODO: add a safety condition here it self so no null object refs
     public static RobotSettings load() {
         File file = AppUtil.getInstance().getSettingsFile(FILENAME);
         Gson gson = new Gson();
