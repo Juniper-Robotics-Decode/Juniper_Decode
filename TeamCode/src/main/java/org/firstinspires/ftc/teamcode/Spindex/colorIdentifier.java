@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,12 +11,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-
+@Config
 @TeleOp
 public class colorIdentifier extends LinearOpMode {
     private RevColorSensorV3 colorSensor1;
-
-
 
     @Override
     public void runOpMode() {
@@ -29,8 +28,7 @@ public class colorIdentifier extends LinearOpMode {
             int blue1 = colorSensor1.blue();
             int green1 = colorSensor1.green();
             double distance1 = colorSensor1.getDistance(DistanceUnit.MM);
-
-            if (distance1 > 92) {
+            if (distance1 > 95) {
                 telemetry.addData("Slot1(cs1): ", "Empty");
                 telemetry.addData("rVAL", colorSensor1.red());
                 telemetry.addData("gVAL", colorSensor1.green());
@@ -40,13 +38,14 @@ public class colorIdentifier extends LinearOpMode {
                 telemetry.addData("rVAL", colorSensor1.red());
                 telemetry.addData("gVAL", colorSensor1.green());
                 telemetry.addData("bVAL", colorSensor1.blue());
-            } else if (blue1 > red1 && blue1 > green1) {
+            } else if (blue1 > red1 && blue1 > green1){
                 telemetry.addData("Slot1(cs1): ", "Purple");
                 telemetry.addData("rVAL", colorSensor1.red());
                 telemetry.addData("gVAL", colorSensor1.green());
                 telemetry.addData("bVAL", colorSensor1.blue());
             }
             telemetry.addData("distance", distance1);
+
             telemetry.update();
         }
     }

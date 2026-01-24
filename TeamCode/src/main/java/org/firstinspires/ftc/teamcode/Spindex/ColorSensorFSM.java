@@ -60,7 +60,7 @@ public class ColorSensorFSM{
         int red = cs.red();
         double dREAD = cs.getDistance(DistanceUnit.MM);
 
-        if (dREAD <= 92) {
+        if (dREAD <= 95) {
             if (green > red && green > blue) {
                 return greenStr;
 

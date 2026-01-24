@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
-
+@Config
 public class SpindexFSM {
     public enum modes { INTAKNG, SHOOTING }
     public enum states { STOPPING_AT_TARGET, STOPPED_AT_TARGET }
@@ -22,6 +23,8 @@ public class SpindexFSM {
     public MotorWrapper spindexMotor;
     public int[] rVals = new int[3], gVals = new int[3], bVals = new int[3];
 
+    public static boolean forceEmpty; //to simualte shooting to succesfully and properly test
+
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
@@ -31,32 +34,79 @@ public class SpindexFSM {
         this.mode = modes.INTAKNG;
         this.state = states.STOPPING_AT_TARGET;
     }
-
-    public void updateState(boolean shooting, double runtime, int r, int g, int b) {
+    private ElapsedTime modeLockTimer = new ElapsedTime();
+    private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
+    public void updateState(double runtime, int r, int g, int b) {
         touchSensorMotorFSM.updateState();
         colorSensorsFSM.updateState();
         colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
-
-        if (shooting) mode = modes.SHOOTING;
-        else mode = modes.INTAKNG;
+        if (forceEmpty) {
+            pocket1 = status.EMPTY;
+            pocket2 = status.EMPTY;
+            pocket3 = status.EMPTY;
+        }
+        boolean allFull = (pocket1 != status.EMPTY && pocket2 != status.EMPTY && pocket3 != status.EMPTY);
+        boolean allEmpty = (pocket1 == status.EMPTY && pocket2 == status.EMPTY && pocket3 == status.EMPTY);
+        if (mode == modes.INTAKNG) {
+            if (allFull) {
+                // Must be full for the flicker time before switching
+                if (modeLockTimer.seconds() > FLICKER_TIME) {
+                    mode = modes.SHOOTING;
+                    modeLockTimer.reset();
+                }
+            } else {
+                modeLockTimer.reset();
+            }
+        }
+        else if (mode == modes.SHOOTING) {
+            if (allEmpty) {
+                if (modeLockTimer.seconds() > FLICKER_TIME) {
+                    mode = modes.INTAKNG;
+                    modeLockTimer.reset();
+                    timer.reset(); //reset the 2.5
+                }
+            } else {
+                modeLockTimer.reset(); // Reset if a ball is still detected
+            }
+        }
 
         switch (mode) {
             case INTAKNG:
-                if (timer.seconds() > 2.5) {
-                    if (pocket1 == status.EMPTY) { pidChanges.targetAngle = 360; timer.reset(); }
-                    else if (pocket2 == status.EMPTY) { pidChanges.targetAngle = 120; timer.reset(); }
-                    else if (pocket3 == status.EMPTY) { pidChanges.targetAngle = 240; timer.reset(); }
-                    else { spindexMotor.set(1); }
+                //check if all full
+                if (pocket1 != status.EMPTY && pocket2 != status.EMPTY && pocket3 != status.EMPTY) {
+                    mode = modes.SHOOTING;
                 }
+            //if not all full then need to intake and stuff
+                if (timer.seconds() > 2.5) {
+                    if (pocket1 == status.EMPTY) {
+                        pidChanges.targetAngle = 360;
+                        timer.reset();
+                    }
+                    else if (pocket2 == status.EMPTY) {
+                        pidChanges.targetAngle = 120;
+                        timer.reset();
+                    }
+                    else if (pocket3 == status.EMPTY) {
+                        pidChanges.targetAngle = 240;
+                        timer.reset();
+                    }
+                }
+                //FOR NOW PID only moving when intaking
                 pidChanges.PIDMoveCalc(runtime);
                 break;
 
             case SHOOTING:
                 switch (state) {
-                    case STOPPING_AT_TARGET: break;
-                    case STOPPED_AT_TARGET: break;
+                    case STOPPING_AT_TARGET:
+                        // later
+                        break;
+                    case STOPPED_AT_TARGET:
+                        // later
+                        break;
                 }
-                spindexMotor.set(1);
+
+                // CONTINUOUS SPIN until shooting button pressed
+                spindexMotor.set(1.0);
                 break;
         }
 
