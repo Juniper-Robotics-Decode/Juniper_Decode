@@ -15,7 +15,6 @@ public class TouchSensorMotorFSM {
         POSITION_3,
     }
 
-    public static AnalogInput AI1;
     public final MotorWrapper spindexMotor;
     public static states state;
     private Telemetry telemetry;
@@ -26,7 +25,6 @@ public class TouchSensorMotorFSM {
     public TouchSensorMotorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
 
-        AI1 = hwMap.getAnalogInput1();
 
         this.telemetry = telemetry;
 

@@ -95,5 +95,9 @@ public class MotorWrapper {
         motorEx.setTargetPosition(target);
     }
 
+    public void brakeModeMotor(){
+        motorEx.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+    }
+
 }
 
