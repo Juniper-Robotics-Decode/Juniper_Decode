@@ -20,7 +20,7 @@ public class SpindexTeleOp extends LinearOpMode {
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
         AI = hwMap.getAnalogInput();
         while (!AI.getState()){
-            spindexMotor.set(0.3);
+            spindexMotor.set(0.1);
             telemetry.addData("Motor Position", "Going to Origin");
             telemetry.update();
         }
