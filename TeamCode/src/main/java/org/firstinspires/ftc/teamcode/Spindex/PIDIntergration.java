@@ -45,7 +45,7 @@ public class PIDIntergration extends LinearOpMode {
 
             // FIXED: Added missing parameters
             spindexFSM.updateState(getRuntime(), r, g, b);
-//1
+
             colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
 
             if (timer.seconds() > 2.5) {
