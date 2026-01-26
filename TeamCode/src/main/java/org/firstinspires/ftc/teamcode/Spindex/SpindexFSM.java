@@ -47,7 +47,7 @@ public class SpindexFSM {
 
         colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
 
-
+//1
         if (forceEmpty) {
             pocket1 = status.EMPTY;
             pocket2 = status.EMPTY;
