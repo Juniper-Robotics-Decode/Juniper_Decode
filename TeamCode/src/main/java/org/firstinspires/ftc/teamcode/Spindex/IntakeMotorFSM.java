@@ -1,39 +1,42 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
-public class IntakeMotorFSm {
+public class IntakeMotorFSM {
     public enum states{
-        INTAKING,
-        EJECTING,
-        OFF,
+        intaking,
+        ejecting,
+        off,
     }
     public MotorWrapper IntakeMotor;
     public boolean intake; //Detected motif full or not
-    public boolean FORCE_STOP; //Gamepad button to stop intake!
+    public boolean FORCE_STOP=false; //Gamepad button to stop intake!
     public states state;
     private Telemetry telemetry;
 
-    public IntakeMotorFSm(HWMapSpindex hwMap, Telemetry telemetry){
+    public IntakeMotorFSM(HWMapSpindex hwMap, Telemetry telemetry){
         IntakeMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
-        this.state = states.INTAKING;
+        this.state = states.intaking;
         this.telemetry = telemetry;
-        state= states.INTAKING; // default
+        state= states.intaking; // default
     }
     public void updateState(){
-        if (intake && !FORCE_STOP) { //Detected Motif not full
-            state = states.INTAKING;
-        } else if(!intake && !FORCE_STOP){ //Detected Motif full
-            state = states.EJECTING;
-        } else if (FORCE_STOP) { //stop requested
-            state = states.OFF;
-//1
+        if (FORCE_STOP) {
+            state = states.off;
+            IntakeMotor.set(0);
+        }
+        else if (intake) {
+            // intake = true means Spindex has room (not full)
+            state = states.intaking;
+            IntakeMotor.set(1.0);
+        }
+        else {
+            // intake = false means Spindex is FULL
+            state = states.ejecting;
+            IntakeMotor.set(-0.5);
+            IntakeMotor.brakeModeMotor();
         }
         telemetry.addData("INTAKE STATE?", state);
         telemetry.addData("Intake?", intake);

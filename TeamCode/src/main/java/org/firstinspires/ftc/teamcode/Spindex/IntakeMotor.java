@@ -26,7 +26,7 @@ public class IntakeMotor extends LinearOpMode {
                 IntakeMotor.setPower(0);
 
             }
-//1
+
             telemetry.addData("IntakeMotorPower", IntakeMotor.getPower());
             telemetry.addData("Intake?", intake);
             telemetry.addData("FORCE STOP?", FORCE_STOP);
