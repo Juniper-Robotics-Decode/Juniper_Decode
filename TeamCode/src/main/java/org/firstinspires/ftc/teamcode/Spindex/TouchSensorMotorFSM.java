@@ -30,14 +30,14 @@ public class TouchSensorMotorFSM {
 
         state = states.POSITION_1; // placeholder
     }
-    public void spindexOffset(modes mode){
+    /*public void spindexOffset(modes mode){
         if(mode == modes.SHOOTING){
             offset = 60;
         }
         if(mode == modes.INTAKNG){
             offset = 0;
         }
-    }
+    }*/
 
     public void updateState() {
         spindexMotor.readPosition();

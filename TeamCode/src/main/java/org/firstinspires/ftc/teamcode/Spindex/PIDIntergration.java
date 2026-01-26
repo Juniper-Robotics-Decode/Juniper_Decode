@@ -33,7 +33,7 @@ public class PIDIntergration extends LinearOpMode {
 
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
-        spindexFSM = new SpindexFSM(hwMap, telemetry);
+        spindexFSM = new SpindexFSM(hwMap, telemetry, gamepad1);
         pidChanges = new PIDChanges(hwMap, telemetry);
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(), false, 1, 537.7);
 
@@ -44,7 +44,7 @@ public class PIDIntergration extends LinearOpMode {
             int b = hwMap.getColorSensor1().blue();
 
             // FIXED: Added missing parameters
-            spindexFSM.updateState(getRuntime(), r, g, b);
+            spindexFSM.updateState(getRuntime(), r, g, b, gamepad1);
 //1
             colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
 

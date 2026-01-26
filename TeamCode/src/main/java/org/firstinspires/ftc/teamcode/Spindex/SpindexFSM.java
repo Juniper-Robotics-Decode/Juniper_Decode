@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.gamepad.Gamepad;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +20,7 @@ public class SpindexFSM {
     public states state;
     private TouchSensorMotorFSM touchSensorMotorFSM;
     private ColorSensorFSM colorSensorsFSM;
-    private IntakeMotorFSM intakeMotorFSM;
+  //  private IntakeMotorFSM intakeMotorFSM;
     private PIDChanges pidChanges;
 
     private ElapsedTime timer = new ElapsedTime();
@@ -35,11 +35,11 @@ public class SpindexFSM {
     public MotorWrapper spindexMotor;
     public int[] rVals = new int[3], gVals = new int[3], bVals = new int[3];
 
-    public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
+    public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry, Gamepad gamepad1) {
 
         touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
-        intakeMotorFSM = new IntakeMotorFSM(hwMap, telemetry);
+     //   intakeMotorFSM = new IntakeMotorFSM(hwMap, telemetry);
 
         pidChanges = new PIDChanges(hwMap, telemetry);
         this.telemetry = telemetry;
@@ -50,11 +50,11 @@ public class SpindexFSM {
         this.gamepad1 = gamepad1;
     }
 
-    public void updateState(double runtime, int r, int g, int b) {
+    public void updateState(double runtime, int r, int g, int b, Gamepad gamepad1) {
 
         touchSensorMotorFSM.updateState();
         colorSensorsFSM.updateState();
-        intakeMotorFSM.updateState();
+      //  intakeMotorFSM.updateState();
 
         colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
 
@@ -89,8 +89,8 @@ public class SpindexFSM {
             }
         }
         // intakeMotorFSM.intake is TRUE if NOT allFull and opposite
-        intakeMotorFSM.intake = allFull;
-        intakeMotorFSM.FORCE_STOP = gamepad1.getTriangle();
+    //    intakeMotorFSM.intake = allFull;
+    //    intakeMotorFSM.FORCE_STOP = gamepad1.triangle;
         switch (mode) {
             case INTAKNG:
                 if (timer.seconds() > 2.5) {
@@ -105,7 +105,6 @@ public class SpindexFSM {
                         timer.reset();
                     }
                 }
-                intakeMotorFSM.updateState();
 
                 pidChanges.PIDMoveCalc(runtime);
                 break;
@@ -119,10 +118,11 @@ public class SpindexFSM {
                         break;
                 }
                 spindexMotor.set(1.0);
-                intakeMotorFSM.updateState();
+              //  intakeMotorFSM.updateState();
                 break;
 
         }
+        updateTelemetry();
     }
 
 

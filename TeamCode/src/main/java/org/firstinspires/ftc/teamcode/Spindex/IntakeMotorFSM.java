@@ -17,7 +17,7 @@ public class IntakeMotorFSM {
     private Telemetry telemetry;
 
     public IntakeMotorFSM(HWMapSpindex hwMap, Telemetry telemetry){
-        IntakeMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
+        IntakeMotor = new MotorWrapper(hwMap.getIntakeMotor(),false,1, 537.7);
         this.state = states.intaking;
         this.telemetry = telemetry;
         state= states.intaking; // default
