@@ -44,7 +44,7 @@ public class PIDIntergration extends LinearOpMode {
             int b = hwMap.getColorSensor1().blue();
 
             // FIXED: Added missing parameters
-            spindexFSM.updateState(shooting, getRuntime(), r, g, b);
+            spindexFSM.updateState(getRuntime(), r, g, b);
 
             colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
 

@@ -39,7 +39,7 @@ public class SpindexTeleOp extends LinearOpMode {
             int g = hwMap.getColorSensor1().green();
             int b = hwMap.getColorSensor1().blue();
 
-            spindexFSM.updateState(shooting, getRuntime(), r, g, b);
+            spindexFSM.updateState(getRuntime(), r, g, b);
             telemetry.update();
         }
     }
