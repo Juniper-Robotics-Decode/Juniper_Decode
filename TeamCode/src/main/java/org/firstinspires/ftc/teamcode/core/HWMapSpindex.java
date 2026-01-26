@@ -11,6 +11,8 @@ public class HWMapSpindex {
 
     //Spindex
     private MotorEx spindexMotor;
+
+    private MotorEx IntakeMotor;
     private RevColorSensorV3 colorSensor1;
     private DigitalChannel AI;
     public boolean aiSTATE;
@@ -21,12 +23,15 @@ public class HWMapSpindex {
         colorSensor1 = hardwareMap.get(RevColorSensorV3.class, "colorSensor1");
         AI = hardwareMap.get(DigitalChannel.class, "AI");
         spindexMotor = new MotorEx(hardwareMap, "spindexMotor");
+        IntakeMotor = new MotorEx(hardwareMap, "IntakeMotor");
     }
 
 
     public MotorEx getSpindexMotor() {
         return spindexMotor;
     }
+
+    public MotorEx getIntakeMotor(){return IntakeMotor;}
 
     public RevColorSensorV3 getColorSensor1() {
         return colorSensor1;

@@ -34,7 +34,6 @@ public class ColorSensorFSM{
         state= states.EMPTY; // default
     }
     public void updateState() {
-        // FIX: Ensure sensor exists before reading
         if (CS == null) return;
 
         detectedMotif = colorDetector(CS);
