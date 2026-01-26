@@ -20,11 +20,11 @@ import java.util.function.DoubleSupplier;
 public class PositionFSM {
 
     public enum States {
-        ZONE_1(30), // TODO: check does pitch at 22.5 equal like almost 360?
-        ZONE_2(26),
-        ZONE_3(24),
-        ZONE_4(15),
-        ZONE_5(16),
+        ZONE_1(12), // TODO: check does pitch at 22.5 equal like almost 360?
+        ZONE_2(12),
+        ZONE_3(12),
+        ZONE_4(12),
+        ZONE_5(12),
 
         NO_VALID_TARGET;
 
@@ -190,11 +190,11 @@ public class PositionFSM {
 
         velocityMapPP.add(0.5,2500);
         velocityMapPP.add(1.19, 2500);
-        velocityMapPP.add(1.44, 2500);
-        velocityMapPP.add(2.04, 2700);
-        velocityMapPP.add(2.63, 3250);
-        velocityMapPP.add(3.03, 3700);
-        velocityMapPP.add(3.5,4000);
+        velocityMapPP.add(1.44, 2550);
+        velocityMapPP.add(2.04, 2725);
+        velocityMapPP.add(2.63, 3050);
+        velocityMapPP.add(3.03, 3150);
+        velocityMapPP.add(3.74,3650);
         velocityMapPP.createLUT();
 
     }

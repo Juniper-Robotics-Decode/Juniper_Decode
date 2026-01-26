@@ -80,7 +80,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
-
+        double botHeading;
         waitForStart();
 
         while (opModeIsActive()) {
@@ -109,7 +109,12 @@ public class MainTeleOp extends LinearOpMode {
 
             pinpoint.update();
             pos = pinpoint.getPos();
-            double botHeading = (-pos.getHeading(RADIANS)) + Math.PI/2; // + Math.PI/2
+            if(robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos())) {
+                botHeading = (-pos.getHeading(RADIANS)) - Math.PI/2;
+            }
+            else {
+                botHeading = (-pos.getHeading(RADIANS)) + Math.PI/2;
+            }
 
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(botHeading), HeadingRate.calculate(drive.heading));
@@ -125,6 +130,7 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setLocked(locked);
             swerveDrivetrain.updateModules();
 
+         //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
             logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
             logger.log("Swerve Tele \n",swerveDrivetrain.getTele(), Logger.LogLevels.DEBUG);
             logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
