@@ -31,7 +31,7 @@ public class SpindexTeleOp extends LinearOpMode {
             telemetry.addData("Motor Position", "Set to Origin");
             telemetry.update();
         }
-
+//1
         waitForStart();
         while (opModeIsActive()) {
             boolean shooting = gamepad1.right_bumper;

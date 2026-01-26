@@ -33,7 +33,7 @@ public class IntakeMotorFSm {
             state = states.EJECTING;
         } else if (FORCE_STOP) { //stop requested
             state = states.OFF;
-
+//1
         }
         telemetry.addData("INTAKE STATE?", state);
         telemetry.addData("Intake?", intake);
