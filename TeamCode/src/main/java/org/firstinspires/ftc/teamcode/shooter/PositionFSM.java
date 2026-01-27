@@ -91,7 +91,7 @@ public class PositionFSM {
 
     public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings, Logger logger) {
         this.logger = logger;
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
+        //limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
         this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
         sensor = Sensor.PINPOINT;

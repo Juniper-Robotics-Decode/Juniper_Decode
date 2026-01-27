@@ -28,7 +28,7 @@ public class SwerveDrivetrain {
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{2.3,0,1.9,2.14}; //use SwerveCalibration to find
+    private double offsets[] = new double[]{2,0,1.9,2.14}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;
@@ -37,7 +37,7 @@ public class SwerveDrivetrain {
 
     double targetheading = 0.0;
     private boolean headingLocked = false;
-    private PIDFController headingController = new PIDFController(-0.05, 0, 0, 0);
+    private PIDFController headingController = new PIDFController(0.25, 0, 0, 0);
     private double P,I,D,F;
 
     private boolean locked = false;

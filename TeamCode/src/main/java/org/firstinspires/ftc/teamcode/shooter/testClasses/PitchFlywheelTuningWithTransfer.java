@@ -67,7 +67,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
+        //limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
 

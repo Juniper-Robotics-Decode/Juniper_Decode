@@ -53,7 +53,7 @@ public class RelocalizeTest extends LinearOpMode {
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
+        //limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pinpoint = new Pinpoint(hwMap,robotSettings,false);
         turretFSM = new TurretFSM(hwMap,telemetry,logger);
 
