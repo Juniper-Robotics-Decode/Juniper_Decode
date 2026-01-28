@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.Spindex;
+package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -32,9 +32,9 @@ public class PIDIntergration extends LinearOpMode {
         HWMapSpindex hwMap = new HWMapSpindex(hardwareMap);
 
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
-        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
+        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry, this.spindexMotor);
         spindexFSM = new SpindexFSM(hwMap, telemetry);
-        pidChanges = new PIDChanges(hwMap, telemetryMotorWrapper sharedMotor);
+        pidChanges = new PIDChanges(hwMap, telemetry, this.spindexMotor);
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(), false, 1, 537.7);
 
         waitForStart();
@@ -85,5 +85,3 @@ public class PIDIntergration extends LinearOpMode {
         }
     }
 }
-
- */
