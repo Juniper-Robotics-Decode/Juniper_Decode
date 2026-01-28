@@ -134,4 +134,3 @@ public class SpindexFSM {
         else if(pocket == 3) { pocket3 = color(2); rVals[2] = r; gVals[2] = g; bVals[2] = b; }
     }
 }
-//1
