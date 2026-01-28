@@ -25,7 +25,6 @@ public class TouchSensorMotorFSM {
 
     public TouchSensorMotorFSM(HWMapSpindex hwMap, Telemetry telemetry, MotorWrapper sharedMotor) {
         this.spindexMotor = sharedMotor;
-        AI1 = hwMap.getAnalogInput1();
 
         this.telemetry = telemetry;
 
@@ -76,4 +75,3 @@ public class TouchSensorMotorFSM {
         return state == states.POSITION_3;
     }
 }
-//1
