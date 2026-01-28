@@ -32,11 +32,10 @@ public class PIDChanges {
     boolean velocityMode = false;
     boolean lastDpadState = false;
 
-    public PIDChanges(HWMapSpindex hwMap, Telemetry telemetry) {
-        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
+    public PIDChanges(HWMapSpindex hwMap, Telemetry telemetry, MotorWrapper sharedMotor) {
+        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry, sharedMotor);
         this.telemetry = telemetry;
-        this.spindexMotor = touchSensorMotorFSM.spindexMotor;
-    }
+        this.spindexMotor = sharedMotor;    }
 
     public void method(double runtime){
         spindexMotor.resetEncoder();

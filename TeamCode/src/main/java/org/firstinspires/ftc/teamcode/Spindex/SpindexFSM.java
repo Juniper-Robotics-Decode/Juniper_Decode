@@ -26,19 +26,21 @@ public class SpindexFSM {
     public static boolean forceEmpty; //to simualte shooting to succesfully and properly test
 
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
-        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry);
+        this.spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(), false, 1, 537.7);
+        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry, this.spindexMotor);
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
-        pidChanges = new PIDChanges(hwMap, telemetry);
+        pidChanges = new PIDChanges(hwMap, telemetry, this.spindexMotor);
         this.telemetry = telemetry;
-        this.spindexMotor = touchSensorMotorFSM.spindexMotor;
         this.mode = modes.INTAKNG;
         this.state = states.STOPPING_AT_TARGET;
     }
-    private ElapsedTime modeLockTimer = new ElapsedTime();
-    private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
+    // private ElapsedTime modeLockTimer = new ElapsedTime();
+   // private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
     public void updateState(double runtime, int r, int g, int b) {
+        spindexMotor.readPosition();
         touchSensorMotorFSM.updateState();
         colorSensorsFSM.updateState();
+        pidChanges.PIDMoveCalc(runtime);
         colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
         if (forceEmpty) {
             pocket1 = status.EMPTY;
@@ -49,24 +51,19 @@ public class SpindexFSM {
         boolean allEmpty = (pocket1 == status.EMPTY && pocket2 == status.EMPTY && pocket3 == status.EMPTY);
         if (mode == modes.INTAKNG) {
             if (allFull) {
-                // Must be full for the flicker time before switching
-                if (modeLockTimer.seconds() > FLICKER_TIME) {
                     mode = modes.SHOOTING;
-                    modeLockTimer.reset();
-                }
+
             } else {
-                modeLockTimer.reset();
+                    mode = modes.INTAKNG;
+                  //timer.reset(); //reset the 2.5
             }
         }
         else if (mode == modes.SHOOTING) {
             if (allEmpty) {
-                if (modeLockTimer.seconds() > FLICKER_TIME) {
                     mode = modes.INTAKNG;
-                    modeLockTimer.reset();
                     timer.reset(); //reset the 2.5
-                }
             } else {
-                modeLockTimer.reset(); // Reset if a ball is still detected
+                    mode = modes.SHOOTING;
             }
         }
 

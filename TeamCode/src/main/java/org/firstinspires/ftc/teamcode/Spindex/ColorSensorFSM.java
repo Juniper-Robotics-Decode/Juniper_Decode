@@ -30,7 +30,7 @@ public class ColorSensorFSM{
         this.state = states.EMPTY;
         this.detectedMotif = emptyStr;
         this.telemetry = telemetry;
-//1
+//2
         state= states.EMPTY; // default
     }
     public void updateState() {
@@ -52,8 +52,6 @@ public class ColorSensorFSM{
 
 
     }
-    //get one color data, run for 25 loops,
-    // add the green value each time then find mean(total/25) = mean use for standard deviation
     public String colorDetector (RevColorSensorV3 cs){
         int blue = cs.blue();
         int green = cs.green();

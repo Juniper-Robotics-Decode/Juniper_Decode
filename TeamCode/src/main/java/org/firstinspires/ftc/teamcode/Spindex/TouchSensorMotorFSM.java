@@ -15,17 +15,16 @@ public class TouchSensorMotorFSM {
         POSITION_3,
     }
 
-    public static AnalogInput AI1;
+    public AnalogInput AI1;
     public final MotorWrapper spindexMotor;
-    public static states state;
+    public states state;
     private Telemetry telemetry;
     int currentIndex;
     public int offset = 0;
 
 
-    public TouchSensorMotorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
-        spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(),false,1, 537.7);
-
+    public TouchSensorMotorFSM(HWMapSpindex hwMap, Telemetry telemetry, MotorWrapper sharedMotor) {
+        this.spindexMotor = sharedMotor;
         AI1 = hwMap.getAnalogInput1();
 
         this.telemetry = telemetry;
