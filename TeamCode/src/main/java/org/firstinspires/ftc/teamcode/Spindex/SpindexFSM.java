@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
@@ -13,8 +14,9 @@ public class SpindexFSM {
 
     public modes mode;
     public states state;
-    private TouchSensorMotorFSM touchSensorMotorFSM;
+    private spindexMotorFSM spindexMotorFSM;
     private ColorSensorFSM colorSensorsFSM;
+    private IntakeMotorFSM intakeMotorFSM;
     private PIDChanges pidChanges;
     private ElapsedTime timer = new ElapsedTime();
     private Telemetry telemetry;
@@ -23,12 +25,14 @@ public class SpindexFSM {
     public MotorWrapper spindexMotor;
     public int[] rVals = new int[3], gVals = new int[3], bVals = new int[3];
 
-    public static boolean forceEmpty; //to simualte shooting to succesfully and properly test
+    public boolean forceEmpty; //to simualte shooting to succesfully and properly test
 
+    public boolean lastTriangle, intakeEnabled;
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         this.spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(), false, 1, 537.7);
-        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry, this.spindexMotor);
+        spindexMotorFSM = new spindexMotorFSM(hwMap, telemetry, this.spindexMotor);
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
+        intakeMotorFSM = new IntakeMotorFSM(hwMap, telemetry);
         pidChanges = new PIDChanges(hwMap, telemetry, this.spindexMotor);
         this.telemetry = telemetry;
         this.mode = modes.INTAKNG;
@@ -36,63 +40,78 @@ public class SpindexFSM {
     }
     // private ElapsedTime modeLockTimer = new ElapsedTime();
    // private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
-    public void updateState(double runtime, int r, int g, int b) {
+    public void updateState(double runtime, int r, int g, int b, Gamepad gamepad1) {
         spindexMotor.readPosition();
-        touchSensorMotorFSM.updateState();
+        spindexMotorFSM.updateState();
         colorSensorsFSM.updateState();
-        pidChanges.PIDMoveCalc(runtime);
-        colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
+        colorPocket(spindexMotorFSM.currentIndex, r, g, b);
+
         if (forceEmpty) {
             pocket1 = status.EMPTY;
             pocket2 = status.EMPTY;
             pocket3 = status.EMPTY;
         }
+
         boolean allFull = (pocket1 != status.EMPTY && pocket2 != status.EMPTY && pocket3 != status.EMPTY);
         boolean allEmpty = (pocket1 == status.EMPTY && pocket2 == status.EMPTY && pocket3 == status.EMPTY);
-        if (mode == modes.INTAKNG) {
-            if (allFull) {
-                    mode = modes.SHOOTING;
 
-            } else {
-                    mode = modes.INTAKNG;
-                  //timer.reset(); //reset the 2.5
-            }
-        }
-        else if (mode == modes.SHOOTING) {
-            if (allEmpty) {
-                    mode = modes.INTAKNG;
-                    timer.reset(); //reset the 2.5
-            } else {
-                    mode = modes.SHOOTING;
-            }
+        // Mode Transitions
+        if (mode == modes.INTAKNG && allFull) {
+            mode = modes.SHOOTING;
+        } else if (mode == modes.SHOOTING && allEmpty) {
+            mode = modes.INTAKNG;
+            timer.reset();
         }
 
+        // Toggle Logic
+        if (gamepad1.triangle && !lastTriangle) {
+            intakeEnabled = !intakeEnabled;
+        }
+        lastTriangle = gamepad1.triangle;
+
+        // Execute Mode Logic
         switch (mode) {
             case INTAKNG:
-                //check if all full
-                if (pocket1 != status.EMPTY && pocket2 != status.EMPTY && pocket3 != status.EMPTY) {
-                    mode = modes.SHOOTING;
-                }
-            //if not all full then need to intake and stuff
+                // spindex pocket selection
                 if (timer.seconds() > 2.5) {
                     if (pocket1 == status.EMPTY) {
                         pidChanges.targetAngle = 360;
                         timer.reset();
-                    }
-                    else if (pocket2 == status.EMPTY) {
+                    } else if (pocket2 == status.EMPTY) {
                         pidChanges.targetAngle = 120;
                         timer.reset();
-                    }
-                    else if (pocket3 == status.EMPTY) {
+                    } else if (pocket3 == status.EMPTY) {
                         pidChanges.targetAngle = 240;
                         timer.reset();
                     }
                 }
-                //FOR NOW PID only moving when intaking
+
+                // switch between on and off intake
+                if (gamepad1.triangle && !lastTriangle) {
+                    intakeEnabled = !intakeEnabled;
+                }
+                lastTriangle = gamepad1.triangle;
+
+                if (intakeEnabled) {
+                    if (mode == modes.INTAKNG) {
+                        intakeMotorFSM.state = IntakeMotorFSM.states.INTAKING;
+                    } else {
+                        intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
+                    }
+                } else {
+                    intakeMotorFSM.state = IntakeMotorFSM.states.OFF;
+                }
+
                 pidChanges.PIDMoveCalc(runtime);
                 break;
 
             case SHOOTING:
+                if (intakeEnabled) {
+                    intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
+                } else {
+                    intakeMotorFSM.state = IntakeMotorFSM.states.OFF;
+                }
+
                 switch (state) {
                     case STOPPING_AT_TARGET:
                         // later
@@ -102,12 +121,14 @@ public class SpindexFSM {
                         break;
                 }
 
-                // CONTINUOUS SPIN until shooting button pressed
-                spindexMotor.set(1.0);
+                spindexMotor.set(1.0); // Continuous spin for shooting i guess
                 break;
         }
 
-        // Telemetry exactly from original integration code
+        intakeMotorFSM.updateState();
+        updateTelemetry();
+    }
+    public void updateTelemetry(){
         telemetry.addData("State:", state);
         telemetry.addData("Power:", spindexMotor.get());
         telemetry.addData("Pocket 1 [0]", pocket1);
@@ -116,11 +137,10 @@ public class SpindexFSM {
         telemetry.addData("P2 RGB", rVals[1] + ", " + gVals[1] + ", " + bVals[1]);
         telemetry.addData("Pocket 3 [2]", pocket3);
         telemetry.addData("P3 RGB", rVals[2] + ", " + gVals[2] + ", " + bVals[2]);
-        telemetry.addData("Current Index", touchSensorMotorFSM.currentIndex);
+        telemetry.addData("Current Index", spindexMotorFSM.currentIndex);
         telemetry.addData("Target Angle", pidChanges.targetAngle);
         telemetry.addData("Current Angle", pidChanges.currentPosition);
     }
-
     private status color(int pocketIndex) {
         String motif = colorSensorsFSM.getDetectedMotif();
         if (motif.equals("Green")) return status.GREEN;

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 @TeleOp
 public class PIDIntergration extends LinearOpMode {
     private ColorSensorFSM colorSensorsFSM;
-    private TouchSensorMotorFSM touchSensorMotorFSM;
+    private spindexMotorFSM spindexMotorFSM;
     private SpindexFSM spindexFSM;
     private PIDChanges pidChanges;
 
@@ -32,7 +32,7 @@ public class PIDIntergration extends LinearOpMode {
         HWMapSpindex hwMap = new HWMapSpindex(hardwareMap);
 
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
-        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry, this.spindexMotor);
+        spindexMotorFSM = new spindexMotorFSM(hwMap, telemetry, this.spindexMotor);
         spindexFSM = new SpindexFSM(hwMap, telemetry);
         pidChanges = new PIDChanges(hwMap, telemetry, this.spindexMotor);
         spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(), false, 1, 537.7);
@@ -43,9 +43,9 @@ public class PIDIntergration extends LinearOpMode {
             int g = hwMap.getColorSensor1().green();
             int b = hwMap.getColorSensor1().blue();
 
-            spindexFSM.updateState(getRuntime(), r, g, b);
+            spindexFSM.updateState(getRuntime(), r, g, b, gamepad1);
 
-            colorPocket(touchSensorMotorFSM.currentIndex, r, g, b);
+            colorPocket(spindexMotorFSM.currentIndex, r, g, b);
 
             if (timer.seconds() > 2.5) {
                 if (pocket1 == SpindexFSM.status.EMPTY) {

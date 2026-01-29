@@ -18,9 +18,6 @@ public class ColorSensorFSM{
     public  MotorWrapper spindexMotor;
     private Telemetry telemetry;
     private String detectedMotif;
-    private boolean[] full = new boolean[3];
-    private boolean[] green = new boolean[3];
-    private boolean[] purple = new boolean[3];
     private final String greenStr = "Green";
     private final String purpleStr = "Purple";
     private final String emptyStr = "Empty";

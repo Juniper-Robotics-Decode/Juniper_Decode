@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 public class PIDChanges {
-    private TouchSensorMotorFSM touchSensorMotorFSM;
+    private spindexMotorFSM spindexMotorFSM;
     private Telemetry telemetry;
     public int x, y, target;
     public MotorWrapper spindexMotor;
@@ -33,7 +33,7 @@ public class PIDChanges {
     boolean lastDpadState = false;
 
     public PIDChanges(HWMapSpindex hwMap, Telemetry telemetry, MotorWrapper sharedMotor) {
-        touchSensorMotorFSM = new TouchSensorMotorFSM(hwMap, telemetry, sharedMotor);
+        spindexMotorFSM = new spindexMotorFSM(hwMap, telemetry, sharedMotor);
         this.telemetry = telemetry;
         this.spindexMotor = sharedMotor;    }
 

@@ -5,42 +5,40 @@ import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 public class IntakeMotorFSM {
-    public enum states{
-        intaking,
-        ejecting,
-        off,
+    public enum states {
+        INTAKING,
+        EJECTING,
+        OFF
     }
-    public MotorWrapper IntakeMotor;
-    public boolean intake; //Detected motif full or not
-    public boolean FORCE_STOP=false; //Gamepad button to stop intake!
+
+    public MotorWrapper intakeMotor;
     public states state;
     private Telemetry telemetry;
 
-    public IntakeMotorFSM(HWMapSpindex hwMap, Telemetry telemetry){
-        IntakeMotor = new MotorWrapper(hwMap.getIntakeMotor(),false,1, 537.7);
-        this.state = states.intaking;
+    public IntakeMotorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
+        // Initialize the wrapper (Port, Direction, Ratio, CPR)
+        this.intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), false, 1, 537.7);
         this.telemetry = telemetry;
-        state= states.intaking; // default
+        this.state = states.OFF;
     }
-    public void updateState(){
-        if (FORCE_STOP) {
-            state = states.off;
-            IntakeMotor.set(0);
+
+    public void updateState() {
+        switch (state) {
+            case INTAKING:
+                intakeMotor.set(1.0);
+                break;
+
+            case EJECTING:
+                intakeMotor.set(-0.5);
+                intakeMotor.brakeModeMotor();
+                break;
+
+            case OFF:
+                intakeMotor.set(0);
+                intakeMotor.brakeModeMotor();
+                break;
         }
-        else if (intake) {
-            // intake = true means Spindex has room (not full)
-            state = states.intaking;
-            IntakeMotor.set(1.0);
-        }
-        else {
-            // intake = false means Spindex is FULL
-            state = states.ejecting;
-            IntakeMotor.set(-0.5);
-            IntakeMotor.brakeModeMotor();
-        }
-        telemetry.addData("INTAKE STATE?", state);
-        telemetry.addData("Intake?", intake);
-        telemetry.addData("FORCE STOP?", FORCE_STOP);
-        telemetry.update();
+
+        telemetry.addData("Intake Motor FSM State", state);
     }
 }
