@@ -16,20 +16,19 @@ public class IntakeMotorFSM {
     private Telemetry telemetry;
 
     public IntakeMotorFSM(HWMapSpindex hwMap, Telemetry telemetry) {
-        // Initialize the wrapper (Port, Direction, Ratio, CPR)
         this.intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), false, 1, 537.7);
         this.telemetry = telemetry;
-        this.state = states.OFF;
+        this.state = states.INTAKING; //default for now
     }
 
     public void updateState() {
         switch (state) {
             case INTAKING:
-                intakeMotor.set(1.0);
+                intakeMotor.set(0.5);
                 break;
 
             case EJECTING:
-                intakeMotor.set(-0.5);
+                intakeMotor.set(-0.3);
                 intakeMotor.brakeModeMotor();
                 break;
 
