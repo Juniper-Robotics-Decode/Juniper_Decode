@@ -67,7 +67,7 @@ public class SpindexFSM {
 
         switch (mode) {
             case INTAKNG:
-                // spindex pocket selection
+                // spindex pocket movement based on timer
                 if (timer.seconds() > 2.5) {
                     if (pocket1 == status.EMPTY) {
                         pidChanges.targetAngle = 360;
@@ -80,18 +80,22 @@ public class SpindexFSM {
                         timer.reset();
                     }
                 }
+                //in init  make it so that a pocket mouth is against the intake
+                // spindex pocket movement based on color sensor data/detection-Moves when pocket is full
+                if(pocket1 == status.EMPTY){
+                    pidChanges.targetAngle = 0;
+                } else if (pocket2 == status.EMPTY) {
+                    pidChanges.targetAngle = 120;
+                } else if (pocket3 == status.EMPTY){
+                    pidChanges.targetAngle = 240;
+                } else{
+                    mode = modes.SHOOTING;
+                }
 
                 // switch between on and off intake
                 intake_OFF_ON(gamepad1);
+                //switch between ejecting and intaking
                 intake_intake_eject(gamepad1);
-
-                /*
-                if (gamepad1.square && intakeMotorFSM.state == IntakeMotorFSM.states.INTAKING) {
-                    intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
-                } else {
-                    intakeMotorFSM.state = IntakeMotorFSM.states.INTAKING;
-                }
-*/
                 pidChanges.PIDMoveCalc(runtime);
                 break;
 
