@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class SpindexTeleOp extends LinearOpMode {
-//.
+//..
     public DcMotor spindexMotor;
-    @Override
+     @Override
     public void runOpMode() throws InterruptedException {
         HWMapSpindex hwMap = new HWMapSpindex(hardwareMap);
         SpindexFSM spindexFSM = new SpindexFSM(hwMap, telemetry);
