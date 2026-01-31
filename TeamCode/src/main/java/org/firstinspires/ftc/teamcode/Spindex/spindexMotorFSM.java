@@ -25,7 +25,7 @@ public class spindexMotorFSM {
         this.telemetry = telemetry;
         this.currentPos = Positions.POSITION_1;
     }
-    //
+    //.
 
     public void spindexOffset(modes mode){
         if(mode == modes.SHOOTING){

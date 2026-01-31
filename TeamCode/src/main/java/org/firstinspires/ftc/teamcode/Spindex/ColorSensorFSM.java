@@ -73,7 +73,7 @@ public class ColorSensorFSM{
     public boolean slot1IsEmpty() {
         return state == states.EMPTY;
     }
-//
+//..
     public boolean slot1IsGreen() {
         return state == states.GREEN;
     }
