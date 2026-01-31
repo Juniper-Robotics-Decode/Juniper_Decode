@@ -166,6 +166,7 @@ public class TurretFSM {
         logger.log("turret state", state, Logger.LogLevels.DEBUG);
         logger.log("turret target angle", targetAngle, Logger.LogLevels.PRODUCTION);
         logger.log("turret current angle", turretMotor.getScaledPos(), Logger.LogLevels.PRODUCTION);
+        logger.log("turret motor current", turretMotor.getCurrent(), Logger.LogLevels.DEBUG);
     }
 
     public double getCurrentAngle() {

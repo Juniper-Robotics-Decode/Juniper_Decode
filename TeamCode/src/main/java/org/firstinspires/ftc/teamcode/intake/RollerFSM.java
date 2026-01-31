@@ -115,6 +115,6 @@ public class RollerFSM {
         logger.log("Roller FSM State ", State, Logger.LogLevels.DEBUG);
         logger.log("Current Velocity ", currentVelocity, Logger.LogLevels.DEBUG);
         logger.log("Target Velocity ", targetVelocity, Logger.LogLevels.DEBUG);
-        logger.log("Current Amount ", intakeMotor.getCurrent(), Logger.LogLevels.DEBUG);
+        logger.log("Intake motor current ", intakeMotor.getCurrent(), Logger.LogLevels.DEBUG);
     }
 }

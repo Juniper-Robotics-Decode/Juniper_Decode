@@ -132,7 +132,6 @@ public class MainTeleOp extends LinearOpMode {
 
          //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
             logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
-            logger.log("Swerve Tele \n",swerveDrivetrain.getTele(), Logger.LogLevels.DEBUG);
             logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.right_bumper);
@@ -141,6 +140,7 @@ public class MainTeleOp extends LinearOpMode {
             intakeFSM.log();
             transferFSM.log();
             launcherFSM.log();
+            swerveDrivetrain.log();
 
             telemetry.update();
         }

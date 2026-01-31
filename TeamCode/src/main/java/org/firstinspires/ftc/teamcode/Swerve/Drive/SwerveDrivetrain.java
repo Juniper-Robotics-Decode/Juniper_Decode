@@ -8,12 +8,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveModule;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.MathUtils;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-
-import java.util.Locale;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 @Config
 public class SwerveDrivetrain {
@@ -46,6 +44,8 @@ public class SwerveDrivetrain {
 
     private long lastUpdateTime = 0;
     private long lastInputTime = 0;
+
+    Logger logger;
 
     public SwerveDrivetrain(HWMap hwMap) {
         frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false);
@@ -281,7 +281,10 @@ public class SwerveDrivetrain {
 
     public void setHeadingLocked(boolean headingLocked){ this.headingLocked = headingLocked;}
 
-    public String getTele(){
-        return String.format(Locale.ENGLISH, "Front Left Module %s \nFront Right Module %s \nBack Right Module %s \nBack Left Module %s \n %s, \n %s, \n %s, \n %s,\nLocked? %s",frontLeftModule.getTele(), frontRightModule.getTele(), backRightModule.getTele(), backLeftModule.getTele(), wa[0], wa[1], wa[2], wa[3], getLocked());
+    public void log(){
+        frontLeftModule.log();
+        frontRightModule.log();
+        backLeftModule.log();
+        backRightModule.log();
     }
 }

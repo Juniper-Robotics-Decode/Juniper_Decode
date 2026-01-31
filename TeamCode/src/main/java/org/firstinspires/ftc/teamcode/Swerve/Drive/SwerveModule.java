@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 import java.util.Locale;
 
@@ -40,6 +41,8 @@ public class SwerveModule {
 
     private double k_static = 0.02, p = 0.6, i = 0.0, d = 0.002;
     private double offset;
+
+    Logger logger;
 
     public SwerveModule(DcMotorEx m, CRServoImplEx s, AnalogInput e, Double o, Boolean inv) {
         motor = m;
@@ -126,9 +129,15 @@ public class SwerveModule {
 
     public void setMode(DcMotor.RunMode runMode) { motor.setMode(runMode);}
 
-    public double getMotorCurrent() {return motor.getCurrent(CurrentUnit.AMPS); }
+    public double getMotorCurrent() { return motor.getCurrent(CurrentUnit.AMPS);}
 
-    public String getTele() {
-        return String.format(Locale.ENGLISH, "Motor Power %.2f \nWheel Flipped %b \nTarget Position %.2f \nCurrent Position %.2f \nServo Power %.2f", lastMotorPower, wheelFlipped, lastTargetPosition, getCurrentRotation(), lastServoPower);
+    public void log() {
+        logger.log("Motor power", lastMotorPower, Logger.LogLevels.DEBUG);
+        logger.log("Wheel Flipped", wheelFlipped, Logger.LogLevels.DEBUG);
+        logger.log("Target Position", lastTargetPosition, Logger.LogLevels.DEBUG);
+        logger.log("Current Position", current, Logger.LogLevels.DEBUG);
+        logger.log("Current Position", lastMotorPower, Logger.LogLevels.DEBUG);
+        logger.log("Servo Power", lastServoPower, Logger.LogLevels.DEBUG);
+        logger.log("Motor Current", motor.getCurrent(CurrentUnit.AMPS), Logger.LogLevels.DEBUG);
     }
 }

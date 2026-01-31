@@ -116,6 +116,5 @@ public class IntakeFSM {
     public void log(){
         logger.log("Intake Current State ", currentState, Logger.LogLevels.DEBUG);
         Roller.log();
-
     }
 }

@@ -18,7 +18,7 @@ public class HWMap {
     private final MotorEx turretMotor;
     private final CRServo pitchServo;
     private final AnalogInput pitchEncoder;
-    //private final Limelight3A limelight;
+    private final Limelight3A limelight;
 
     //intake
     private final MotorEx intakeMotor;
@@ -59,7 +59,7 @@ public class HWMap {
         pitchServo = new CRServo(hardwareMap, "PS");
         pitchEncoder = hardwareMap.get(AnalogInput.class, "PE");
         transferEncoder = hardwareMap.get(AnalogInput.class, "TE");
-        //limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150);
         transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312);
@@ -85,9 +85,9 @@ public class HWMap {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
-//    public Limelight3A getLimelight() {
-//        return limelight;
-//    }
+    public Limelight3A getLimelight() {
+        return limelight;
+    }
 
     public MotorEx getFlywheelMotor() {
         return flywheelMotor;

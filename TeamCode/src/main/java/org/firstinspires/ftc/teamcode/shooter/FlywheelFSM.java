@@ -127,6 +127,7 @@ public class FlywheelFSM {
         logger.log("Current Velocity Corrected", flywheelMotor.getVelocity(), Logger.LogLevels.PRODUCTION);
         logger.log("FLywheel offset", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION );
         logger.log("flywheel stopping varialbe", stopping, Logger.LogLevels.DEBUG);
+        logger.log("Flywheel current", flywheelMotor.getCurrent(), Logger.LogLevels.DEBUG);
     }
 
     public void voltageCompensation() {
