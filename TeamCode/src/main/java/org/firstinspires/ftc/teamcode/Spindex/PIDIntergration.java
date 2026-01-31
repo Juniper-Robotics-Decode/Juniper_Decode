@@ -47,7 +47,7 @@ public class PIDIntergration extends LinearOpMode {
 
             colorPocket(spindexMotorFSM.currentIndex, r, g, b);
 
-            if (timer.seconds() > 2.5) {
+            if (timer.seconds() > 1.0) {
                 if (pocket1 == SpindexFSM.status.EMPTY) {
                     pidChanges.targetAngle = 360;
                     timer.reset();

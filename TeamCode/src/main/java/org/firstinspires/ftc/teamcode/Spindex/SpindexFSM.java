@@ -25,21 +25,22 @@ public class SpindexFSM {
     public MotorWrapper spindexMotor;
     public int[] rVals = new int[3], gVals = new int[3], bVals = new int[3];
 
-    public boolean forceEmpty; //to simualte shooting to succesfully and properly test
+    public static boolean forceEmpty; //to simualte shooting to succesfully and properly test
 
-    public boolean lastTriangle, intakeEnabled;
+    public boolean lastTriangle, intakeEnabled, lastSquare = false, manualEject = false;
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
         this.spindexMotor = new MotorWrapper(hwMap.getSpindexMotor(), false, 1, 537.7);
         spindexMotorFSM = new spindexMotorFSM(hwMap, telemetry, this.spindexMotor);
         colorSensorsFSM = new ColorSensorFSM(hwMap, telemetry);
         intakeMotorFSM = new IntakeMotorFSM(hwMap, telemetry);
+        intakeMotorFSM.state = IntakeMotorFSM.states.INTAKING;
         pidChanges = new PIDChanges(hwMap, telemetry, this.spindexMotor);
         this.telemetry = telemetry;
         this.mode = modes.INTAKNG;
         this.state = states.STOPPING_AT_TARGET;
     }
     // private ElapsedTime modeLockTimer = new ElapsedTime();
-   // private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
+    // private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
     public void updateState(double runtime, int r, int g, int b, Gamepad gamepad1) {
         spindexMotor.readPosition();
         spindexMotorFSM.updateState();
@@ -63,17 +64,11 @@ public class SpindexFSM {
             timer.reset();
         }
 
-        // Toggle Logic
-        if (gamepad1.triangle && !lastTriangle) {
-            intakeEnabled = !intakeEnabled;
-        }
-        lastTriangle = gamepad1.triangle;
 
-        // Execute Mode Logic
         switch (mode) {
             case INTAKNG:
-                // spindex pocket selection
-                if (timer.seconds() > 2.5) {
+                // spindex pocket movement based on timer
+             /*   if (timer.seconds() > 2.5) {
                     if (pocket1 == status.EMPTY) {
                         pidChanges.targetAngle = 360;
                         timer.reset();
@@ -84,24 +79,23 @@ public class SpindexFSM {
                         pidChanges.targetAngle = 240;
                         timer.reset();
                     }
+                } */
+                //in init  make it so that a pocket mouth is against the intake
+                // spindex pocket movement based on color sensor data/detection-Moves when pocket is full
+                if(pocket1 == status.EMPTY){
+                    pidChanges.targetAngle = 360;
+                } else if (pocket2 == status.EMPTY) {
+                    pidChanges.targetAngle = 120;
+                } else if (pocket3 == status.EMPTY){
+                    pidChanges.targetAngle = 240;
+                } else{
+                    mode = modes.SHOOTING;
                 }
 
                 // switch between on and off intake
-                if (gamepad1.triangle && !lastTriangle) {
-                    intakeEnabled = !intakeEnabled;
-                }
-                lastTriangle = gamepad1.triangle;
-
-                if (intakeEnabled) {
-                    if (mode == modes.INTAKNG) {
-                        intakeMotorFSM.state = IntakeMotorFSM.states.INTAKING;
-                    } else {
-                        intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
-                    }
-                } else {
-                    intakeMotorFSM.state = IntakeMotorFSM.states.OFF;
-                }
-
+                intake_OFF_ON(gamepad1);
+                //switch between ejecting and intaking
+                intake_intake_eject(gamepad1);
                 pidChanges.PIDMoveCalc(runtime);
                 break;
 
@@ -113,6 +107,7 @@ public class SpindexFSM {
                 }
 
                 switch (state) {
+
                     case STOPPING_AT_TARGET:
                         // later
                         break;
@@ -120,7 +115,9 @@ public class SpindexFSM {
                         // later
                         break;
                 }
-
+                if(pocket1 == status.EMPTY && pocket2==status.EMPTY && pocket3 == status.EMPTY){
+                    mode = modes.INTAKNG;
+                }
                 spindexMotor.set(1.0); // Continuous spin for shooting i guess
                 break;
         }
@@ -147,7 +144,45 @@ public class SpindexFSM {
         else if (motif.equals("Purple")) return status.PURPLE;
         else return status.EMPTY;
     }
+    private void intake_OFF_ON(Gamepad gamepad1){
+        if (gamepad1.triangle && !lastTriangle) {
+            intakeEnabled = !intakeEnabled;
+        }
+        lastTriangle = gamepad1.triangle;
 
+        if (intakeEnabled) {
+            if (mode == modes.INTAKNG) {
+                intakeMotorFSM.state = IntakeMotorFSM.states.INTAKING;
+            } else {
+                intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
+            }
+        } else {
+            intakeMotorFSM.state = IntakeMotorFSM.states.OFF;
+        }
+
+    }
+    private void intake_intake_eject(Gamepad gamepad1) {
+        if (gamepad1.square && !lastSquare) {
+            manualEject = !manualEject;
+        }
+        lastSquare = gamepad1.square;
+
+
+        if (intakeEnabled) {
+            if (manualEject) {
+                intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
+            } else {
+                // Default Auto Logic
+                if (mode == modes.INTAKNG) {
+                    intakeMotorFSM.state = IntakeMotorFSM.states.INTAKING;
+                } else {
+                    intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
+                }
+            }
+        } else {
+            intakeMotorFSM.state = IntakeMotorFSM.states.OFF;
+        }
+    }
     private void colorPocket(int pocket, int r, int g, int b) {
         if(pocket == 1) { pocket1 = color(0); rVals[0] = r; gVals[0] = g; bVals[0] = b; }
         else if(pocket == 2) { pocket2 = color(1); rVals[1] = r; gVals[1] = g; bVals[1] = b; }
