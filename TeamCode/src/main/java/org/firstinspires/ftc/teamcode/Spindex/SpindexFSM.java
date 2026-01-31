@@ -38,6 +38,10 @@ public class SpindexFSM {
         this.telemetry = telemetry;
         this.mode = modes.INTAKNG;
         this.state = states.STOPPING_AT_TARGET;
+        spindexMotorFSM.initSpindexMovement();
+    }
+    public boolean homeSpindex() {
+        return spindexMotorFSM.initSpindexMovement();
     }
     // private ElapsedTime modeLockTimer = new ElapsedTime();
     // private final double FLICKER_TIME = 0.3; // 300 milliseconds to prevent code being wonky because of sensor flicking
@@ -68,6 +72,7 @@ public class SpindexFSM {
         switch (mode) {
             case INTAKNG:
                 // spindex pocket movement based on timer
+                /*
                 if (timer.seconds() > 2.5) {
                     if (pocket1 == status.EMPTY) {
                         pidChanges.targetAngle = 360;
@@ -79,7 +84,7 @@ public class SpindexFSM {
                         pidChanges.targetAngle = 240;
                         timer.reset();
                     }
-                }
+                } */
                 //in init  make it so that a pocket mouth is against the intake
                 // spindex pocket movement based on color sensor data/detection-Moves when pocket is full
                 if(pocket1 == status.EMPTY){
@@ -135,6 +140,7 @@ public class SpindexFSM {
         telemetry.addData("Current Index", spindexMotorFSM.currentIndex);
         telemetry.addData("Target Angle", pidChanges.targetAngle);
         telemetry.addData("Current Angle", pidChanges.currentPosition);
+        telemetry.update();
     }
     private status color(int pocketIndex) {
         String motif = colorSensorsFSM.getDetectedMotif();

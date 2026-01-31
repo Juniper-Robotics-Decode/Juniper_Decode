@@ -14,14 +14,14 @@ public class HWMapSpindex {
 
     private MotorEx IntakeMotor;
     private RevColorSensorV3 colorSensor1;
-    private DigitalChannel AI;
+    private DigitalChannel LimiSwitch;
     public boolean aiSTATE;
 
 
     public HWMapSpindex(HardwareMap hardwareMap) {
 
         colorSensor1 = hardwareMap.get(RevColorSensorV3.class, "colorSensor1");
-        AI = hardwareMap.get(DigitalChannel.class, "AI");
+        LimiSwitch = hardwareMap.get(DigitalChannel.class, "LimitSwitch");
         spindexMotor = new MotorEx(hardwareMap, "spindexMotor");
         IntakeMotor = new MotorEx(hardwareMap, "IntakeMotor");
     }
@@ -37,11 +37,11 @@ public class HWMapSpindex {
         return colorSensor1;
     }
 
-    public DigitalChannel getAnalogInput() {
-        return AI;
+    public DigitalChannel getLimiSwitch() {
+        return LimiSwitch;
     }
 
     public boolean getAIstate() {
-        return AI.getState();
+        return LimiSwitch.getState();
     }
 }
