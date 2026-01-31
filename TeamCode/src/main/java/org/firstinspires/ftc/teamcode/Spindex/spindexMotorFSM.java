@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 import org.firstinspires.ftc.teamcode.Spindex.SpindexFSM.modes;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 public class spindexMotorFSM {
     // Physical locations only
@@ -15,6 +16,7 @@ public class spindexMotorFSM {
 
     public final MotorWrapper spindexMotor;
     public Positions currentPos;
+    private DigitalChannel LimitSwitch;
 
     private Telemetry telemetry;
     public int currentIndex;
@@ -24,6 +26,18 @@ public class spindexMotorFSM {
         this.spindexMotor = sharedMotor;
         this.telemetry = telemetry;
         this.currentPos = Positions.POSITION_1;
+        LimitSwitch = hwMap.getLimiSwitch();
+    }
+    public boolean initSpindexMovement() {
+        if (LimitSwitch.getState()) {
+            spindexMotor.set(0.3);
+            return false;
+        } else {
+            spindexMotor.set(0);
+            spindexMotor.brakeModeMotor();
+            spindexMotor.resetEncoder();
+            return true;
+        }
     }
      //   //.
 
@@ -53,6 +67,9 @@ public class spindexMotorFSM {
 
         telemetry.addData("Spindex Position", currentPos);
         telemetry.addData("Spindex Index", currentIndex);
+        telemetry.addData("Limit Switch Pressed?", LimitSwitch.getState());
+        telemetry.update();
+
     }
 
     public boolean atPosition1() {
