@@ -73,11 +73,11 @@ public class ColorSensorFSM{
     public boolean slot1IsEmpty() {
         return state == states.EMPTY;
     }
-
+//
     public boolean slot1IsGreen() {
         return state == states.GREEN;
     }
-    // gist, read:org, read:user, repo, user:email, workflow
+// gist, read:org, read:user, repo, user:email, workflow
     public boolean slot1IsPurple() {
         return state == states.PURPLE;
     }

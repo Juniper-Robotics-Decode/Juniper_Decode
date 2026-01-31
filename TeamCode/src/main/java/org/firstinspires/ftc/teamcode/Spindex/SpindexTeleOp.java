@@ -1,28 +1,28 @@
 package org.firstinspires.ftc.teamcode.Spindex;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-
 import org.firstinspires.ftc.teamcode.core.HWMapSpindex;
-
+import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class SpindexTeleOp extends LinearOpMode {
-    public DigitalChannel LimitSwitch;
+
+    public RevTouchSensor TCS;
+    public DcMotor spindexMotor;
     @Override
     public void runOpMode() throws InterruptedException {
         HWMapSpindex hwMap = new HWMapSpindex(hardwareMap);
         SpindexFSM spindexFSM = new SpindexFSM(hwMap, telemetry);
-        LimitSwitch = hwMap.getLimiSwitch();
-        while (!isStarted() && !isStopRequested()) {
-            if (spindexFSM.homeSpindex()) {
-                telemetry.addData("LimitSwitch", LimitSwitch.getState());
-                telemetry.update();
-                break; // Stop moving once the switch is hit
-            }
+        TCS = hardwareMap.get(RevTouchSensor.class, "TCS");
+        spindexMotor = hardwareMap.get(DcMotor.class, "spindexMotor");
+        if(!TCS.isPressed()){
+            spindexMotor.setPower(0.2);
+        } else {
+            spindexMotor.setPower(0);
+            spindexMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         waitForStart();
         while (opModeIsActive()) {

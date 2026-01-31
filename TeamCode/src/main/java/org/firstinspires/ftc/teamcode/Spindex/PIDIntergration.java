@@ -15,7 +15,7 @@ public class PIDIntergration extends LinearOpMode {
     private SpindexFSM spindexFSM;
     private PIDChanges pidChanges;
 
-    // Using the status enum from SpindexFSM to avoid conflicts
+    // Using .the status enum from SpindexFSM to avoid conflicts
     public SpindexFSM.status pocket1;
     public SpindexFSM.status pocket2;
     public SpindexFSM.status pocket3;
@@ -85,4 +85,4 @@ public class PIDIntergration extends LinearOpMode {
         }
     }
 }
-//1
+//1//l.

@@ -39,6 +39,7 @@ public class spindexMotorFSM {
             return true;
         }
     }
+     //   //.
 
     public void spindexOffset(modes mode){
         if(mode == modes.SHOOTING){
@@ -84,3 +85,4 @@ public class spindexMotorFSM {
     }
 
 }
+//
