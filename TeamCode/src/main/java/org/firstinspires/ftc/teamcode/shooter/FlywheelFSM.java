@@ -84,7 +84,7 @@ public class FlywheelFSM {
 
         flywheelMotor.setVelocityConstants(vP,vI,vD,ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
-        targetVelocityTicks = targetVelocityTicks;
+        targetVelocityTicks = -targetVelocityTicks;
         double error = targetVelocityTicks - flywheelMotor.getVelocity();
         if(error > TOLERANCE) {
             flywheelMotor.set(1);
