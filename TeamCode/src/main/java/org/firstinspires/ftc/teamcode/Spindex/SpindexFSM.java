@@ -115,9 +115,6 @@ public class SpindexFSM {
                         // later
                         break;
                 }
-                if(pocket1 == status.EMPTY && pocket2==status.EMPTY && pocket3 == status.EMPTY){
-                    mode = modes.INTAKNG;
-                }
                 spindexMotor.set(1.0); // Continuous spin for shooting i guess
                 break;
         }
