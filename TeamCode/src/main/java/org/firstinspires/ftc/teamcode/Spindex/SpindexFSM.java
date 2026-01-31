@@ -25,7 +25,7 @@ public class SpindexFSM {
     public MotorWrapper spindexMotor;
     public int[] rVals = new int[3], gVals = new int[3], bVals = new int[3];
 
-    public static boolean forceEmpty; //to simualte shooting to succesfully and properly test
+    public boolean forceEmpty; //to simualte shooting to succesfully and properly test
 
     public boolean lastTriangle, intakeEnabled, lastSquare = false, manualEject = false;
     public SpindexFSM(HWMapSpindex hwMap, Telemetry telemetry) {
@@ -68,7 +68,7 @@ public class SpindexFSM {
         switch (mode) {
             case INTAKNG:
                 // spindex pocket movement based on timer
-             /*   if (timer.seconds() > 2.5) {
+                if (timer.seconds() > 2.5) {
                     if (pocket1 == status.EMPTY) {
                         pidChanges.targetAngle = 360;
                         timer.reset();
@@ -79,11 +79,11 @@ public class SpindexFSM {
                         pidChanges.targetAngle = 240;
                         timer.reset();
                     }
-                } */
+                }
                 //in init  make it so that a pocket mouth is against the intake
                 // spindex pocket movement based on color sensor data/detection-Moves when pocket is full
                 if(pocket1 == status.EMPTY){
-                    pidChanges.targetAngle = 360;
+                    pidChanges.targetAngle = 0;
                 } else if (pocket2 == status.EMPTY) {
                     pidChanges.targetAngle = 120;
                 } else if (pocket3 == status.EMPTY){
@@ -115,10 +115,11 @@ public class SpindexFSM {
                         // later
                         break;
                 }
+
                 spindexMotor.set(1.0); // Continuous spin for shooting i guess
                 break;
         }
-////
+
         intakeMotorFSM.updateState();
         updateTelemetry();
     }
@@ -159,12 +160,13 @@ public class SpindexFSM {
 
     }
     private void intake_intake_eject(Gamepad gamepad1) {
+        // Debounce the square button
         if (gamepad1.square && !lastSquare) {
             manualEject = !manualEject;
         }
         lastSquare = gamepad1.square;
 
-
+        // Execute logic based on toggle state
         if (intakeEnabled) {
             if (manualEject) {
                 intakeMotorFSM.state = IntakeMotorFSM.states.EJECTING;
