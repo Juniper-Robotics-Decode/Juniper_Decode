@@ -134,9 +134,9 @@ public class MainTeleOp extends LinearOpMode {
             logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
             logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
             logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
-            intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
+            intakeFSM.updateState(gamepad1.dpad_up, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.right_bumper);
-            launcherFSM.updateState(gamepad1.b,gamepad1.dpad_up,gamepad1.left_bumper,gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right,gamepad2.y,gamepad2.a,gamepad2.b,gamepad2.x, gamepad2.left_bumper, gamepad2.right_bumper);
+            launcherFSM.updateState(gamepad1.b,gamepad1.y,gamepad1.left_bumper,gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right,gamepad2.y,gamepad2.a,gamepad2.b,gamepad2.x, gamepad2.left_bumper, gamepad2.right_bumper);
 
             intakeFSM.log();
             transferFSM.log();

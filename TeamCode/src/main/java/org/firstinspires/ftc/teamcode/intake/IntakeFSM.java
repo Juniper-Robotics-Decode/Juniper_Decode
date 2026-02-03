@@ -42,10 +42,10 @@ public class IntakeFSM {
         this.logger = logger;
     }
 
-    public void updateState(boolean YPress, boolean D_Pad_Left_Press) {
+    public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press) {
         Roller.updateState();
 
-        findTargetState(YPress, D_Pad_Left_Press);
+        findTargetState(D_Pad_Up_Press, D_Pad_Left_Press);
         switch (currentState) {
 
             case RAMPING_UP_TO_INTAKE:
@@ -84,12 +84,12 @@ public class IntakeFSM {
         }
     }
 
-    public void findTargetState(boolean YPress, boolean D_Pad_Left_Press) {
+    public void findTargetState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press) {
 
-        if (YPress && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED || currentState == State.RAMPING_UP_TO_INTAKE)) {
+        if (D_Pad_Up_Press && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED || currentState == State.RAMPING_UP_TO_INTAKE)) {
             currentState = State.RAMPING_UP_TO_EJECT;
 
-        } else if (YPress && (Roller.EJECTING())) {
+        } else if (D_Pad_Up_Press && (Roller.EJECTING())) {
             currentState = State.RAMPING_UP_TO_INTAKE;
 
         }
