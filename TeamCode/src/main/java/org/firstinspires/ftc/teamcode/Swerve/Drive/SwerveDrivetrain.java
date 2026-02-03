@@ -26,7 +26,7 @@ public class SwerveDrivetrain {
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{0.8,-0.2,1.9,2.14}; //use SwerveCalibration to find
+    private double offsets[] = new double[]{0.8,0.1,1.9,2.14}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;
@@ -47,16 +47,18 @@ public class SwerveDrivetrain {
 
     Logger logger;
 
-    public SwerveDrivetrain(HWMap hwMap) {
-        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false);
-        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, offsets[1], false);
-        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, offsets[2], false);
-        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, offsets[3], false);
+    public SwerveDrivetrain(HWMap hwMap, Logger logger) {
+        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false, logger);
+        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, offsets[1], false, logger);
+        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, offsets[2], false, logger);
+        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, offsets[3], false, logger);
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
         for (SwerveModule m : modules) m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         R = hypot(trackwidth, wheelbase);
+        this.logger = logger;
+
     }
 
     /// calculates swerve modules motor powers and wheel angles from gamepad inputs and robot current heading as according to 2nd order swerve kinematics
@@ -84,33 +86,14 @@ public class SwerveDrivetrain {
 
         /// locking logic
         long currentTime = System.currentTimeMillis();
-//        if (x != 0 || y != 0 || heading != 0) {
-//            lastUpdateTime = currentTime;
-//            locked = false;
-//        } else {
-//            if ((currentTime - lastUpdateTime < lockdelay) && (!locked))
-//            {
-//                waitingtolock = true;
-//            }
-//            else if ((currentTime - lastUpdateTime) > lockdelay){
-//                waitingtolock = false;
-//                locked = true;
-//            }
-//        }
 
         if (locked) { //locked wheel angles
             ws = new double[]{0,0,0,0};
             wa = new double[]{atan2(-1, -1), atan2(-1, 1), atan2(1, 1), atan2(1, -1)};
         }
         else {
-            if (waitingtolock && (x == 0 && y == 0 && heading == 0)){
-                ws = new double[]{0,0,0,0};
-                for (int i = 0; i < 4; i++){
-                    wa[i] = lastwa[i];
-                }
-            }
             /// kinematics
-            else { //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
+            //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
                 double dt = (lastUpdateTime == 0) ? 30 : (currentTime - lastUpdateTime); //finds last loop time
                 lastUpdateTime = currentTime;
 
@@ -129,7 +112,6 @@ public class SwerveDrivetrain {
 
                 ws = new double[]{hypot(a, c), hypot(a, d), hypot(b, d), hypot(b, c)};
                 wa = new double[]{atan2(a, c), atan2(a, d), atan2(b, d), atan2(b, c)};
-            }
         }
 
         max = MathUtils.max(ws);
@@ -140,7 +122,6 @@ public class SwerveDrivetrain {
             SwerveModule m = modules[i];
             if (Math.abs(max) > 1) ws[i] /= max;
             m.update(wa[i], (ws[i]*MotorScaling[i]));
-            lastwa[i] = wa[i];
         }
     }
 

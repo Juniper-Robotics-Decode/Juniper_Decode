@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 
 //this class is to find zeros, inverses,and check each module's coordinate system is in accordance
@@ -41,10 +42,12 @@ public class SwerveCalibration extends LinearOpMode {
     public static double P, I, D;
     public static double target;
 
+    Logger logger;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        logger = new Logger(telemetry);
         FLM = hardwareMap.get(DcMotorEx.class, "FLM");
         FRM = hardwareMap.get(DcMotorEx.class, "FRM");
         BLM = hardwareMap.get(DcMotorEx.class, "BLM");
@@ -60,10 +63,10 @@ public class SwerveCalibration extends LinearOpMode {
         BLE = hardwareMap.get(AnalogInput.class, "BLE");
         BRE = hardwareMap.get(AnalogInput.class, "BRE");
 
-        SwerveModule frontLeftModule = new SwerveModule(FLM, FLS, FLE, 0.0, false);
-        SwerveModule frontRightModule = new SwerveModule(FRM, FRS, FRE, 0.0, false);
-        SwerveModule backRightModule = new SwerveModule(BRM, BRS, BRE, 0.0, false);
-        SwerveModule backLeftModule = new SwerveModule(BLM, BLS, BLE, 0.0, false);
+        SwerveModule frontLeftModule = new SwerveModule(FLM, FLS, FLE, 0.0, false, logger);
+        SwerveModule frontRightModule = new SwerveModule(FRM, FRS, FRE, 0.0, false, logger);
+        SwerveModule backRightModule = new SwerveModule(BRM, BRS, BRE, 0.0, false, logger);
+        SwerveModule backLeftModule = new SwerveModule(BLM, BLS, BLE, 0.0, false, logger);
 
         int i = 0;
 

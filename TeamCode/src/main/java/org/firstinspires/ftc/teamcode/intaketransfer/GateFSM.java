@@ -18,7 +18,7 @@ public class GateFSM {
     private AxonServoWrapper transferServo;
     public State currentState;
     public static double positionUp = .38;
-    public static double positionDown = 0.55;
+    public static double positionDown = 0.58;
     public static double targetPosition = positionDown;
 
     public static double UPPER_HARD_STOP = 1;

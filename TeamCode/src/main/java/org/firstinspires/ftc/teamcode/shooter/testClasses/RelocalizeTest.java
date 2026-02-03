@@ -64,7 +64,7 @@ public class RelocalizeTest extends LinearOpMode {
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);
