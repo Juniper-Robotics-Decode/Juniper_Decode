@@ -24,11 +24,11 @@ public class Constants {
             .useSecondaryDrivePIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryTranslationalPIDF(true)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.12, 0, 0.005 , 0))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0.005 , 0))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.003, 0.01))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0 , 0.003, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(2.5, 0 , 0.003, 0))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.63, 0, 0.035, 0))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.001, 0, 0.00001, 0.6, 0.13))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0025, 0, 0.00001, 0.6, 0.13))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.000005, 0.6, 0.13))
             .centripetalScaling(0.005)
 
@@ -51,7 +51,7 @@ public class Constants {
         return new CoaxialPod(hardwareMap,"FLM","FLS","FLE",
                 new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(0.8),
+                Math.toDegrees(0.8), //0.8
                 new Pose(4.963582677,4.96063),
                 0,3.3,
                 false);
@@ -61,7 +61,7 @@ public class Constants {
         return new CoaxialPod(hardwareMap,"FRM","FRS","FRE",
                 new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(-0.2),
+                Math.toDegrees(0.2),
                 new Pose(4.963582677,-4.96063),
                 0,3.3,
                 false);

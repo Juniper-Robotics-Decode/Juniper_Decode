@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
@@ -10,8 +9,10 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+@Autonomous
 public class GeneratedTraj extends LinearOpMode {
 
     public PathChain Path1;
@@ -26,6 +27,8 @@ public class GeneratedTraj extends LinearOpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
+
+    private final Pose startPose = new Pose(86.720, 137.685, Math.toRadians(0));
 
 
     public void Paths(Follower follower) {
@@ -97,13 +100,57 @@ public class GeneratedTraj extends LinearOpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(scorePreload);
-                setPathState(1);
+                follower.followPath(Path1, true);
+                setPathState(-1);
                 break;
+
             case 1:
                 if (!follower.isBusy()) {
-                    telemetry.addData("followed", 0);
+                    follower.followPath(Path2, true);
+                    setPathState(2);
                 }
+                break;
+
+            case 2:
+                if (!follower.isBusy()) {
+                    follower.followPath(Path3, true);
+                    setPathState(3);
+                }
+                break;
+
+            case 3:
+                if (!follower.isBusy()) {
+                    follower.followPath(Path4, true);
+                    setPathState(4);
+                }
+                break;
+
+            case 4:
+                if (!follower.isBusy()) {
+                    follower.followPath(Path5, true);
+                    setPathState(5);
+                }
+                break;
+
+            case 5:
+                if (!follower.isBusy()) {
+                    follower.followPath(Path6, true);
+                    setPathState(6);
+                }
+                break;
+
+            case 6:
+                if (!follower.isBusy()) {
+                    follower.followPath(Path7, true);
+                    setPathState(7);
+                }
+                break;
+
+            case 7:
+                if (!follower.isBusy()) {
+                    setPathState(-1);
+                }
+                break;
         }
     }
 
@@ -138,4 +185,3 @@ public class GeneratedTraj extends LinearOpMode {
     }
 }
 
-*/
