@@ -107,9 +107,7 @@ public class SwerveDrivetrain {
         else {
             if (waitingtolock && (x == 0 && y == 0 && heading == 0)){
                 ws = new double[]{0,0,0,0};
-                for (int i = 0; i < 4; i++){
-                    wa[i] = lastwa[i];
-                }
+                System.arraycopy(lastwa, 0, wa, 0, 4);
             }
             /// kinematics
             else { //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
