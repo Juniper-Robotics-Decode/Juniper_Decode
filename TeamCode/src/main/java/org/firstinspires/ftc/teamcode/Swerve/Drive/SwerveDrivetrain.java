@@ -129,6 +129,13 @@ public class SwerveDrivetrain {
 
                 ws = new double[]{hypot(a, c), hypot(a, d), hypot(b, d), hypot(b, c)};
                 wa = new double[]{atan2(a, c), atan2(a, d), atan2(b, d), atan2(b, c)};
+
+                for (int i = 0; i < 4; i++){ //protection for pinpoint NaN returns
+                    if (Double.isNaN(ws[i]) || Double.isNaN(wa[i])){
+                        ws = new double[]{0, 0, 0, 0};
+                        wa = new double[]{0, 0, 0, 0};
+                    }
+                }
             }
         }
 
@@ -282,9 +289,9 @@ public class SwerveDrivetrain {
     public void setHeadingLocked(boolean headingLocked){ this.headingLocked = headingLocked;}
 
     public void log(){
-        frontLeftModule.log();
-        frontRightModule.log();
-        backLeftModule.log();
-        backRightModule.log();
+//        frontLeftModule.log();
+//        frontRightModule.log();
+//        backLeftModule.log();
+//        backRightModule.log();
     }
 }

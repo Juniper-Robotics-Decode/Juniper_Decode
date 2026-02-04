@@ -64,6 +64,12 @@ public class SwerveModule {
     }
 
     public void update(double wa, double ws) {
+        if (Double.isNaN(wa) || Double.isNaN(ws)) {
+            rotationController.reset();
+            wa = 0;
+            ws = 0;
+        }
+
         rotationController.setPID(p, i, d);
 
         double current = normalizeRadians(getCurrentRotation());
