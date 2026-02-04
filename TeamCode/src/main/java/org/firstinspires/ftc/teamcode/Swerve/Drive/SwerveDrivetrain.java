@@ -26,7 +26,7 @@ public class SwerveDrivetrain {
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{0.8,-0.2,1.9,2.14}; //use SwerveCalibration to find
+    private double offsets[] = new double[]{0.8,0.1,1.9,2.14}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;
@@ -47,16 +47,18 @@ public class SwerveDrivetrain {
 
     Logger logger;
 
-    public SwerveDrivetrain(HWMap hwMap) {
-        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false);
-        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, offsets[1], false);
-        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, offsets[2], false);
-        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, offsets[3], false);
+    public SwerveDrivetrain(HWMap hwMap, Logger logger) {
+        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, offsets[0], false, logger);
+        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, offsets[1], false, logger);
+        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, offsets[2], false, logger);
+        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, offsets[3], false, logger);
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
         for (SwerveModule m : modules) m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         R = hypot(trackwidth, wheelbase);
+        this.logger = logger;
+
     }
 
     /// calculates swerve modules motor powers and wheel angles from gamepad inputs and robot current heading as according to 2nd order swerve kinematics
@@ -289,9 +291,9 @@ public class SwerveDrivetrain {
     public void setHeadingLocked(boolean headingLocked){ this.headingLocked = headingLocked;}
 
     public void log(){
-//        frontLeftModule.log();
-//        frontRightModule.log();
-//        backLeftModule.log();
-//        backRightModule.log();
+        frontLeftModule.log();
+        frontRightModule.log();
+        backLeftModule.log();
+        backRightModule.log();
     }
 }

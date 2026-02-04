@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
@@ -37,6 +38,8 @@ public class PinpointDistanceTest extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
+    Logger logger;
+
     @Override
     public void runOpMode() {
         XRate = new SlewRateLimiter(xrate);
@@ -45,13 +48,13 @@ public class PinpointDistanceTest extends LinearOpMode {
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-
         RobotSettings robotSettings = new RobotSettings();
         HWMap hwMap = new HWMap(hardwareMap);
         Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings,false);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        logger = new Logger(telemetry);
 
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);

@@ -16,6 +16,7 @@ import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -32,6 +33,7 @@ public class SwerveTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    Logger logger;
     private HWMap hwMap;
     private SwerveDrivetrain swerveDrivetrain;
 
@@ -47,7 +49,7 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{-1,1,1,1};
-    public static double[] Zeros = new double[]{2,0,1.9,2.14};
+    public static double[] Zeros = new double[]{0.8,0.1,1.9,2.14};
 
     public static double kgain = 2;
 
@@ -64,8 +66,8 @@ public class SwerveTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         P = 0.25;
         kgain = 2;
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        logger = new Logger(telemetry);
 
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
@@ -86,7 +88,7 @@ public class SwerveTest extends LinearOpMode {
         odo.recalibrateIMU();
 
         hwMap = new HWMap(hardwareMap);
-        swerveDrivetrain = new org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);

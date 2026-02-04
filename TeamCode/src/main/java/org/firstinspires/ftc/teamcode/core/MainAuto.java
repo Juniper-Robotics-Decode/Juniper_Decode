@@ -83,7 +83,7 @@ public class MainAuto extends LinearOpMode {
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
         pinpoint = new Pinpoint(hwMap,robotSettings, true);
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);

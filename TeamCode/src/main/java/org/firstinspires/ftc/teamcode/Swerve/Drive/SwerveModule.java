@@ -44,7 +44,7 @@ public class SwerveModule {
 
     Logger logger;
 
-    public SwerveModule(DcMotorEx m, CRServoImplEx s, AnalogInput e, Double o, Boolean inv) {
+    public SwerveModule(DcMotorEx m, CRServoImplEx s, AnalogInput e, Double o, Boolean inv, Logger logger) {
         motor = m;
         MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
         motorConfigurationType.setAchieveableMaxRPMFraction(MAX_MOTOR);
@@ -61,6 +61,8 @@ public class SwerveModule {
         rotationController = new PIDController(p, i, d);
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        this.logger = logger;
     }
 
     public void update(double wa, double ws) {
@@ -141,8 +143,7 @@ public class SwerveModule {
         logger.log("Motor power", lastMotorPower, Logger.LogLevels.DEBUG);
         logger.log("Wheel Flipped", wheelFlipped, Logger.LogLevels.DEBUG);
         logger.log("Target Position", lastTargetPosition, Logger.LogLevels.DEBUG);
-        logger.log("Current Position", current, Logger.LogLevels.DEBUG);
-        logger.log("Current Position", lastMotorPower, Logger.LogLevels.DEBUG);
+        logger.log("Current Position", getCurrentRotation(), Logger.LogLevels.DEBUG);
         logger.log("Servo Power", lastServoPower, Logger.LogLevels.DEBUG);
         logger.log("Motor Current", motor.getCurrent(CurrentUnit.AMPS), Logger.LogLevels.DEBUG);
     }
