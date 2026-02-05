@@ -12,6 +12,14 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Pinpoint;
+import org.firstinspires.ftc.teamcode.core.PoseStorage;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
+import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
+import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
+import org.firstinspires.ftc.teamcode.shooter.ShooterFSM;
+
 @Autonomous
 public class GeneratedTraj extends LinearOpMode {
 
@@ -23,12 +31,21 @@ public class GeneratedTraj extends LinearOpMode {
     public PathChain Path6;
     public PathChain Path7;
 
-    private Follower follower;
+    public Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
 
+
     private final Pose startPose = new Pose(86.720, 137.685, Math.toRadians(0));
+
+    private HWMap hwMap;
+    private RobotSettings robotSettings;
+    private Pinpoint pinpoint;
+    private IntakeFSM intakeFSM;
+    private ShooterFSM shooterFSM;
+    private TransferFSM transferFSM;
+
 
 
     public void Paths(Follower follower) {
@@ -98,14 +115,19 @@ public class GeneratedTraj extends LinearOpMode {
     }
 
     public void autonomousPathUpdate() {
+        pinpoint.update();
+        shooterFSM.updateState(false);
+        intakeFSM.updateState(false,false);
         switch (pathState) {
             case 0:
+                transferFSM.updateState(false,false);
                 follower.followPath(Path1, true);
-                setPathState(-1);
+                setPathState(1);
                 break;
 
             case 1:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,true);
                     follower.followPath(Path2, true);
                     setPathState(2);
                 }
@@ -113,6 +135,7 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 2:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,false);
                     follower.followPath(Path3, true);
                     setPathState(3);
                 }
@@ -120,6 +143,7 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 3:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,true);
                     follower.followPath(Path4, true);
                     setPathState(4);
                 }
@@ -127,6 +151,7 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 4:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,false);
                     follower.followPath(Path5, true);
                     setPathState(5);
                 }
@@ -134,6 +159,7 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 5:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,false);
                     follower.followPath(Path6, true);
                     setPathState(6);
                 }
@@ -141,6 +167,7 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 6:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,false);
                     follower.followPath(Path7, true);
                     setPathState(7);
                 }
@@ -148,6 +175,8 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 7:
                 if (!follower.isBusy()) {
+                    transferFSM.updateState(false,true);
+                    PoseStorage.currentPose = follower.getPose();
                     setPathState(-1);
                 }
                 break;
@@ -170,12 +199,22 @@ public class GeneratedTraj extends LinearOpMode {
 
         opmodeTimer.resetTimer();
         setPathState(0);
+
+
+        hwMap = new HWMap(hardwareMap);
+        robotSettings = new RobotSettings();
+        pinpoint = new Pinpoint(hwMap,robotSettings);
+        intakeFSM = new IntakeFSM(hwMap, telemetry);
+        transferFSM = new TransferFSM(hwMap, telemetry);
+        shooterFSM = new ShooterFSM(hwMap,telemetry, pinpoint);
+
         waitForStart();
         while (opModeIsActive()) {
             follower.update();
             autonomousPathUpdate();
 
 
+            shooterFSM.log();
             telemetry.addData("path state", pathState);
             telemetry.addData("x", follower.getPose().getX());
             telemetry.addData("y", follower.getPose().getY());

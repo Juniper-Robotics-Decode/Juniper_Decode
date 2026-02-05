@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.shooter;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
@@ -72,10 +71,8 @@ public class TurretFSM {
         else if (targetAngle < LOWER_HARD_STOP) {
             targetAngle = LOWER_HARD_STOP;
         }
-*/
-/*
         double delta = angleDelta(turretMotor.getScaledPos(), targetAngle);
-        double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);*//*
+        double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);
 
         double error = targetAngle - turretMotor.getScaledPos();
         telemetry.addData("Error", error);
@@ -131,4 +128,3 @@ public class TurretFSM {
 
 
 }
-*/

@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.core;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -13,6 +12,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.util.Timing;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.pedroPathing.GeneratedTraj;
 import org.firstinspires.ftc.teamcode.shooter.ShooterFSM;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
@@ -45,8 +46,10 @@ public class MainTeleOp extends LinearOpMode {
 
 
     private HWMap hwMap;
-    private Pinpoint pinpoint;
     private RobotSettings robotSettings;
+    private Follower follower;
+
+    private Pinpoint pinpoint;
     private GamepadEx gamepad;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
@@ -67,6 +70,7 @@ public class MainTeleOp extends LinearOpMode {
 
         hwMap = new HWMap(hardwareMap);
         robotSettings = new RobotSettings();
+
         pinpoint = new Pinpoint(hwMap, robotSettings);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap);
@@ -111,9 +115,8 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 
-           */
-/* telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*//*
+ telemetry.addData("Bot Heading", BotHeading);
+            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());
 
             telemetry.addData("loop time", loopTimer.elapsedTime());
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
@@ -128,4 +131,3 @@ public class MainTeleOp extends LinearOpMode {
 
 }
 
-*/

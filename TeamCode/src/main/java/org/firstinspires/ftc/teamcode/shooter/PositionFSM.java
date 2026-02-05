@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.shooter;
 
 import com.arcrobotics.ftclib.util.InterpLUT;
@@ -116,13 +115,11 @@ public class PositionFSM {
         }
 
         //TODO: add if turret velocity under threshold and drive velocity under threshold then relocalize at all times
-*/
-/*
         if(RobotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
             if(limelightCamera.hasTarget() && pinpoint.pinpointReady()) {
                 relocalize();
             }
-        }*//*
+        }
 
     }
 
@@ -256,10 +253,12 @@ public class PositionFSM {
         telemetry.addData("Goal Distance", pinpoint.getGoalDistance());
         telemetry.addData("pinpoint heading error", pinpoint.getHeadingErrorTrig());
         telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
+        telemetry.addData("Robot x", pinpoint.getX());
+        telemetry.addData("Robot y", pinpoint.getY());
+        telemetry.addData("Robot heading", pinpoint.getHeading());
         telemetry.addLine("----------PINPOINT LOG----------");
 
         telemetry.addLine("----------POSITION FSM LOG----------");
     }
 
 }
-*/

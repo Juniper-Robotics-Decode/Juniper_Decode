@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.Swerve.Swerve;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -14,7 +13,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.pedropathing.localization.PoseTracker;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -65,7 +65,7 @@ public class SwerveTest extends LinearOpMode {
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
         Xoffset = 10.5; Yoffset = 1; //find in CAD
-        odo.setOffsets(Xoffset, Yoffset);
+        odo.setOffsets(Xoffset, Yoffset, DistanceUnit.CM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
@@ -120,4 +120,3 @@ public class SwerveTest extends LinearOpMode {
     }
 
 }
-*/

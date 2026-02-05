@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.core;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class HWMap {
+
     // shooter
     private final MotorEx flywheelMotor;
     private final MotorEx turretMotor;
@@ -46,6 +48,8 @@ public class HWMap {
     public AnalogInput BLE;
 
 
+    private final GoBildaPinpointDriver odo;
+
     public HWMap (HardwareMap hardwareMap) {
         flywheelMotor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         flywheelMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
@@ -74,9 +78,14 @@ public class HWMap {
         BLE = hardwareMap.get(AnalogInput.class, "BLE");
         BRE = hardwareMap.get(AnalogInput.class, "BRE");
 
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+
     }
 
 
+    public GoBildaPinpointDriver getOdo() {
+        return odo;
+    }
     public Limelight3A getLimelight() {
         return limelight;
     }

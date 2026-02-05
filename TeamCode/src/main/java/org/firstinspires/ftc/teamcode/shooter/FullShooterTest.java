@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.shooter;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -47,4 +46,3 @@ public class FullShooterTest extends LinearOpMode {
         telemetry.update();
     }
 }
-*/

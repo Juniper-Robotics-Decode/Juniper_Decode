@@ -1,9 +1,9 @@
-/*
 package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 //import com.pedropathing.localization.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 @Config
 public class Pinpoint {  // TODO: add junit
 
-  //  GoBildaPinpointDriver odo;
+    GoBildaPinpointDriver odo;
     Pose2D pos;
     public double x, y, heading;
     public static double Xoffset, Yoffset;
@@ -21,19 +21,21 @@ public class Pinpoint {  // TODO: add junit
 
 
     public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
-     //   odo = hwMap.getOdo();
+        odo = hwMap.getOdo();
         Xoffset = -132.5; Yoffset = 14.075;
 
-    */
-/*    odo.setOffsets(Xoffset, Yoffset);
+        odo.setOffsets(Xoffset, Yoffset, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-*//*
+
 
        // odo.resetPosAndIMU();
 
        // Pose2D pose2D = new Pose2D(DistanceUnit.METER, 0, 0.0, AngleUnit.DEGREES, 0.0);
-    //    odo.setPosition(robotSettings.startPosState.getPose2D());
+    //  odo.setPosition(robotSettings.startPosState.getPose2D());
+
+
+        odo.setPosition(new Pose2D(DistanceUnit.INCH,86.720, 137.685,AngleUnit.DEGREES,0));
         update();
     }
 
@@ -50,8 +52,8 @@ public class Pinpoint {  // TODO: add junit
     }
 
     public void updateHeadingOnly() {
-        odo.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
-        heading = Math.toDegrees(odo.getHeading());
+        odo.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
+        heading = Math.toDegrees(odo.getHeading(AngleUnit.DEGREES));
     }
 
     public Pose2D getPos() {
@@ -84,7 +86,7 @@ public class Pinpoint {  // TODO: add junit
         odo.setPosition(pose2D);
         odo.update();
     }
-
+/*
 public double getGoalHeading() {
         double error;
         if(MainAuto.ALLIANCE.equals("RED")) {
@@ -97,8 +99,7 @@ public double getGoalHeading() {
             error = -error;
         }
         return error;
-
-    }
+    }*/
 
 
     public double getHeadingErrorTrig() {
@@ -120,4 +121,3 @@ public double getGoalHeading() {
     }
 
 }
-*/

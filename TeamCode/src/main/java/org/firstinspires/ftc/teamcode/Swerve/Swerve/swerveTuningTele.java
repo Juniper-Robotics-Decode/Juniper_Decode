@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.Swerve.Swerve;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -9,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import com.pedropathing.follower.Follower;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -32,7 +32,7 @@ public class swerveTuningTele extends LinearOpMode{
     public double x, y, heading;
     public double BotHeading;
     public boolean locked;
-    private Follower follower;
+    private GoBildaPinpointDriver odo;
     private double Xoffset, Yoffset;
     private Pose2D pos;
 
@@ -57,7 +57,7 @@ public class swerveTuningTele extends LinearOpMode{
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
         Xoffset = 10.5; Yoffset = 1; //find in CAD
-        odo.setOffsets(Xoffset, Yoffset);
+        odo.setOffsets(Xoffset, Yoffset,DistanceUnit.CM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
@@ -134,4 +134,3 @@ public class swerveTuningTele extends LinearOpMode{
         }
     }
 }
-*/
