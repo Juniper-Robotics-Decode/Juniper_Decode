@@ -101,4 +101,8 @@ public class TransferFSM {
             currentState = State.MOVING_DOWN;
         }
     }
+
+    public boolean AT_UP () {
+        return currentState == State.AT_UP;
+    }
 }

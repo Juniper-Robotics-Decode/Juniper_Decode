@@ -49,6 +49,28 @@ public class GeneratedTraj extends LinearOpMode {
 
 
     public void Paths(Follower follower) {
+       /* Path1 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(86.720, 137.685), new Pose(86.720, 90.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+
+        Path2 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(86.720, 90.000),
+                                new Pose(86.720, 84.000),
+                                new Pose(105.000, 84.000)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .build();*/
+
+
+
         Path1 = follower
                 .pathBuilder()
                 .addPath(
@@ -126,33 +148,32 @@ public class GeneratedTraj extends LinearOpMode {
                 break;
 
             case 1:
-                if (!follower.isBusy()) {
+                if(!follower.isBusy()) {
                     transferFSM.updateState(false,true);
-                    follower.followPath(Path2, true);
-                    setPathState(2);
+                    if(transferFSM.AT_UP()) {
+                        setPathState(-1);
+                    }
                 }
                 break;
-
             case 2:
-                if (!follower.isBusy()) {
-                    transferFSM.updateState(false,false);
-                    follower.followPath(Path3, true);
+                if (transferFSM.AT_UP()) {
+                    follower.followPath(Path2, true);
                     setPathState(3);
                 }
                 break;
 
             case 3:
                 if (!follower.isBusy()) {
-                    transferFSM.updateState(false,true);
-                    follower.followPath(Path4, true);
+                    transferFSM.updateState(false,false);
+                    follower.followPath(Path3, true);
                     setPathState(4);
                 }
                 break;
 
             case 4:
                 if (!follower.isBusy()) {
-                    transferFSM.updateState(false,false);
-                    follower.followPath(Path5, true);
+                    transferFSM.updateState(false,true);
+                    follower.followPath(Path4, true);
                     setPathState(5);
                 }
                 break;
@@ -160,7 +181,7 @@ public class GeneratedTraj extends LinearOpMode {
             case 5:
                 if (!follower.isBusy()) {
                     transferFSM.updateState(false,false);
-                    follower.followPath(Path6, true);
+                    follower.followPath(Path5, true);
                     setPathState(6);
                 }
                 break;
@@ -168,12 +189,20 @@ public class GeneratedTraj extends LinearOpMode {
             case 6:
                 if (!follower.isBusy()) {
                     transferFSM.updateState(false,false);
-                    follower.followPath(Path7, true);
+                    follower.followPath(Path6, true);
                     setPathState(7);
                 }
                 break;
 
             case 7:
+                if (!follower.isBusy()) {
+                    transferFSM.updateState(false,false);
+                    follower.followPath(Path7, true);
+                    setPathState(8);
+                }
+                break;
+
+            case 8:
                 if (!follower.isBusy()) {
                     transferFSM.updateState(false,true);
                     PoseStorage.currentPose = follower.getPose();

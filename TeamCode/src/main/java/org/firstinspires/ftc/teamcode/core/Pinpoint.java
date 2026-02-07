@@ -19,6 +19,11 @@ public class Pinpoint {  // TODO: add junit
     public static double Xoffset, Yoffset;
 
 
+    // TODO: need to convert coordinates
+    // coordinates for Pinpoint derived from Pedro
+    // x = -y
+    // y = x
+    // theta = thetaPedro + 90
 
     public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
         odo = hwMap.getOdo();
@@ -46,8 +51,8 @@ public class Pinpoint {  // TODO: add junit
     public void update() {
         odo.update();
         pos = odo.getPosition();
-        x = pos.getX(DistanceUnit.METER);
-        y= pos.getY(DistanceUnit.METER);
+        x = pos.getX(DistanceUnit.INCH);
+        y= pos.getY(DistanceUnit.INCH);
         heading = pos.getHeading(AngleUnit.DEGREES);
     }
 
@@ -79,7 +84,7 @@ public class Pinpoint {  // TODO: add junit
     }
 
     public double getGoalDistance() {
-        return Math.sqrt(Math.pow((RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));
+        return Math.sqrt(Math.pow((138 - x), 2) + Math.pow((138 - y), 2));
     }
 
     public void setPosition(Pose2D pose2D) {
@@ -104,7 +109,7 @@ public double getGoalHeading() {
 
     public double getHeadingErrorTrig() {
         double targetAngle;
-        targetAngle = Math.toDegrees(Math.atan2((RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), (RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x)));
+        targetAngle = Math.toDegrees(Math.atan2((138 - y), (138 - x)));
 
         double error = targetAngle - heading;
 
@@ -114,9 +119,10 @@ public double getGoalHeading() {
         else if (error >= 180) {
             error -= 360;
         }
- error = -error;
-        error = 360 - error;
 
+        /*error = -error;
+        error = 360 - error;
+*/
         return error;
     }
 
