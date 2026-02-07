@@ -86,14 +86,31 @@ public class SwerveDrivetrain {
 
         /// locking logic
         long currentTime = System.currentTimeMillis();
+//        if (x != 0 || y != 0 || heading != 0) {
+//            lastUpdateTime = currentTime;
+//            locked = false;
+//        } else {
+//            if ((currentTime - lastUpdateTime < lockdelay) && (!locked))
+//            {
+//                waitingtolock = true;
+//            }
+//            else if ((currentTime - lastUpdateTime) > lockdelay){
+//                waitingtolock = false;
+//                locked = true;
+//            }
+//        }
 
         if (locked) { //locked wheel angles
             ws = new double[]{0,0,0,0};
             wa = new double[]{atan2(-1, -1), atan2(-1, 1), atan2(1, 1), atan2(1, -1)};
         }
         else {
+            if (waitingtolock && (x == 0 && y == 0 && heading == 0)){
+                ws = new double[]{0,0,0,0};
+                System.arraycopy(lastwa, 0, wa, 0, 4);
+            }
             /// kinematics
-            //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
+            else { //2nd order swerve kinematics bastardized(using motor powers as velocities -> need kgain) //proper 2nd order kinematics would need velocities and accel to be set
                 double dt = (lastUpdateTime == 0) ? 30 : (currentTime - lastUpdateTime); //finds last loop time
                 lastUpdateTime = currentTime;
 
@@ -112,6 +129,14 @@ public class SwerveDrivetrain {
 
                 ws = new double[]{hypot(a, c), hypot(a, d), hypot(b, d), hypot(b, c)};
                 wa = new double[]{atan2(a, c), atan2(a, d), atan2(b, d), atan2(b, c)};
+
+                for (int i = 0; i < 4; i++){ //protection for pinpoint NaN returns
+                    if (Double.isNaN(ws[i]) || Double.isNaN(wa[i])){
+                        ws = new double[]{0, 0, 0, 0};
+                        wa = new double[]{0, 0, 0, 0};
+                    }
+                }
+            }
         }
 
         max = MathUtils.max(ws);
@@ -122,6 +147,7 @@ public class SwerveDrivetrain {
             SwerveModule m = modules[i];
             if (Math.abs(max) > 1) ws[i] /= max;
             m.update(wa[i], (ws[i]*MotorScaling[i]));
+            lastwa[i] = wa[i];
         }
     }
 
