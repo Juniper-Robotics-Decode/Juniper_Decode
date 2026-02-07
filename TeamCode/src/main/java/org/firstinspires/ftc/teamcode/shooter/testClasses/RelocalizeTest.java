@@ -2,27 +2,26 @@
 package org.firstinspires.ftc.teamcode.shooter.testClasses;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.inverses;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.scalars;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.xrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.yrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.offsets;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scalars;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.TurretFSM;
@@ -35,7 +34,6 @@ public class RelocalizeTest extends LinearOpMode {
     Pinpoint pinpoint;
     TurretFSM turretFSM;
     RobotSettings robotSettings;
-    double CAMERA_DISTANCE_FROM_CENTER = 0.07207114;
 
     private SwerveDrivetrain swerveDrivetrain;
 
@@ -48,14 +46,17 @@ public class RelocalizeTest extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
+    private Logger logger;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
-        robotSettings = new RobotSettings();
+        robotSettings = RobotSettings.load();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry);
-        pinpoint = new Pinpoint(hwMap,robotSettings);
-        turretFSM = new TurretFSM(hwMap,telemetry);
+        //limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
+        pinpoint = new Pinpoint(hwMap,robotSettings,false);
+        turretFSM = new TurretFSM(hwMap,telemetry,logger);
 
 
         XRate = new SlewRateLimiter(xrate);
@@ -64,7 +65,7 @@ public class RelocalizeTest extends LinearOpMode {
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);
@@ -80,9 +81,10 @@ public class RelocalizeTest extends LinearOpMode {
                 limelightCamera.update();
                 pinpoint.update();
                 turretFSM.updateState();
+                turretFSM.log();
 
             if (gamepad1.options) {
-                pinpoint.resetPosAndIMU();
+                pinpoint.resetIMU();
             }
 
             pinpoint.update();
@@ -101,12 +103,11 @@ public class RelocalizeTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setLocked(locked);
-            swerveDrivetrain.setPose(drive);
+            swerveDrivetrain.setPose(drive, BotHeading, 12.4);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getTele());
+            swerveDrivetrain.log();
 
 
             telemetry.addData("RAW X", pinpoint.getX());
@@ -126,36 +127,32 @@ public class RelocalizeTest extends LinearOpMode {
             telemetry.addData("Limelight Ty", limelightCamera.getTy());
 
 
-            //TODO: add 20 degree pitch and add 90 degree roll
-                double cameraAbsoluteHeading = pinpoint.getHeading() - turretFSM.getCurrentAngle();
-                double vectorAbsoluteHeading = cameraAbsoluteHeading - limelightCamera.getTy();
-                double vectorMagnitude = limelightCamera.getFlatDistance();
-
-                double xCam = RobotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - (vectorMagnitude*(Math.cos(Math.toRadians(vectorAbsoluteHeading))));
-                double yCam = RobotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - (vectorMagnitude*(Math.sin(Math.toRadians(vectorAbsoluteHeading))));
-
-                double xRobot = xCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
-                double yRobot = yCam + (CAMERA_DISTANCE_FROM_CENTER*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
 
 
+            if(gamepad1.a) {
+                relocalize();
+            }
 
-                if(gamepad1.a) {
-                    Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot, yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
-                    pinpoint.setPosition(newPos);
-                }
+        }
+    }
 
-                telemetry.addLine("--- RELOCALIZATION ---");
-                telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
-                telemetry.addData("Pinpoint heading", pinpoint.getHeading());
-                telemetry.addData("turret current angle", turretFSM.getCurrentAngle());
-                telemetry.addData("Vector Heading", vectorAbsoluteHeading);
-                telemetry.addData("Vector Dist", vectorMagnitude);
-                telemetry.addData("Cam X", xCam);
-                telemetry.addData("Cam Y", yCam);
-                telemetry.addData("Robot X", xRobot);
-                telemetry.addData("Robot Y", yRobot);
-                telemetry.update();
+    public void relocalize() {
 
+        double robotHeading = pinpoint.getHeading();
+
+        double xRobot = limelightCamera.getxField();
+        double yRobot = limelightCamera.getyField();
+
+        turretFSM.setTargetAngle(0, gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right, gamepad2.left_bumper);
+        if(turretFSM.ALIGNED()) {
+
+
+
+            telemetry.addLine("--- RELOCALIZATION ---");
+            telemetry.addData("Robot Heading", robotHeading);
+            telemetry.addData("Robot X", xRobot);
+            telemetry.addData("Robot Y", yRobot);
+            telemetry.update();
         }
     }
 }

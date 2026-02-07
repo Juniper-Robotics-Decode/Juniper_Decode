@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
@@ -28,11 +29,11 @@ public class TurretPIDTest extends LinearOpMode {
 
     private PIDController pidController;
     public static double TOLERANCE = 3;
-    public static double P=-0.03, I=0.25, D=0, F=0.115;
+    public static double P=0.01, I=0.0, D=0, F=0.2;
     public static double gearRatio = 16.0/109.0;
 
     public static double UPPER_HARD_STOP = 0;
-    public static double LOWER_HARD_STOP = -110;
+    public static double LOWER_HARD_STOP = -90;
 
     public static double POWER_CAP = 1;
 
@@ -72,39 +73,31 @@ public class TurretPIDTest extends LinearOpMode {
         pidController.setPID(P,I,D);
         pidController.setTolerance(TOLERANCE);
         turretMotor.readPosition();
-
         if(targetAngle > UPPER_HARD_STOP) {
             targetAngle = UPPER_HARD_STOP;
         }
         else if (targetAngle < LOWER_HARD_STOP) {
             targetAngle = LOWER_HARD_STOP;
         }
+
 /*
         double delta = angleDelta(turretMotor.getScaledPos(), targetAngle);
         double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);*/
-        double error = targetAngle - turretMotor.getScaledPos();
+        double currentPos = turretMotor.getScaledPos();
+        double error = targetAngle - currentPos;
         telemetry.addData("Error", error);
 
-        /*F = F*Math.signum(error);
-        */
-
-        double power = pidController.calculate(turretMotor.getScaledPos(),targetAngle);
-        error = targetAngle - turretMotor.getScaledPos();
-        power = power + (F*error);
+        double power = pidController.calculate(currentPos,targetAngle);
+        if(Math.abs(error) >= TOLERANCE) {
+            power = power + (F * Math.signum(error));
+        }
         if(Math.abs(power) > POWER_CAP) {
             double signPower = Math.signum(power);
             power = signPower*POWER_CAP;
         }
         turretMotor.set(power);
     }
-/*
-    private double angleDelta(double measuredAngle, double targetAngle) {
-        return Math.min(normalizeDegrees(measuredAngle - targetAngle), 2452.5 - normalizeDegrees(measuredAngle - targetAngle));
-    }
 
-    private double angleDeltaSign(double measuredAngle, double targetAngle) {
-        return -(Math.signum(normalizeDegrees(targetAngle - measuredAngle) - (2452.5 - normalizeDegrees(targetAngle - measuredAngle))));
-    }*/
 
 
 

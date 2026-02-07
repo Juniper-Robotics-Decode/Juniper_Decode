@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static java.lang.Math.abs;
@@ -19,8 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 
+/// todo dereference everything from this
 @Config
 @TeleOp
 public class swerveTuningTele extends LinearOpMode{
@@ -37,18 +39,21 @@ public class swerveTuningTele extends LinearOpMode{
     private Pose2D pos;
 
     private SlewRateLimiter XRate, YRate, HeadingRate;
-    public static double xrate = 4.0, yrate = 4.0, headingrate = 3.0;
+    public static double xrate = 3.0, yrate = 3.0, headingrate = 2.2;
 
-    public static double offsets[] = new double[]{-0.2, 1.1, 3.2, 1.1};
+    public static double offsets[] = new double[]{0.8,0.1,1.9,2.14};
     public static boolean inverses[] = new boolean[]{false, false, false, false};
-    public static double scalars[] = new double[]{1, 1, 1, 1};
+    public static double scalars[] = new double[]{-1, 1, 1, 1};
 
     public static int i;
     public static boolean gamepad;
 
+    Logger logger;
+
     @Override
     public void runOpMode() throws InterruptedException{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        logger = new Logger(telemetry);
 
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
@@ -67,7 +72,7 @@ public class swerveTuningTele extends LinearOpMode{
         odo.recalibrateIMU();
 
         hwMap = new HWMap(hardwareMap);
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -121,15 +126,14 @@ public class swerveTuningTele extends LinearOpMode{
             swerveDrivetrain.setOffsets(offsets);
             swerveDrivetrain.setInverses(inverses);
 
-            swerveDrivetrain.setPose(drive);
-            swerveDrivetrain.updateModules();
+            swerveDrivetrain.setPose(drive, BotHeading, 12.4);
             swerveDrivetrain.updateModule(i);
 
             telemetry.addData("x", drive.x);
             telemetry.addData("y", drive.y);
             telemetry.addData("heading", drive.heading);
-            telemetry.addData("tele \n", swerveDrivetrain.getTele());
             telemetry.addData("locked", locked);
+            swerveDrivetrain.log();
             telemetry.update();
         }
     }

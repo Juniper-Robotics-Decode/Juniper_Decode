@@ -1,23 +1,24 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.inverses;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.scalars;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.xrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.yrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.offsets;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scalars;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.pedropathing.localization.PoseTracker;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -34,10 +35,11 @@ public class SwerveTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    Logger logger;
     private HWMap hwMap;
     private SwerveDrivetrain swerveDrivetrain;
 
-    public double x, y, heading;
+    public static double x, y, heading;
     public double BotHeading;
     public boolean locked;
 
@@ -48,13 +50,21 @@ public class SwerveTest extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
-    public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{0.1, 1.1, 3.2, 0.6};
+    public static double[] MotorScalars = new double[]{-1,1,1,1};
+    public static double[] Zeros = new double[]{0.8,0.1,1.9,2.14};
+
+    public static double kgain = 2;
+
+    public static double P, I, D, F;
+
+    public static double lockdelay;
 
     @Override
     public void runOpMode() throws InterruptedException{
-
+        P = 0.25;
+        kgain = 2;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        logger = new Logger(telemetry);
 
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
@@ -75,7 +85,7 @@ public class SwerveTest extends LinearOpMode {
         odo.recalibrateIMU();
 
         hwMap = new HWMap(hardwareMap);
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);
@@ -87,8 +97,16 @@ public class SwerveTest extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
+            double voltage = hwMap.getVoltageSensor().getVoltage();
+
             swerveDrivetrain.setMotorScaling(MotorScalars);
             swerveDrivetrain.setOffsets(Zeros);
+            swerveDrivetrain.setKgain(kgain);
+            swerveDrivetrain.setHeadingControllerPIDF(P, I, D, F);
+            swerveDrivetrain.setlockdelay(lockdelay);
+
+            //swerveDrivetrain.calculateCurrentBasedScalers();
+            //swerveDrivetrain.calculateVelocityBasedScalers();
 
             if (gamepad1.options) {
                 odo.resetPosAndIMU();
@@ -98,8 +116,20 @@ public class SwerveTest extends LinearOpMode {
             pos = odo.getPosition();
             BotHeading = -pos.getHeading(RADIANS);
 
-            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
+            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepad1.left_stick_x, gamepad1.left_stick_y))), (TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
+
+            if (drive.x < 0.02){
+                drive.x = 0;
+            }
+
+            if (drive.y < 0.02){
+                drive.y = 0;
+            }
+
+            if (drive.heading < 0.02){
+                drive.heading = 0;
+            }
 
             if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
                 locked = true;
@@ -108,12 +138,12 @@ public class SwerveTest extends LinearOpMode {
                 locked = false;
             }
 
+            swerveDrivetrain.setPose(drive, BotHeading, voltage);
             swerveDrivetrain.setLocked(locked);
-            swerveDrivetrain.setPose(drive);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Tele Module \n",swerveDrivetrain.getTele());
+            swerveDrivetrain.log();
             telemetry.update();
         }
 

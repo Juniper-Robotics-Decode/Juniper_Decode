@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.core.HWMap;
 import java.util.concurrent.TimeUnit;
 
 @Config
-public class TransferServoFSM {
+public class IntakeServoFSM {
 
     public enum State {
         MOVING_TO_POSITION,
@@ -19,41 +19,34 @@ public class TransferServoFSM {
     }
 
     private Telemetry telemetry;
-    private ServoWrapper transferServo;
+    private ServoWrapper intakeServo;
     public State currentState;
-    public static double targetPosition = .25;
-    public static double positionUp = .5;
-    public static double positionDown = .25;
-    static Timing.Timer postitionTimer;
+    public static double targetPosition = .6;
+    public static double positionUp = 1;
+    public static double positionDown = .6;
+    static Timing.Timer transferPostitionTimer;
 
-    public TransferServoFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        postitionTimer = new Timing.Timer(1, TimeUnit.SECONDS); // Original length 1000
+    public IntakeServoFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
+        intakeServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
+        transferPostitionTimer = new Timing.Timer(1, TimeUnit.SECONDS); // Original length 1000
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
     }
 
     public void updateState() {
 
-        telemetry.addData("Current Position ", transferServo.getPosition());
-        telemetry.addData("Elapsed Time ", postitionTimer.elapsedTime());
+        telemetry.addData("Current Position ", intakeServo.getPosition());
+        telemetry.addData("Elapsed Time ", transferPostitionTimer.elapsedTime());
         telemetry.addData("Target Position ", targetPosition);
         telemetry.addData("ServoFSM State ", currentState);
 
 
-        double percentError = Math.abs((transferServo.getPosition() - targetPosition) / targetPosition);
+        double percentError = Math.abs((intakeServo.getPosition() - targetPosition) / targetPosition);
         telemetry.addData("Percent Error", percentError);
-        if (!postitionTimer.isTimerOn() && percentError >= 0.001) {
+        if (!transferPostitionTimer.isTimerOn() && percentError >= 0.001) {
             currentState = State.MOVING_TO_POSITION;
-            transferServo.setPosition(targetPosition);
-            postitionTimer.start();
-        }
-
-        if (postitionTimer.done()) {
-            postitionTimer.pause();
-            if (currentState == State.AT_UP){
-                targetPosition = positionDown;
-            }
+            intakeServo.setPosition(targetPosition);
+            transferPostitionTimer.start();
         }
 
         if (targetPosition == positionUp) {
@@ -63,7 +56,6 @@ public class TransferServoFSM {
         if (targetPosition == positionDown) {
             currentState = State.AT_DOWN;
         }
-        // else if(currentState = A)
     }
 
     public boolean AT_DOWN() {
@@ -73,6 +65,7 @@ public class TransferServoFSM {
     public boolean AT_UP() {
         return currentState == State.AT_UP;
     }
+
 
     public void MoveUp() {
         targetPosition = positionUp;

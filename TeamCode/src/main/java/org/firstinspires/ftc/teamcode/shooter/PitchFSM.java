@@ -7,7 +7,10 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
+
+import java.util.function.DoubleSupplier;
 
 @Config
 public class PitchFSM {
@@ -22,25 +25,32 @@ public class PitchFSM {
 
     private PIDFController pidfController;
     public static double TOLERANCE = 1;
-    public static double P=0.07, I=0, D=0, F=0;
+    public static double P=0.05, I=0, D=0, F=0;
     public static double UPPER_HARD_STOP = 29;
-    public static double LOWER_HARD_STOP = 13;
+    public static double LOWER_HARD_STOP = 10;
     public static double gearRatio = 1.0/12.0;
+    public static double pitchReductionFactor = 0.10;
+    private double MANUAL_OFFSET = 0;
+    private DoubleSupplier flywheelErrorProvider;
 
 
     Telemetry telemetry;
 
-    public PitchFSM(HWMap hwMap, Telemetry telemetry) {
+    Logger logger;
+
+    public PitchFSM(HWMap hwMap, Telemetry telemetry, DoubleSupplier flywheelErrorProvider, Logger logger) {
+        this.logger = logger;
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
         state = States.ALIGNING;
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
         this.telemetry = telemetry;
         targetAngle = 11;
+        this.flywheelErrorProvider = flywheelErrorProvider;
     }
 
-    public void updateState(){
-        updatePID();
+    public void updateState(boolean yPress2, boolean aPress2){
+        updatePID(yPress2,aPress2);
         if(pidfController.atSetPoint()) {
             state = States.ALIGNED;
         }
@@ -49,7 +59,17 @@ public class PitchFSM {
         }
     }
 
-    public void updatePID() {
+    public void updatePID(boolean yPress, boolean aPress) {
+        if(yPress) {
+            MANUAL_OFFSET++;
+        }
+        if(aPress) {
+            MANUAL_OFFSET--;
+        }
+
+
+        targetAngle = targetAngle + MANUAL_OFFSET;
+      //  adjustForFlywheel();
         if(targetAngle > UPPER_HARD_STOP) {
             targetAngle = UPPER_HARD_STOP;
         }
@@ -99,9 +119,18 @@ public class PitchFSM {
     }
 
     public void log() {
-        telemetry.addData("pitch state", state);
-        telemetry.addData("pitch target angle", targetAngle);
-        telemetry.addData("pitch current angle", pitchServo.getScaledPos());
+        logger.log("-----------Pitch-------", "", Logger.LogLevels.PRODUCTION);
+        logger.log("pitch Manual offset", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
+        logger.log("pitch state", state, Logger.LogLevels.DEBUG);
+        logger.log("pitch target angle", targetAngle, Logger.LogLevels.PRODUCTION);
+        logger.log("pitch current angle", pitchServo.getScaledPos(), Logger.LogLevels.PRODUCTION);
+    }
+
+    private void adjustForFlywheel() {
+        double flywheelError = flywheelErrorProvider.getAsDouble();
+        if(flywheelError > 40) {
+            targetAngle = targetAngle + flywheelError * pitchReductionFactor;
+        }
     }
 
 }

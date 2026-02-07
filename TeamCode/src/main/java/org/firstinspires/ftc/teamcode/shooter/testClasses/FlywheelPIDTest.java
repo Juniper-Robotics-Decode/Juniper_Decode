@@ -26,7 +26,7 @@ public class FlywheelPIDTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor1 = new MotorEx(hardwareMap,"FM1", Motor.GoBILDA.BARE);
+        motor1 = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         motor1.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

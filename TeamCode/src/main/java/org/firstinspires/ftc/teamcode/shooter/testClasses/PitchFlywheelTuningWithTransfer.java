@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
@@ -24,22 +26,23 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     MotorEx motor;
 
     HWMap hwMap;
+    RobotSettings robotSettings;
     private NewAxonServo pitchServo;
     private LimelightCamera limelightCamera;
     public static double targetAngle;
 
     private PIDFController pidfController;
     public static double TOLERANCE = 1;
-    public static double P=0.07, I=0, D=0, F=0;
+    public static double P=0.1, I=0, D=0, F=0;
     public static double gearRatio = 1.0/12.0;
 
-    public static double UPPER_HARD_STOP = 22;
-    public static double LOWER_HARD_STOP = 12.5;
+    public static double UPPER_HARD_STOP = 28;
+    public static double LOWER_HARD_STOP = 10;
 
 
     public static double vP=3, vI=0, vD=0, vF = 0;
 
-    public static double ks=0, kv=1.55, ka=0;
+    public static double ks=0, kv=1.7, ka=0;
 
     public static double defaultVelocity = 0;  // RPM
 
@@ -47,11 +50,16 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     public static double targetVelocityTicks;
 
+    private Logger logger;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
-        intakeFSM = new IntakeFSM(hwMap,telemetry);
-        transferFSM = new TransferFSM(hwMap, telemetry);
+        robotSettings = RobotSettings.load();
+
+        transferFSM = new TransferFSM(hwMap, telemetry, logger);
+        intakeFSM = new IntakeFSM(hwMap,telemetry, transferFSM,logger);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -59,14 +67,14 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry);
+        //limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
 
         waitForStart();
         while (opModeIsActive()) {
             limelightCamera.update();
-            transferFSM.updateState(gamepad1.dpad_right, gamepad1.right_bumper);
+            transferFSM.updateState(gamepad1.right_bumper);
             intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
             updatePID();
             telemetry.addData("Voltage", hardwareMap.voltageSensor.iterator().next().getVoltage());

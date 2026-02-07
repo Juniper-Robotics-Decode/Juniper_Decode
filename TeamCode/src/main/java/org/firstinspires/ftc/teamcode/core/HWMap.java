@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class HWMap {
 
@@ -26,6 +27,7 @@ public class HWMap {
     // Transfer
     private final MotorEx transferMotor;
     private final Servo transferServo;
+    private final AnalogInput transferEncoder;
 
     // Front Left Module Hardware
     public DcMotorEx FLM;
@@ -47,6 +49,7 @@ public class HWMap {
     public CRServoImplEx BLS;
     public AnalogInput BLE;
 
+    private VoltageSensor voltageSensor;
 
     private final GoBildaPinpointDriver odo;
 
@@ -56,12 +59,12 @@ public class HWMap {
         turretMotor = new MotorEx(hardwareMap,"TM", Motor.GoBILDA.RPM_1150); // TODO: get right RPM
         pitchServo = new CRServo(hardwareMap, "PS");
         pitchEncoder = hardwareMap.get(AnalogInput.class, "PE");
+        transferEncoder = hardwareMap.get(AnalogInput.class, "TE");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150);
         transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312);
         transferServo = hardwareMap.get(Servo.class, "TS");
-        transferServo.setDirection(Servo.Direction.REVERSE);
 
         FLM = hardwareMap.get(DcMotorEx.class, "FLM");
         FRM = hardwareMap.get(DcMotorEx.class, "FRM");
@@ -80,7 +83,10 @@ public class HWMap {
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+
     }
+
 
 
     public GoBildaPinpointDriver getOdo() {
@@ -106,7 +112,6 @@ public class HWMap {
         return pitchEncoder;
     }
 
-
     public MotorEx getIntakeMotor() {
         return intakeMotor;
     }
@@ -119,4 +124,12 @@ public class HWMap {
         return transferServo;
     }
 
+
+    public AnalogInput getTransferEncoder() {
+        return transferEncoder;
+    }
+
+    public VoltageSensor getVoltageSensor() {
+        return voltageSensor;
+    }
 }

@@ -2,12 +2,12 @@
 package org.firstinspires.ftc.teamcode.shooter.testClasses;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.inverses;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.offsets;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.scalars;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.xrate;
-import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.yrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.offsets;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scalars;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -19,9 +19,9 @@ import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.MainAuto;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
@@ -39,22 +39,23 @@ public class PinpointDistanceTest extends LinearOpMode {
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
+    Logger logger;
+
     @Override
     public void runOpMode() {
-        MainAuto.ALLIANCE = "RED";
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
         HeadingRate = new SlewRateLimiter(headingrate);
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-
         RobotSettings robotSettings = new RobotSettings();
         HWMap hwMap = new HWMap(hardwareMap);
-        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings);
+        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings,false);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        logger = new Logger(telemetry);
 
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);
@@ -68,7 +69,7 @@ public class PinpointDistanceTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.options) {
-                pinpoint.resetPosAndIMU();
+                pinpoint.resetIMU();
             }
 
             pinpoint.update();
@@ -87,13 +88,11 @@ public class PinpointDistanceTest extends LinearOpMode {
                 locked = false;
             }
 
-            swerveDrivetrain.setLocked(locked);
-            swerveDrivetrain.setPose(drive);
+            swerveDrivetrain.setPose(drive, BotHeading, 12.4);
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getTele());
-
+            swerveDrivetrain.log();
 
             telemetry.addData("RAW X", pinpoint.getX());
             telemetry.addData("RAW Y", pinpoint.getY());
