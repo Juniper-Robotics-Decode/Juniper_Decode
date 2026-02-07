@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Swerve.Drive.ParticleFilter;
 
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class MonteCarloSwerveFilter { //todo standardize units across swerve
     private final ArrayList<SwerveParticle> particles = new ArrayList<>();
@@ -66,11 +65,11 @@ public class MonteCarloSwerveFilter { //todo standardize units across swerve
     }
 
     private void resample() {
-        Collections.sort(particles, (p1, p2) -> Double.compare(p2.weight, p1.weight));
+        particles.sort((p1, p2) -> Double.compare(p2.weight, p1.weight));
 
-        int eliteLimit = PARTICLE_COUNT / 5;
-        for (int i = eliteLimit; i < PARTICLE_COUNT; i++) {
-            SwerveParticle parent = particles.get(i % eliteLimit);
+        int genSize = PARTICLE_COUNT / 5;
+        for (int i = genSize; i < PARTICLE_COUNT; i++) {
+            SwerveParticle parent = particles.get(i % genSize);
             particles.get(i).copyFrom(parent);
 
             particles.get(i).mutate(Math.toRadians(0.5));

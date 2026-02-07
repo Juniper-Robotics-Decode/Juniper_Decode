@@ -39,7 +39,7 @@ public class SwerveModule {
     double lastServoPower;
     double lastTargetPosition;
 
-    private double k_static = 0.02, p = 0.6, i = 0.0, d = 0.002;
+    private double k_static = 0.00, p = 0.5, i = 0.0, d = 0.008;
     private double offset;
 
     Logger logger;

@@ -49,6 +49,8 @@ public class MainTeleOp extends LinearOpMode {
     private TransferFSM transferFSM;
     private LauncherFSM launcherFSM;
 
+    public static double P, I, D, F;
+
 
     private Timing.Timer loopTimer;
 
@@ -87,6 +89,8 @@ public class MainTeleOp extends LinearOpMode {
             loopTimer.start();
             logger.log("ALLIANCE", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
             logger.log("distance method", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
+
+            swerveDrivetrain.setHeadingControllerPIDF(P, I, D, F);
 
             double voltage = hwMap.getVoltageSensor().getVoltage();
 

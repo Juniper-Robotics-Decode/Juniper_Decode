@@ -57,11 +57,6 @@ public class SwerveTest extends LinearOpMode {
 
     public static double lockdelay;
 
-    public enum centerofRotation {
-        robot,
-        intake
-    }
-
     @Override
     public void runOpMode() throws InterruptedException{
         P = 0.25;
@@ -121,6 +116,18 @@ public class SwerveTest extends LinearOpMode {
 
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepad1.left_stick_x, gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
+
+            if (drive.x < 0.02){
+                drive.x = 0;
+            }
+
+            if (drive.y < 0.02){
+                drive.y = 0;
+            }
+
+            if (drive.heading < 0.02){
+                drive.heading = 0;
+            }
 
             if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
                 locked = true;
