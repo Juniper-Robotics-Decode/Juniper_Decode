@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.core.Pinpoint;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 
+import java.util.Optional;
+
 @TeleOp
 public class PinpointLLRelocalizationTest extends LinearOpMode {
     HWMap hwMap;
@@ -30,45 +32,55 @@ public class PinpointLLRelocalizationTest extends LinearOpMode {
     double heading = 0;
     double allianceYaw;
     Pose2D llPose;
-    Logger logger;
-    Telemetry telemetry;
     @Override
     public void runOpMode() throws InterruptedException {
 
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+     //   telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry,robotSettings);
         pinpoint = new Pinpoint(hwMap,robotSettings,false);
 
-        logger = new Logger(telemetry);
+        waitForStart();
+
         while (opModeIsActive()) {
+
             if (gamepad1.x) {
-                logger.log("status","relocalizing", Logger.LogLevels.DEBUG);
-                logger.log("X1",X, Logger.LogLevels.DEBUG);
-                logger.log("Y1",Y, Logger.LogLevels.DEBUG);
-                logger.log("H1",heading, Logger.LogLevels.DEBUG);
                 relocalize();
-                logger.log("status","relocalized", Logger.LogLevels.DEBUG);
-                logger.log("X2",X, Logger.LogLevels.DEBUG);
-                logger.log("Y2",Y, Logger.LogLevels.DEBUG);
-                logger.log("H2",heading, Logger.LogLevels.DEBUG);
             }
-            logger.log("status","none", Logger.LogLevels.DEBUG);
-            logger.log("X",X, Logger.LogLevels.DEBUG);
-            logger.log("Y",Y, Logger.LogLevels.DEBUG);
-            logger.log("H",heading, Logger.LogLevels.DEBUG);
+
+
+            limelightCamera.update();
+            X = limelightCamera.getxField();
+            Y = limelightCamera.getyField();
+            pinpoint.update();
+
+//            telemetry.addData("status","none");
+//            telemetry.addData("X",X);
+//            telemetry.addData("Y",Y);
+//            telemetry.addData("H", String.valueOf(heading));
+            telemetry.addData("status","relocalizing");
+            telemetry.addData("XL",X);
+            telemetry.addData("YL",Y);
+//            telemetry.addData("H1",String.valueOf(heading));
+
+
+            telemetry.addData("status","relocalized");
+            telemetry.addData("XP",pinpoint.getX());
+            telemetry.addData("YP",pinpoint.getY());
+//            telemetry.addData("H2",String.valueOf(heading));
+//            logger.log("level","DD", Logger.LogLevels.DRIVER_DATA);
+//            logger.log("level","P", Logger.LogLevels.PRODUCTION);
+            telemetry.update();
         }
     }
     public void relocalize(){
-        limelightCamera.update();
-        X = limelightCamera.getxField();
-        Y = limelightCamera.getyField();/*
-        if(limelightCamera.getTargetID() == 20){allianceYaw = -133.6;}
+       /* if(limelightCamera.getTargetID() == 20){allianceYaw = -133.6;}
         else if(limelightCamera.getTargetID() == 24){allianceYaw = 133.6;}
-        heading = limelightCamera.getTx() + allianceYaw;*/
+        heading = limelightCamera.getTx() + allianceYaw;
+*/
         llPose = new Pose2D(DistanceUnit.METER,X,Y,AngleUnit.DEGREES,pinpoint.getHeading());
         pinpoint.setPosition(llPose);
-        pinpoint.update();
+
     }
 }

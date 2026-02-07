@@ -24,10 +24,9 @@ public class TurretFSM {
     private MotorWrapper turretMotor;
     private States state;
     private double targetAngle;
-
     private PIDController pidController;
     public static double TOLERANCE = 3;
-    public static double P=0.015, I=0.35, D=0, F=0.25;
+    public static double P=0.015, I=0.1, D=0, F=0.2;
     public static double gearRatio = 16.0/109.0;
 
     public static double UPPER_HARD_STOP = 0;
