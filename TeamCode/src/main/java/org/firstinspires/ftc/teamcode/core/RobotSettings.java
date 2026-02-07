@@ -17,8 +17,8 @@ import java.io.IOException;
 @Config
 public class RobotSettings {
     public enum Alliance{
-        RED(new Pose2D(DistanceUnit.METER, -1.482, 1.413, AngleUnit.DEGREES, 136.4)),
-        BLUE (new Pose2D(DistanceUnit.METER, -1.482, -1.413, AngleUnit.DEGREES, 223.6));
+        RED(new Pose2D(DistanceUnit.METER, -1.432, 1.5, AngleUnit.DEGREES, 136.4)),
+        BLUE (new Pose2D(DistanceUnit.METER, -1.482, -1.48, AngleUnit.DEGREES, 223.6));
 
         private Pose2D pose2D;
 

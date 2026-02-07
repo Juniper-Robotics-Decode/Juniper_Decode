@@ -43,12 +43,12 @@ public class LauncherFSM {
         state = States.PREPARING_TO_SHOOT;
     }
 
-    public void updateState(boolean bPress, boolean dPadUp, boolean leftBumper, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2) {
+    public void updateState(boolean bPress, boolean yPress, boolean leftBumper, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2) {
         flywheelFSM.updateState(bPress2,xPress2);
         turretFSM.updateState();
         pitchFSM.updateState(yPress2,aPress2);
         positionFSM.updateState(rightBumper2);
-        findTargetState(bPress, dPadUp);
+        findTargetState(bPress, yPress);
 
         switch (state) {
             case PREPARING_TO_SHOOT:
@@ -92,11 +92,11 @@ public class LauncherFSM {
         }
     }
 
-    public void findTargetState(boolean bPress, boolean dPadUp) {
+    public void findTargetState(boolean bPress, boolean yPress) {
         if(bPress) {
             state = States.TOGGLING_FLYWHEEL;
         }
-        else if(dPadUp) {
+        else if(yPress) {
             state = States.RELOCALIZING;
         }
         else if(!(state == States.TOGGLING_FLYWHEEL || state == States.RELOCALIZING)) {
