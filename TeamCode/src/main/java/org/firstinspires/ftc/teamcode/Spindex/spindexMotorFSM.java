@@ -24,7 +24,7 @@ public class spindexMotorFSM {
         this.spindexMotor = sharedMotor;
         this.telemetry = telemetry;
         this.currentPos = Positions.POSITION_1;
-    }
+    }//1
      //   //.
 
     public void spindexOffset(modes mode){

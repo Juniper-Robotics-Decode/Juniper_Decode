@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-
+//1
 @TeleOp
 @Config
 public class analogInput extends LinearOpMode {

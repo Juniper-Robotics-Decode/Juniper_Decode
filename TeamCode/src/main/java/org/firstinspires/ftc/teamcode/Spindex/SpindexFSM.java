@@ -119,7 +119,7 @@ public class SpindexFSM {
                 spindexMotor.set(1.0); // Continuous spin for shooting i guess
                 break;
         }
-
+//1
         intakeMotorFSM.updateState();
         updateTelemetry();
     }
