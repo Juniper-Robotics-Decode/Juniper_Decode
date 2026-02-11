@@ -16,7 +16,7 @@ public class spindexMotorFSM {
 
     public final MotorWrapper spindexMotor;
     public Positions currentPos;
-    private DigitalChannel LimitSwitch;
+ //   private DigitalChannel LimitSwitch;
 
     private Telemetry telemetry;
     public int currentIndex;
@@ -26,8 +26,8 @@ public class spindexMotorFSM {
         this.spindexMotor = sharedMotor;
         this.telemetry = telemetry;
         this.currentPos = Positions.POSITION_1;
-        LimitSwitch = hwMap.getLimiSwitch();
-    }
+     //   LimitSwitch = hwMap.getLimiSwitch();
+    }/*
     public boolean initSpindexMovement() {
         if (LimitSwitch.getState()) {
             spindexMotor.set(0.3);
@@ -39,7 +39,7 @@ public class spindexMotorFSM {
             return true;
         }
     }
-     //   //.
+ */
 
     public void spindexOffset(modes mode){
         if(mode == modes.SHOOTING){
@@ -67,7 +67,7 @@ public class spindexMotorFSM {
 
         telemetry.addData("Spindex Position", currentPos);
         telemetry.addData("Spindex Index", currentIndex);
-        telemetry.addData("Limit Switch Pressed?", LimitSwitch.getState());
+      //  telemetry.addData("Limit Switch Pressed?", LimitSwitch.getState());
         telemetry.update();
 
     }
