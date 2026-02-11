@@ -76,7 +76,7 @@ public class LauncherFSM {
                 }
                 break;
             case RELOCALIZING:
-                Pose2D newPos = positionFSM.getRobotPos();
+                Pose2D newPos = positionFSM.relocalize();
                 turretFSM.setTargetAngle(0,dPadUp2,dPadDown2,dPadLeft2,dPadRight2,leftBumper2);
                 telemetry.addData("-----------------Good to Relocalize-----------", "");
                 telemetry.addData("launcher new pos x", newPos.getX(DistanceUnit.METER));

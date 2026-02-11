@@ -26,7 +26,7 @@ public class SwerveDrivetrain {
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{0.8,0.1,1.9,2.14}; //use SwerveCalibration to find
+    private double offsets[] = new double[]{0.7,2.9,-2.6,0.8}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;

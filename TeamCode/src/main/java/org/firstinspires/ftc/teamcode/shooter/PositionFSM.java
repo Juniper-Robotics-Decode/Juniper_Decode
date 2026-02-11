@@ -55,7 +55,8 @@ public class PositionFSM {
     private InterpLUT velocityMapLL;
     private InterpLUT velocityMapPP;
 
-
+    double X = 0;
+    double Y = 0;
 
     private double defaultFlywheelVelocity = 2500;
     private double flywheelTargetVelocityRPM;
@@ -256,49 +257,49 @@ public class PositionFSM {
             else {
                 sensor = Sensor.PINPOINT;
             }
-            if(Math.abs(pinpoint.getGoalDistance() - limelightCamera.getFlatDistance()) > 0.1 && pinpoint.pinpointReady() && limelightCamera.hasTarget()) {
-                rumbleNotification = true;
-            }
-            else {
-                rumbleNotification = false;
-            }
+//            if(Math.abs(pinpoint.getGoalDistance() - limelightCamera.getFlatDistance()) > 0.1 && pinpoint.pinpointReady() && limelightCamera.hasTarget()) {
+//                rumbleNotification = true;
+//            }
+//            else {
+//                rumbleNotification = false;
+//            }
         }
 
     }
 
-    public void relocalize() {
-        //TODO: add 20 degree pitch and add 90 degree roll
-        double turretHeading = -turretAngleProvider.getAsDouble();
-        double CamOffsetHeadingFromTurret = 180+48.064;
-        double robotHeading = pinpoint.getHeading();
-        double cameraAbsoluteHeading = robotHeading + turretHeading + CamOffsetHeadingFromTurret;
-
-        double camX = limelightCamera.getxField();
-        double camY = limelightCamera.getyField();
-        double distanceCamToTurretCenter = 0.07207114;
-
-        double distanceTurretCenterToRobotCenter = 0.04;
-
-        double xTurret =  camX - (distanceCamToTurretCenter*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
-        double yTurret = camY - (distanceCamToTurretCenter*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
-
-        double xRobot = xTurret - (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading + 180))));
-        double yRobot = yTurret - (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading + 180))));
-
-        Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
-        pinpoint.setPosition(newPos);
-
-        telemetry.addLine("--- RELOCALIZATION ---");
-        telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
-        telemetry.addData("Robot Heading", robotHeading);
-        telemetry.addData("Turret Heading", turretHeading);
-        telemetry.addData("Turret X", xTurret);
-        telemetry.addData("Turret Y", yTurret);
-        telemetry.addData("Cam X", camX);
-        telemetry.addData("Cam Y", camY);
-        telemetry.addData("Robot X", xRobot);
-        telemetry.addData("Robot Y", yRobot);
-    }
+//    public void relocalize() {
+//        //TODO: add 20 degree pitch and add 90 degree roll
+//        double turretHeading = -turretAngleProvider.getAsDouble();
+//        double CamOffsetHeadingFromTurret = 180+48.064;
+//        double robotHeading = pinpoint.getHeading();
+//        double cameraAbsoluteHeading = robotHeading + turretHeading + CamOffsetHeadingFromTurret;
+//
+//        double camX = limelightCamera.getxField();
+//        double camY = limelightCamera.getyField();
+//        double distanceCamToTurretCenter = 0.07207114;
+//
+//        double distanceTurretCenterToRobotCenter = 0.04;
+//
+//        double xTurret =  camX - (distanceCamToTurretCenter*(Math.cos(Math.toRadians(cameraAbsoluteHeading))));
+//        double yTurret = camY - (distanceCamToTurretCenter*(Math.sin(Math.toRadians(cameraAbsoluteHeading))));
+//
+//        double xRobot = xTurret - (distanceTurretCenterToRobotCenter*(Math.cos(Math.toRadians(robotHeading + 180))));
+//        double yRobot = yTurret - (distanceTurretCenterToRobotCenter*(Math.sin(Math.toRadians(robotHeading + 180))));
+//
+//        Pose2D newPos = new Pose2D(DistanceUnit.METER, xRobot,yRobot, AngleUnit.DEGREES, pinpoint.getHeading());
+//        pinpoint.setPosition(newPos);
+//
+//        telemetry.addLine("--- RELOCALIZATION ---");
+//        telemetry.addData("Cam absolute Heading", cameraAbsoluteHeading);
+//        telemetry.addData("Robot Heading", robotHeading);
+//        telemetry.addData("Turret Heading", turretHeading);
+//        telemetry.addData("Turret X", xTurret);
+//        telemetry.addData("Turret Y", yTurret);
+//        telemetry.addData("Cam X", camX);
+//        telemetry.addData("Cam Y", camY);
+//        telemetry.addData("Robot X", xRobot);
+//        telemetry.addData("Robot Y", yRobot);
+//    }
 
 
     public void log() {
@@ -319,7 +320,8 @@ public class PositionFSM {
         logger.log("ty", limelightCamera.getTy(), Logger.LogLevels.DEBUG);
         logger.log("Has target", limelightCamera.hasTarget(), Logger.LogLevels.PRODUCTION);
         logger.log("----------LIMELIGHT LOG----------", "", Logger.LogLevels.PRODUCTION);
-
+        logger.log("Limelight x",limelightCamera.getxField(), Logger.LogLevels.DEBUG);
+        logger.log("Limelight y",limelightCamera.getyField(), Logger.LogLevels.DEBUG);
         logger.log("----------PINPOINT LOG----------", "", Logger.LogLevels.PRODUCTION);
         logger.log("Goal Distance", pinpoint.getGoalDistance(), Logger.LogLevels.PRODUCTION);
         logger.log("pinpoint heading error", pinpoint.getHeadingErrorTrig(), Logger.LogLevels.PRODUCTION);
@@ -344,6 +346,14 @@ public class PositionFSM {
             newPoseRelocal = new Pose2D(DistanceUnit.METER, limelightCamera.getxField(), limelightCamera.getyField(), AngleUnit.DEGREES, pinpoint.getHeading());
         //}
         return newPoseRelocal;
+    }
+
+    public Pose2D relocalize(){
+        limelightCamera.update();
+        X = limelightCamera.getxField();
+        Y = limelightCamera.getyField();
+        pinpoint.update();
+        return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES,pinpoint.getHeading());
     }
 
     public void resetOdo() {
