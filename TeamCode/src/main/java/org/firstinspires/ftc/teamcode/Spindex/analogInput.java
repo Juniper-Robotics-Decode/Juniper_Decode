@@ -12,26 +12,30 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 @TeleOp
 @Config
 public class analogInput extends LinearOpMode {
-    public DigitalChannel LimitSwitch;
+    public DigitalChannel AI;
+    public DcMotor motor;
+    public static double threshold = 1.0;
     public boolean pressed;
-    public DcMotor spindexMotor;
-    public void runOpMode() {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        LimitSwitch = hardwareMap.get(DigitalChannel.class, "LimitSwitch");
-        spindexMotor = hardwareMap.get(DcMotor.class, "spindexMotor");
-        waitForStart();
 
-        while (opModeIsActive()) {
-            pressed = LimitSwitch.getState();
-            if(pressed){
-                spindexMotor.setPower(0);
-            } else{
-                spindexMotor.setPower(1);
-                spindexMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public void runOpMode(){
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        AI = hardwareMap.get(DigitalChannel.class, "AI");
+        motor = hardwareMap.get(DcMotor.class,"motor");
+        waitForStart();
+        while(opModeIsActive()){
+            pressed = AI.getState(); //true = state
+            if (pressed) {
+                telemetry.addData("Input Status", "PRESSED");
+                motor.setPower(0);
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            } else {
+                telemetry.addData("Input Status", "NOT PRESSED");
+                motor.setPower(0.5);
             }
-            telemetry.addData("SpindexMotor Power", spindexMotor.getPower());
-            telemetry.addData("State", pressed);
+            telemetry.addData("State", AI.getState());
             telemetry.update();
+
         }
+
     }
 }
