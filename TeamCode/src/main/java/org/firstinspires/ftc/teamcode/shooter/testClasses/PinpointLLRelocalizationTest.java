@@ -29,7 +29,7 @@ public class PinpointLLRelocalizationTest extends LinearOpMode {
     Pinpoint pinpoint;
     double X = 0;
     double Y = 0;
-    double heading = 0;
+    double H = 0;
     double allianceYaw;
     Pose2D llPose;
     @Override
@@ -55,22 +55,14 @@ public class PinpointLLRelocalizationTest extends LinearOpMode {
             Y = limelightCamera.getyField();
             pinpoint.update();
 
-//            telemetry.addData("status","none");
-//            telemetry.addData("X",X);
-//            telemetry.addData("Y",Y);
-//            telemetry.addData("H", String.valueOf(heading));
             telemetry.addData("status","relocalizing");
             telemetry.addData("XL",X);
             telemetry.addData("YL",Y);
-//            telemetry.addData("H1",String.valueOf(heading));
 
 
             telemetry.addData("status","relocalized");
             telemetry.addData("XP",pinpoint.getX());
             telemetry.addData("YP",pinpoint.getY());
-//            telemetry.addData("H2",String.valueOf(heading));
-//            logger.log("level","DD", Logger.LogLevels.DRIVER_DATA);
-//            logger.log("level","P", Logger.LogLevels.PRODUCTION);
             telemetry.update();
         }
     }

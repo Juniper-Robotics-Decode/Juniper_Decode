@@ -9,6 +9,8 @@ import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scala
 import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
 import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 
+import static java.lang.Math.abs;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -51,7 +53,7 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{-1,1,1,1};
-    public static double[] Zeros = new double[]{0.8,0.1,1.9,2.14};
+    public static double[] Zeros = new double[]{0.1,2.9,-2.8,1.5};
 
     public static double kgain = 2;
 
@@ -119,15 +121,15 @@ public class SwerveTest extends LinearOpMode {
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepad1.left_stick_x, gamepad1.left_stick_y))), (TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(BotHeading), HeadingRate.calculate(drive.heading));
 
-            if (drive.x < 0.02){
+            if (abs(drive.x) < 0.02){
                 drive.x = 0;
             }
 
-            if (drive.y < 0.02){
+            if (abs(drive.y) < 0.02){
                 drive.y = 0;
             }
 
-            if (drive.heading < 0.02){
+            if (abs(drive.heading) < 0.02){
                 drive.heading = 0;
             }
 

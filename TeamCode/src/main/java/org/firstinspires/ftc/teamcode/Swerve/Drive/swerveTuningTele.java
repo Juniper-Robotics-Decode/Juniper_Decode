@@ -41,7 +41,7 @@ public class swerveTuningTele extends LinearOpMode{
     private SlewRateLimiter XRate, YRate, HeadingRate;
     public static double xrate = 3.0, yrate = 3.0, headingrate = 2.2;
 
-    public static double offsets[] = new double[]{0.8,0.1,1.9,2.14};
+    public static double offsets[] = new double[]{0.7,2.9,-2.6,0.8};
     public static boolean inverses[] = new boolean[]{false, false, false, false};
     public static double scalars[] = new double[]{-1, 1, 1, 1};
 

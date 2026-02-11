@@ -12,7 +12,7 @@ public class RollerFSM {
     private Telemetry telemetry;
     public static State State;
     private final MotorWrapper intakeMotor;
-    public static double kS = 0, kV = 2, kA = 0;
+    public static double kS = 0, kV = 1.5, kA = 0;
     public static double p = 0.15, i = 0, d = 0;
     private double currentVelocity;
     public static double targetVelocity = 2790;
