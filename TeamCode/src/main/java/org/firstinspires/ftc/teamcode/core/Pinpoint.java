@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.follower.FollowerConstants;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-//import com.pedropathing.localization.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;

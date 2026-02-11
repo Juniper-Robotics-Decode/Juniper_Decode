@@ -68,9 +68,9 @@ public class PedroTeleop extends LinearOpMode {
 
             follower.setTeleOpDrive(forward,strafe,turn,false);
             loopTimer.start();
-            telemetry.addData("ALLIANCE", MainAuto.ALLIANCE);
+           /* telemetry.addData("ALLIANCE", MainAuto.ALLIANCE);
             telemetry.addData("distance method", RobotSettings.distanceMethod);
-
+*/
             if (gamepad1.options) {
                 follower.setPose(new Pose(0, 0, 0));
             }

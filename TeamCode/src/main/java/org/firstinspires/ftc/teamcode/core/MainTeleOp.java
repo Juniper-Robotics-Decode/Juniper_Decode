@@ -23,9 +23,6 @@ import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
 import org.firstinspires.ftc.teamcode.shooter.LauncherFSM;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
-import org.firstinspires.ftc.teamcode.pedroPathing.GeneratedTraj;
-import org.firstinspires.ftc.teamcode.shooter.ShooterFSM;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
@@ -74,7 +71,7 @@ public class MainTeleOp extends LinearOpMode {
         logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
-        pinpoint = new Pinpoint(hwMap, robotSettings);
+        pinpoint = new Pinpoint(hwMap, robotSettings, false);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 

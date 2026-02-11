@@ -12,11 +12,12 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
@@ -55,7 +56,7 @@ public class SwerveHeadingTuner extends LinearOpMode {
         YRate = new SlewRateLimiter(yrate);
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        odo.setOffsets(10.5, 1.0);
+        odo.setOffsets(10.5, 1.0, DistanceUnit.CM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         odo.resetPosAndIMU();

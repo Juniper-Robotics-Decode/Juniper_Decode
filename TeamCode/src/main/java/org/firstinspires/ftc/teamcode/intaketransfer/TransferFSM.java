@@ -102,9 +102,6 @@ public class TransferFSM {
         return currentState == State.TRANSFERING;
     }
 
-    public boolean TRANSFERED() {
-        return currentState == State.TRANSFERED;
-    }
 
     public void log() {
         logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
@@ -112,7 +109,7 @@ public class TransferFSM {
         logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
     }
 
-    public boolean AT_UP () {
-        return currentState == State.AT_UP;
+    public boolean TRANSFERED() {
+        return currentState == State.TRANSFERED;
     }
 }
