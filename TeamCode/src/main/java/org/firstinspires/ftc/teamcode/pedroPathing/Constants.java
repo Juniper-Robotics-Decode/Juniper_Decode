@@ -47,11 +47,16 @@ public class Constants {
 //            .maxPower(.75)
             .staticFrictionCoefficient(0.02);
 
+
+    public static double offsets[] = new double[]{-0.8,-1.8,-2.2,1.2};
+    public static boolean inverses[] = new boolean[]{false, false, false, false};
+    public static double scalars[] = new double[]{-1, 1, -1, -1};
+
     private static CoaxialPod leftFront(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"FLM","FLS","FLE",
                 new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(0.7), //0.8
+                Math.toDegrees(-0.8),
                 new Pose(4.963582677,4.96063),
                 0,3.3,
                 false);
@@ -61,16 +66,17 @@ public class Constants {
         return new CoaxialPod(hardwareMap,"FRM","FRS","FRE",
                 new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(2.9),
+                Math.toDegrees(-1.8),
                 new Pose(4.963582677,-4.96063),
                 0,3.3,
                 false);
     }
 
+
     private static CoaxialPod leftBack(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"BLM","BLS","BLE",
                 new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE,
                 Math.toDegrees(0.8),
                 new Pose(-4.963582677,4.96063),
                 0,3.3,
@@ -80,7 +86,7 @@ public class Constants {
     private static CoaxialPod rightBack(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"BRM","BRS","BRE",
                 new PIDFCoefficients(0.6*(Math.PI/180.0), 0.0, 0.002*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE,
                 Math.toDegrees(-2.6),
                 new Pose(-4.963582677,-4.96063),
                 0,3.3,
