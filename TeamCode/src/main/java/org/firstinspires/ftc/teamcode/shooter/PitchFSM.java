@@ -5,8 +5,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.norm
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.NewAxonServo;
 
 @Config
@@ -28,14 +28,16 @@ public class PitchFSM {
     public static double gearRatio = 1.0/12.0;
 
 
-    Telemetry telemetry;
+    Logger logger;
+    Logger mechanismLogger;
 
-    public PitchFSM(HWMap hwMap, Telemetry telemetry) {
+    public PitchFSM(HWMap hwMap, Logger logger) {
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
         state = States.ALIGNING;
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
-        this.telemetry = telemetry;
+        this.logger = logger;
+        this.mechanismLogger = mechanismLogger;
         targetAngle = 11;
     }
 
@@ -62,10 +64,10 @@ public class PitchFSM {
 
         double error = targetAngle - pitchServo.getScaledPos();
 
-        telemetry.addData("error", error);
+        logger.log("error", error, Logger.LogLevels.DEBUG);
 
         double power = pidfController.calculate(pitchServo.getScaledPos(),targetAngle);
-        telemetry.addData("power", power);
+        logger.log("power", power, Logger.LogLevels.DEBUG);
         pitchServo.set(power);
     }
 
@@ -99,9 +101,8 @@ public class PitchFSM {
     }
 
     public void log() {
-        telemetry.addData("pitch state", state);
-        telemetry.addData("pitch target angle", targetAngle);
-        telemetry.addData("pitch current angle", pitchServo.getScaledPos());
+        logger.log("pitch state", state, Logger.LogLevels.PRODUCTION);
+        logger.log("pitch target angle", targetAngle, Logger.LogLevels.DEBUG);
+        logger.log("pitch current angle", pitchServo.getScaledPos(), Logger.LogLevels.DEBUG);
     }
-
 }

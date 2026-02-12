@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 
 @Config
 public class FlywheelFSM {
+
+
     public enum States{
         AT_TARGET_VELOCITY,
         STOPPED
@@ -16,7 +18,7 @@ public class FlywheelFSM {
 
     public static double vP=3, vI=0, vD=0, vF = 0; // 0.3 p for just the first half
 
-    public static double ks=0, kv=1.7, ka=0;  // 1.37 for just the first half
+    public static double ks=0, kv=2, ka=0;  // 1.37 for just the first half
 
     public static double TOLERANCE = 100; // ticks
 
@@ -27,15 +29,17 @@ public class FlywheelFSM {
 
     private MotorWrapper flywheelMotor;
 
-    private Telemetry telemetry;
+    private Logger logger;
+
+
 
     private States state;
 
     private boolean stopping = false;
 
-    public FlywheelFSM(HWMap hwMap, Telemetry telemetry) {
-        flywheelMotor = new MotorWrapper(hwMap.getFlywheelMotor(),true,1);
-        this.telemetry = telemetry;
+    public FlywheelFSM(HWMap hwMap, Logger logger) {
+        flywheelMotor = new MotorWrapper(hwMap.getFlywheelMotor(),true,1, true);
+        this.logger = logger;
         state = States.STOPPED;
     }
 
@@ -65,7 +69,7 @@ public class FlywheelFSM {
         flywheelMotor.readVelocity();
         flywheelMotor.setVelocityConstants(vP,vI,vD,ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
-        targetVelocityTicks = -targetVelocityTicks;
+        targetVelocityTicks = targetVelocityTicks;
         flywheelMotor.setVelocity(targetVelocityTicks);
     }
 
@@ -91,12 +95,10 @@ public class FlywheelFSM {
 
 
     public void log() {
-        telemetry.addData("flywheel stopping varialbe", stopping);
-        telemetry.addData("Flywheel FSM state", state);
-        telemetry.addData("Target Velocity RPM", targetVelocityRPM);
-        telemetry.addData("Target Velocity Ticks", targetVelocityTicks);
-        telemetry.addData("Current Velocity Corrected", flywheelMotor.getVelocity());
+        logger.log("flywheel stopping variable", stopping, Logger.LogLevels.DEBUG);
+        logger.log("Flywheel FSM state", state, Logger.LogLevels.PRODUCTION);
+        logger.log("Target Velocity RPM", targetVelocityRPM, Logger.LogLevels.DEBUG);
+        logger.log("Target Velocity Ticks", targetVelocityTicks, Logger.LogLevels.DEBUG);
+        logger.log("<b><u><font color='red'>Current Velocity Corrected</font></u></b>", flywheelMotor.getVelocity(), Logger.LogLevels.DEBUG);
     }
-
-
 }

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 
@@ -12,20 +13,22 @@ public class BeltFSM {
 
     public enum State {
         STOPPED,
-        MOVING
+        MOVING,
+        REVERSING
     }
 
-    private Telemetry telemetry;
+    Logger logger;
     private MotorWrapper transferMotor;
     public static double power = .8;
     public static double movePower = 1;
     public static double stopPower = 0;
+    public static double reversePower = -1;
 
     public State State;
 
-    public BeltFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1);
-        this.telemetry = telemetry;
+    public BeltFSM(HWMap intaketransferhwmap, Logger logger) {
+        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1, true);
+        this.logger = logger;
         State = State.STOPPED;
     }
 
@@ -40,9 +43,14 @@ public class BeltFSM {
         if (transferMotor.getVelocity() != 0) {
             State = State.MOVING;
         }
-        telemetry.addData("Current State ", State);
-        telemetry.addData("Power ", power);
-        telemetry.addData("Velocity ", transferMotor.getVelocity());
+
+        if (transferMotor.getCurrent() > 5 && State == State.MOVING){
+            State = State.REVERSING;
+        }
+
+        if (transferMotor.getVelocity() < 0){
+            State = State.REVERSING;
+        }
     }
 
     public void updatePower() {
@@ -57,6 +65,10 @@ public class BeltFSM {
         power = stopPower;
     }
 
+    public void Reverse() {
+        power = reversePower;
+    }
+
     public boolean MOVING() {
         return State == State.MOVING;
     }
@@ -64,8 +76,7 @@ public class BeltFSM {
     public boolean STOPPED() {
         return State == State.STOPPED;
     }
+
+    public boolean REVERSING() {return State == State.REVERSING;
+    }
 }
-
-
-
-

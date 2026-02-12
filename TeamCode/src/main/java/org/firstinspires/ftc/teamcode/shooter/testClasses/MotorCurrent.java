@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-@TeleOp
+@TeleOp(name = "", group = "5")
 @Config
 public class MotorCurrent extends LinearOpMode {
 

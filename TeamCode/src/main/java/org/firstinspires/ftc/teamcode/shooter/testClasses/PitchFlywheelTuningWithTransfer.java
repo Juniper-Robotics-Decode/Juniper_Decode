@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
 @Config
-@TeleOp
+@TeleOp(name = "", group = "2")
 public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     TransferFSM transferFSM;

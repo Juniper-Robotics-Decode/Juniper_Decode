@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Swerve.Swerve;
+package org.firstinspires.ftc.teamcode.shooter.testClasses;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.headingrate;
@@ -9,84 +9,71 @@ import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.xrat
 import static org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveTuningTele.yrate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
-import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
+import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.MainAuto;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
+import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
-@Config
 @TeleOp(name = "", group = "1")
-public class SwerveTest extends LinearOpMode {
+public class PinpointDistanceTest extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private SwerveDrivetrain swerveDrivetrain;
 
-    private HWMap hwMap;
-    private swerveDrivetrain swerveDrivetrain;
 
-    public double x, y, heading;
     public double BotHeading;
     public boolean locked;
 
-    GoBildaPinpointDriver odo;
-    private double Xoffset, Yoffset;
     private Pose2D pos;
 
     private SlewRateLimiter XRate, YRate, HeadingRate;
     private JoystickScaling StrafingScaler, TurningScaler;
 
     @Override
-    public void runOpMode() throws InterruptedException{
-
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+    public void runOpMode() {
+        MainAuto.ALLIANCE = "RED";
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
         HeadingRate = new SlewRateLimiter(headingrate);
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
-        Xoffset = 10.5; Yoffset = 1; //find in CAD
-        odo.setOffsets(Xoffset, Yoffset);
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        RobotSettings robotSettings = new RobotSettings();
+        HWMap hwMap = new HWMap(hardwareMap);
+        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        odo.resetPosAndIMU();
-        Pose2D startingpos = new Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0);
-        odo.setPosition(startingpos);
-        odo.recalibrateIMU();
-
-        hwMap = new HWMap(hardwareMap);
-        swerveDrivetrain = new swerveDrivetrain(hwMap);
+        swerveDrivetrain = new SwerveDrivetrain(hwMap);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);
         swerveDrivetrain.setMotorScaling(scalars);
 
-        telemetry.addData("Status", "Initialized");
+        telemetry.addLine("Alliance" + robotSettings.alliance);
+        telemetry.addData("start Pos", robotSettings.startPosState.getPose2D());
         telemetry.update();
+
         waitForStart();
-        runtime.reset();
 
         while (opModeIsActive()) {
             if (gamepad1.options) {
-                odo.resetPosAndIMU();
+                pinpoint.resetPosAndIMU();
             }
 
-            odo.update();
-            pos = odo.getPosition();
+            pinpoint.update();
+
+
+            pos = pinpoint.getPos();
             BotHeading = -pos.getHeading(RADIANS);
 
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(gamepad1.left_stick_x, -gamepad1.left_stick_y))), (-TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
@@ -104,10 +91,33 @@ public class SwerveTest extends LinearOpMode {
             swerveDrivetrain.updateModules();
 
             telemetry.addData("Bot Heading", BotHeading);
-            telemetry.addData("Tele Module \n",swerveDrivetrain.getTele());
+            telemetry.addData("Swerve Tele \n", swerveDrivetrain.getTele());
+
+
+            telemetry.addData("RAW X", pinpoint.getX());
+            telemetry.addData("RAW Y", pinpoint.getY());
+            telemetry.addData("RAW Heading", pinpoint.getHeading());
+
+            telemetry.addLine("-----------------");
+
+            telemetry.addData("Distance to Goal", pinpoint.getGoalDistance());
+            telemetry.addData("Heading Error", pinpoint.getHeadingErrorTrig());
+            telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
+
+            String turnDir;
+            if (pinpoint.getHeadingErrorTrig() > 0) {
+                turnDir = "LEFT";
+            }
+            else {
+                turnDir = "RIGHT";
+            }
+            if (Math.abs(pinpoint.getHeadingErrorTrig()) < 2.0) {
+                turnDir = "AIMED";
+            }
+
+            telemetry.addData("Suggested Turn", turnDir);
+
             telemetry.update();
         }
-
     }
-
 }

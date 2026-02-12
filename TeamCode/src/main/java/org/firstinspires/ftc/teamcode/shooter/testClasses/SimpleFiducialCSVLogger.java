@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+@TeleOp(name = "", group = "3")
 public class SimpleFiducialCSVLogger extends LinearOpMode {
 
     private Limelight3A limelight;

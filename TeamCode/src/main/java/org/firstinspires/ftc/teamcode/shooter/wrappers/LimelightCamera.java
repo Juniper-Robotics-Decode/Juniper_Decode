@@ -5,7 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.MainAuto;
 
 import java.util.List;
@@ -22,28 +22,28 @@ public class LimelightCamera {
     private double flatDistance_m = 0;
     private double tx_degrees = 0;
     private double ty_degrees = 0;
-    private Telemetry telemetry;
+    private Logger logger;
 
-    public LimelightCamera(Limelight3A limelight3A, Telemetry telemetry) {
+    public LimelightCamera(Limelight3A limelight3A, Logger logger) {
         limelight = limelight3A;
         limelight.setPollRateHz(100);
         limelight.start();
         limelight.pipelineSwitch(1);
-        this.telemetry = telemetry;
+        this.logger = logger;
     }
 
     public void update() {
         LLResult result = limelight.getLatestResult();
-        telemetry.addData("is there a limelight result", !(result == null));
-        telemetry.addData("is there a valid limelight result", result.isValid());
+        logger.log("is there a limelight result", !(result == null), Logger.LogLevels.DEBUG);
+        logger.log("is there a valid limelight result", result.isValid(), Logger.LogLevels.DEBUG);
         if (result == null) { // || !result.isValid()
             hasValidTarget = false;
             return;
         }
 
         List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
-        telemetry.addData("is there a fiducial result", !(fiducials == null));
-        telemetry.addData("is there a non-empty fiducial", !fiducials.isEmpty());
+        logger.log("is there a fiducial result", !(fiducials == null), Logger.LogLevels.DEBUG);
+        logger.log("is there a non-empty fiducial", !fiducials.isEmpty(), Logger.LogLevels.DEBUG);
         if (fiducials == null || fiducials.isEmpty()) {
             hasValidTarget = false;
             return;
@@ -68,7 +68,7 @@ public class LimelightCamera {
 
         }
 
-        telemetry.addData("was the target ID found", !(fiducial==null));
+        logger.log("was the target ID found", !(fiducial==null), Logger.LogLevels.DEBUG);
         if (fiducial == null) {
             hasValidTarget = false;
             return;

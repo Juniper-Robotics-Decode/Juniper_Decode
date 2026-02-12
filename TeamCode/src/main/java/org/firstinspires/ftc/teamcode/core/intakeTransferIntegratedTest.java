@@ -6,15 +6,18 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
 @Config
+@TeleOp(name = "", group = "4")
 public class intakeTransferIntegratedTest extends LinearOpMode {
 
 
     private HWMap hwmap;
+    private Logger logger;
     private GamepadEx gamepad;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
@@ -26,8 +29,8 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         hwmap = new HWMap(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
-        intakeFSM = new IntakeFSM(hwmap, telemetry);
-        transferFSM = new TransferFSM(hwmap, telemetry);
+        intakeFSM = new IntakeFSM(hwmap, logger);
+        transferFSM = new TransferFSM(hwmap, logger);
 
         waitForStart();
         while (opModeIsActive()) {

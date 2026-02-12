@@ -50,34 +50,34 @@ public class HWMap {
     private GoBildaPinpointDriver odo;
 
     public HWMap (HardwareMap hardwareMap) {
-        flywheelMotor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
+        flywheelMotor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE); // Port 0 (Expansion Hub)
         flywheelMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-        turretMotor = new MotorEx(hardwareMap,"TM", Motor.GoBILDA.RPM_1150); // TODO: get right RPM
-        pitchServo = new CRServo(hardwareMap, "PS");
-        pitchEncoder = hardwareMap.get(AnalogInput.class, "PE");
+        turretMotor = new MotorEx(hardwareMap,"TM", Motor.GoBILDA.RPM_1150); // Port 1 TODO: get right RPM
+        pitchServo = new CRServo(hardwareMap, "PS"); // Port 1 (Expansion Hub)
+        pitchEncoder = hardwareMap.get(AnalogInput.class, "PE"); // Port 0 (Expansion Hub)
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-        intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150);
-        transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312);
-        transferServo = hardwareMap.get(Servo.class, "TS");
+        intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150); // Port 0 (Control Hub)
+        transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312); // Port 3 (Control Hub)
+        transferServo = hardwareMap.get(Servo.class, "TS"); // Port 0 (Expansion Hub)
         transferServo.setDirection(Servo.Direction.REVERSE);
 
-        FLM = hardwareMap.get(DcMotorEx.class, "FLM");
-        FRM = hardwareMap.get(DcMotorEx.class, "FRM");
-        BLM = hardwareMap.get(DcMotorEx.class, "BLM");
-        BRM = hardwareMap.get(DcMotorEx.class, "BRM");
+        FLM = hardwareMap.get(DcMotorEx.class, "FLM"); // Port 2 (Control Hub)
+        FRM = hardwareMap.get(DcMotorEx.class, "FRM"); // Port 3 (Expansion Hub)
+        BLM = hardwareMap.get(DcMotorEx.class, "BLM"); // Port 1 (Control Hub)
+        BRM = hardwareMap.get(DcMotorEx.class, "BRM"); // Port 2 (Expansion Hub)
 
-        FLS = hardwareMap.get(CRServoImplEx.class, "FLS");
-        FRS = hardwareMap.get(CRServoImplEx.class, "FRS");
-        BLS = hardwareMap.get(CRServoImplEx.class, "BLS");
-        BRS = hardwareMap.get(CRServoImplEx.class, "BRS");
+        FLS = hardwareMap.get(CRServoImplEx.class, "FLS"); // Port 0 (Control Hub)
+        FRS = hardwareMap.get(CRServoImplEx.class, "FRS"); // Port 3 (Control Hub)
+        BLS = hardwareMap.get(CRServoImplEx.class, "BLS"); // Port 1 (Control Hub)
+        BRS = hardwareMap.get(CRServoImplEx.class, "BRS"); // Port 2 (Control Hub)
 
-        FLE = hardwareMap.get(AnalogInput.class, "FLE");
-        FRE = hardwareMap.get(AnalogInput.class, "FRE");
-        BLE = hardwareMap.get(AnalogInput.class, "BLE");
-        BRE = hardwareMap.get(AnalogInput.class, "BRE");
+        FLE = hardwareMap.get(AnalogInput.class, "FLE"); // Port 0 (Control Hub)
+        FRE = hardwareMap.get(AnalogInput.class, "FRE"); // Port 3 (Control Hub)
+        BLE = hardwareMap.get(AnalogInput.class, "BLE"); // Port 1 (Control Hub)
+        BRE = hardwareMap.get(AnalogInput.class, "BRE"); // Port 2 (Control Hub)
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo"); // Port 0 (Control Hub)
     }
 
 

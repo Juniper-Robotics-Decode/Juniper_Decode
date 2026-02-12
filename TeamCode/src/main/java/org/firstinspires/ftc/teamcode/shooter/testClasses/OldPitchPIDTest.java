@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.shooter.wrappers.AxonCRServoWrapper;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 
 @Config
-@TeleOp
+@TeleOp(name = "", group = "2")
 public class OldPitchPIDTest extends LinearOpMode {
 
     HWMap hwMap;

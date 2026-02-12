@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-@TeleOp
+@TeleOp(name = "", group = "3")
 public class LimeLightTest extends LinearOpMode {
 
     private Limelight3A limelight;

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 
 
 @Config
-@TeleOp
+@TeleOp(name = "", group = "2")
 public class TurretPIDTest extends LinearOpMode {
 
     HWMap hwMap;

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+@TeleOp(name = "", group = "2")
 public class AngleTestCSV extends LinearOpMode {
 
     private Limelight3A limelight;

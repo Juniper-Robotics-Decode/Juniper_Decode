@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+@TeleOp(name = "", group = "3")
 public class LimelightCSVTest extends LinearOpMode {
 
     private static final Logger log = LoggerFactory.getLogger(LimelightCSVTest.class);

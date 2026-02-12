@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.intake;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.arcrobotics.ftclib.util.Timing;
+
+
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
+import org.firstinspires.ftc.teamcode.intaketransfer.IntakeServoFSM;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class IntakeFSM {
-
 
     enum State {
         RAMPING_UP_TO_INTAKE,
@@ -13,33 +18,36 @@ public class IntakeFSM {
         STOPPING,
         READY_TO_INTAKE,
         EJECTING,
-        STOPPED
+        STOPPED,
     }
 
+    private Logger logger;
     private RollerFSM Roller;
-    private State currentState = State.RAMPING_UP_TO_INTAKE;
-    private Telemetry telemetry;
+    private IntakeServoFSM Servo;
 
-    public IntakeFSM(HWMap hardwareMap, Telemetry telemetry) {
-        Roller = new RollerFSM(hardwareMap, telemetry);
-        this.telemetry = telemetry;
+    private State currentState = State.RAMPING_UP_TO_INTAKE;
+    Timing.Timer autoReverseTimer;
+
+    public IntakeFSM(HWMap hardwareMap, Logger logger) {
+        autoReverseTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
+        Roller = new RollerFSM(hardwareMap, logger);
+        Servo = new IntakeServoFSM(hardwareMap, logger);
+        this.logger = logger;
     }
 
     public void updateState(boolean YPress, boolean D_Pad_Left_Press) {
         Roller.updateState();
+
         findTargetState(YPress, D_Pad_Left_Press);
         switch (currentState) {
-            case RAMPING_UP_TO_EJECT:
-                Roller.eject();
-                if (Roller.EJECTING()) {
-                    currentState = State.EJECTING;
-                }
-                break;
 
             case RAMPING_UP_TO_INTAKE:
                 Roller.intake();
                 if (Roller.INTAKING()) {
                     currentState = State.READY_TO_INTAKE;
+                    if (Servo.AT_UP()) {
+                        Servo.MoveDown();
+                    }
                 }
                 break;
 
@@ -47,19 +55,34 @@ public class IntakeFSM {
                 Roller.stop();
                 if (Roller.STOPPED()) {
                     currentState = State.STOPPED;
+                    if (Servo.AT_UP()) {
+                        Servo.MoveDown();
+                    }
+                }
+
+                break;
+
+            case RAMPING_UP_TO_EJECT:
+                Roller.eject();
+                if (Roller.EJECTING()) {
+                    currentState = State.EJECTING;
+                    Servo.MoveUp();
+                    if (Servo.AT_UP()) {
+                        Servo.MoveDown();
+                    }
                 }
                 break;
         }
-        telemetry.addData("Current State ", currentState);
-
     }
 
     public void findTargetState(boolean YPress, boolean D_Pad_Left_Press) {
 
         if (YPress && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED)) {
             currentState = State.RAMPING_UP_TO_EJECT;
-        } else if (YPress && currentState == State.EJECTING) {
+
+        } else if (YPress && (currentState == State.EJECTING)) {
             currentState = State.RAMPING_UP_TO_INTAKE;
+
         }
 
         if (D_Pad_Left_Press && (currentState == State.READY_TO_INTAKE || currentState == State.EJECTING)) {
@@ -67,5 +90,28 @@ public class IntakeFSM {
         } else if (D_Pad_Left_Press && currentState == State.STOPPED) {
             currentState = State.RAMPING_UP_TO_INTAKE;
         }
+
+        /*
+                                        JAMMING
+
+        if (Roller.RAMPING_UP_TO_INTAKE() && currentState == State.EJECTING){
+            currentState = State.RAMPING_UP_TO_INTAKE;
+        }
+
+        if (Roller.JAMMED()) {
+            currentState = State.RAMPING_UP_TO_EJECT;
+        }
+                                                                                                    */
+    }
+
+    public void log() {
+        if (currentState == State.READY_TO_INTAKE) {
+            logger.log("<b><u><font color='green'>Intake Current State</font></u></b>", currentState, Logger.LogLevels.PRODUCTION);
+        } else if (currentState == State.EJECTING) {
+            logger.log("<b><u><font color='red'>Intake Current State</font></u></b>", currentState, Logger.LogLevels.PRODUCTION);
+        }
+        Roller.log();
+        Servo.log();
+
     }
 }

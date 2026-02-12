@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 
 @Config
-@TeleOp
+@TeleOp(name = "", group = "1")
 public class swerveTuningTele extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 

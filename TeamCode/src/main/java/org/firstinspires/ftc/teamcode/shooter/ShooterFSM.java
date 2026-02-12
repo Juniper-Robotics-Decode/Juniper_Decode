@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.shooter;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
-public class ShooterFSM {
+public class LauncherFSM {
 
     public enum States{
         PREPARING_TO_SHOOT,
@@ -13,6 +13,7 @@ public class ShooterFSM {
         TOGGLED_FLYWHEEL
     }
 
+    private Logger logger;
     private FlywheelFSM flywheelFSM;
     private TurretFSM turretFSM;
     private PitchFSM pitchFSM;
@@ -20,13 +21,13 @@ public class ShooterFSM {
     private States state;
     private boolean flywheelStopping = false;
 
-    private Telemetry telemetry;
-    public ShooterFSM (HWMap hardwareMap, Telemetry telemetry, Pinpoint pinpoint) {
-        flywheelFSM = new FlywheelFSM(hardwareMap,telemetry);
-        turretFSM = new TurretFSM(hardwareMap,telemetry);
-        pitchFSM = new PitchFSM(hardwareMap,telemetry);
-        positionFSM = new PositionFSM(hardwareMap,telemetry, pinpoint);
-        this.telemetry = telemetry;
+
+    public LauncherFSM(HWMap hardwareMap,Logger logger, Pinpoint pinpoint) {
+        flywheelFSM = new FlywheelFSM(hardwareMap,logger);
+        turretFSM = new TurretFSM(hardwareMap,logger);
+        pitchFSM = new PitchFSM(hardwareMap,logger);
+        positionFSM = new PositionFSM(hardwareMap,logger, pinpoint, turretFSM::getCurrentAngle);
+        this.logger = logger;
         state = States.PREPARING_TO_SHOOT;
     }
 
@@ -53,6 +54,7 @@ public class ShooterFSM {
                     flywheelFSM.setTargetVelocityRPM(positionFSM.getFlywheelTargetVelocityRPM());
                     flywheelStopping = false;
                 }
+
                 else {
                     flywheelFSM.setTargetVelocityRPM(0);
                     flywheelStopping = true;
@@ -75,9 +77,9 @@ public class ShooterFSM {
     }
 
     public void log() {
-        telemetry.addData("shooter state", state);
-        flywheelFSM.log();
+        logger.log("<b><u><font color='red'>shooter state</font></u></b>", state, Logger.LogLevels.PRODUCTION);
         turretFSM.log();
+        flywheelFSM.log();
         pitchFSM.log();
         positionFSM.log();
     }

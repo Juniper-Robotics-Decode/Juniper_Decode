@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
-@TeleOp
+@TeleOp(name = "", group = "2")
 public class FullShooterTest extends LinearOpMode {
 
     HWMap hwMap;

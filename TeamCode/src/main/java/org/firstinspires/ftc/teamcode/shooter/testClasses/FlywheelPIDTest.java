@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Config
-@TeleOp
+@TeleOp(name = "", group = "2")
 public class FlywheelPIDTest extends LinearOpMode {
 
     MotorEx motor;
