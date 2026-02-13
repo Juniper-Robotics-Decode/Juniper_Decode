@@ -37,9 +37,9 @@ public class RobotSettings {
         LIMELIGHT_AND_PINPOINT
     }
     public enum StartPos{
-        CLOSE_RED (new Pose2D(DistanceUnit.METER, -1.64, 0.16, AngleUnit.DEGREES, 0)),
+        CLOSE_RED (new Pose2D(DistanceUnit.METER, -1.419,1.224, AngleUnit.DEGREES, 40.4)),
         FAR_RED (new Pose2D(DistanceUnit.METER, 1.64, 0.16, AngleUnit.DEGREES, 180)),
-        CLOSE_BLUE (new Pose2D(DistanceUnit.METER, -1.64, -0.16, AngleUnit.DEGREES, 0)),
+        CLOSE_BLUE (new Pose2D(DistanceUnit.METER, -1.419,-1.224, AngleUnit.DEGREES, 319.6)),
         FAR_BLUE((new Pose2D(DistanceUnit.METER, 1.64, -0.16, AngleUnit.DEGREES, 180)));
 
         private Pose2D pose2D;

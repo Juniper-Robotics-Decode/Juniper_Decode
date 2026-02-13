@@ -45,6 +45,7 @@ public class PitchFSM {
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
         this.telemetry = telemetry;
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         targetAngle = 11;
         this.flywheelErrorProvider = flywheelErrorProvider;
     }
@@ -61,10 +62,10 @@ public class PitchFSM {
 
     public void updatePID(boolean yPress, boolean aPress) {
         if(yPress) {
-            MANUAL_OFFSET++;
+            MANUAL_OFFSET--;
         }
         if(aPress) {
-            MANUAL_OFFSET--;
+            MANUAL_OFFSET++;
         }
 
 
@@ -82,10 +83,10 @@ public class PitchFSM {
 
         double error = targetAngle - pitchServo.getScaledPos();
 
-        telemetry.addData("error", error);
+//        telemetry.addData("error", error);
 
         double power = pidfController.calculate(pitchServo.getScaledPos(),targetAngle);
-        telemetry.addData("power", power);
+//        telemetry.addData("power", power);
         pitchServo.set(power);
     }
 
@@ -119,8 +120,8 @@ public class PitchFSM {
     }
 
     public void log() {
-        logger.log("-----------Pitch-------", "", Logger.LogLevels.PRODUCTION);
-        logger.log("pitch Manual offset", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
+        logger.log("<font color='yellow'>-----------Pitch-------</font>", "", Logger.LogLevels.PRODUCTION);
+        logger.log("<b><font color='green'>pitch Manual offset</font></b>", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
         logger.log("pitch state", state, Logger.LogLevels.DEBUG);
         logger.log("pitch target angle", targetAngle, Logger.LogLevels.PRODUCTION);
         logger.log("pitch current angle", pitchServo.getScaledPos(), Logger.LogLevels.PRODUCTION);

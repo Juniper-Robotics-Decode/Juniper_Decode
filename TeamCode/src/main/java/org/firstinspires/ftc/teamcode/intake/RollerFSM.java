@@ -51,7 +51,7 @@ public class RollerFSM {
             State = State.INTAKING;
         }
 
-        if (currentVelocity < -500) {
+        if (currentVelocity < 0) {
             State = State.EJECTING;
         }
 
@@ -62,10 +62,10 @@ public class RollerFSM {
         intakeMotor.readVelocity();
         intakeMotor.setVelocityConstants(p, i, d, kS, kV, kA);
         updatePID();
-        telemetry.addData("Roller FSM State ", State);
+        /*telemetry.addData("Roller FSM State ", State);
         telemetry.addData("Current Velocity ", currentVelocity);
         telemetry.addData("Target Velocity ", targetVelocity);
-        telemetry.addData("Current Amount ", intakeMotor.getCurrent());
+        telemetry.addData("Current Amount ", intakeMotor.getCurrent());*/
     }
 
     public void updatePID() {
