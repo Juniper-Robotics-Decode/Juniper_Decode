@@ -79,9 +79,9 @@ public class MainTeleOp extends LinearOpMode {
         swerveDrivetrain.setInverses(inverses);
         swerveDrivetrain.setMotorScaling(scalars);
 
+        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger, false);
         transferFSM = new TransferFSM(hwMap, telemetry,logger);
         intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
-        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger);
 
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);

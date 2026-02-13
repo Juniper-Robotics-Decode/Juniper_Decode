@@ -34,7 +34,7 @@ public class TurretFSM {
 
     public static double POWER_CAP = 1;
 
-    public static double TURRET_OFFSET = 3;
+    public static double TURRET_OFFSET = 5;
 
     private double MANUAL_OFFSET = 0;
 

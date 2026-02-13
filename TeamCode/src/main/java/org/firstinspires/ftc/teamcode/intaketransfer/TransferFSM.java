@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
+import org.firstinspires.ftc.teamcode.shooter.LauncherFSM;
 
 
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,7 @@ public class TransferFSM {
 
     public static long DOWN_TIME = 1000;
     public static long UP_TIME = 500;
+
 
     public TransferFSM(HWMap hardwareMap, Telemetry telemetry, Logger logger) {
         this.logger = logger;
@@ -107,6 +109,7 @@ public class TransferFSM {
         logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
         transferServoFSM.log();
         logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("Shooter Prepared", LauncherFSM.launcherPrepared(), Logger.LogLevels.PRODUCTION);
     }
 
     public boolean TRANSFERED() {

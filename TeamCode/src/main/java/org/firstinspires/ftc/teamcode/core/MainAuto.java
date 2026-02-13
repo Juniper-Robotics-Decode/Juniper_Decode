@@ -97,7 +97,7 @@ public class MainAuto extends LinearOpMode {
 
         logger = new Logger(telemetry);
 
-        launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger);
+        launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger, true);
 
         transferFSM = new TransferFSM(hwMap,telemetry,logger);
 

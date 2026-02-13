@@ -30,7 +30,7 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
         hwmap = new HWMap(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
         logger = new Logger(telemetry);
-        transferFSM = new TransferFSM(hwmap, telemetry, logger);
+        //transferFSM = new TransferFSM(hwmap, telemetry, logger);
         intakeFSM = new IntakeFSM(hwmap, telemetry, transferFSM,logger);
 
         waitForStart();

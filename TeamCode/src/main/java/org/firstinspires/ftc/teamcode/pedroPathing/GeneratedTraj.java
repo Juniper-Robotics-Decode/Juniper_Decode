@@ -148,23 +148,21 @@ public class GeneratedTraj extends LinearOpMode {
 
             case 1:
                 if(!follower.isBusy()) {
-                    transferFSM.updateState(true);
-                    if(transferFSM.TRANSFERED()) {
-                        setPathState(-1);
-                    }
+                    transferFSM.updateState(false);
+                    actionTimer.resetTimer();
+                    pathState = 2;
                 }
                 break;
             case 2:
-                if (transferFSM.TRANSFERED()) {
-                    follower.followPath(Path2, true);
-                    setPathState(3);
+                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
+                    transferFSM.updateState(true);
+                    pathState = 3;
                 }
                 break;
-
             case 3:
-                if (!follower.isBusy()) {
-                    transferFSM.updateState(false);
-                    follower.followPath(Path3, true);
+                transferFSM.updateState(true);
+                if (transferFSM.TRANSFERED()) {
+                    follower.followPath(Path2, true);
                     setPathState(4);
                 }
                 break;
@@ -172,41 +170,70 @@ public class GeneratedTraj extends LinearOpMode {
             case 4:
                 if (!follower.isBusy()) {
                     transferFSM.updateState(false);
-                    follower.followPath(Path4, true);
+                    follower.followPath(Path3, true);
                     setPathState(5);
                 }
                 break;
-
             case 5:
-                if (!follower.isBusy()) {
+                if(!follower.isBusy()) {
                     transferFSM.updateState(false);
-                    follower.followPath(Path5, true);
+                    follower.followPath(Path4, true);
                     setPathState(6);
+                }
+            case 6:
+                if(!follower.isBusy()) {
+                    transferFSM.updateState(false);
+                    actionTimer.resetTimer();
+                    pathState = 7;
+                }
+                break;
+            case 7:
+                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
+                    transferFSM.updateState(true);
+                    pathState = 8;
+                }
+                break;
+            case 8:
+                transferFSM.updateState(true);
+                if (transferFSM.TRANSFERED()) {
+                    follower.followPath(Path5, true);
+                    setPathState(9);
                 }
                 break;
 
-            case 6:
+            case 9:
                 if (!follower.isBusy()) {
                     transferFSM.updateState(false);
                     follower.followPath(Path6, true);
-                    setPathState(7);
+                    setPathState(10);
                 }
                 break;
 
-            case 7:
+            case 10:
                 if (!follower.isBusy()) {
                     transferFSM.updateState(false);
                     follower.followPath(Path7, true);
-                    setPathState(8);
+                    setPathState(11);
                 }
                 break;
-
-            case 8:
-                if (!follower.isBusy()) {
+            case 12:
+                if(!follower.isBusy()) {
+                    transferFSM.updateState(false);
+                    actionTimer.resetTimer();
+                    pathState = 13;
+                }
+                break;
+            case 13:
+                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
                     transferFSM.updateState(true);
+                    pathState = 14;
+                }
+                break;
+            case 14:
+                    transferFSM.updateState(true);
+                    launcherFSM.setEndOfAuto(true);
                     PoseStorage.currentPose = follower.getPose();
                     setPathState(-1);
-                }
                 break;
         }
     }
@@ -221,6 +248,7 @@ public class GeneratedTraj extends LinearOpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+        actionTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         Paths(follower);
         follower.setStartingPose(startPose);
@@ -233,9 +261,9 @@ public class GeneratedTraj extends LinearOpMode {
         logger = new Logger(telemetry);
         robotSettings = RobotSettings.load();
         pinpoint = new Pinpoint(hwMap,robotSettings, false);
+        launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger, true);
         transferFSM = new TransferFSM(hwMap, telemetry,logger);
         intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
-        launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -244,10 +272,13 @@ public class GeneratedTraj extends LinearOpMode {
 
 
             launcherFSM.log();
+            transferFSM.log();
+            intakeFSM.log();
             telemetry.addData("path state", pathState);
             telemetry.addData("x", follower.getPose().getX());
             telemetry.addData("y", follower.getPose().getY());
             telemetry.addData("heading", follower.getPose().getHeading());
+            telemetry.addData("action timer", actionTimer.getElapsedTime());
             telemetry.update();
         }
     }
