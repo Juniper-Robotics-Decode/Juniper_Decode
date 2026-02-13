@@ -21,10 +21,10 @@ public class LauncherFSM {
         RELOCALIZED
     }
 
-    private static FlywheelFSM flywheelFSM;
-    private static TurretFSM turretFSM;
-    private static PitchFSM pitchFSM;
-    private PositionFSM positionFSM;
+    public  FlywheelFSM flywheelFSM;
+    public  TurretFSM turretFSM;
+    public  PitchFSM pitchFSM;
+    public PositionFSM positionFSM;
     private Pinpoint pinpoint;
     private States state;
     private boolean flywheelStopping = false;
@@ -126,14 +126,6 @@ public class LauncherFSM {
         pitchFSM.log();
     }
 
-    public static boolean launcherPrepared() {
-        if(flywheelFSM.AT_TARGET_VELOCITY() && turretFSM.ALIGNED() && pitchFSM.ALIGNED()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
     public void setEndOfAuto(boolean endOfAuto) {
         this.endOfAuto = endOfAuto;

@@ -109,7 +109,6 @@ public class TransferFSM {
         logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
         transferServoFSM.log();
         logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
-        logger.log("Shooter Prepared", LauncherFSM.launcherPrepared(), Logger.LogLevels.PRODUCTION);
     }
 
     public boolean TRANSFERED() {
