@@ -80,6 +80,7 @@ public class MainTeleOp extends LinearOpMode {
         intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
         launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger);
 
+        P = 0.008; I = 0; D = 0;
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
         double botHeading;

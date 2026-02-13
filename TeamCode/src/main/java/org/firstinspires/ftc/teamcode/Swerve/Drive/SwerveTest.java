@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
 @Config
 @TeleOp
 public class SwerveTest extends LinearOpMode {
-
+    // todo make this the tuning tele
     private ElapsedTime runtime = new ElapsedTime();
 
     Logger logger;
@@ -51,7 +51,7 @@ public class SwerveTest extends LinearOpMode {
     private JoystickScaling StrafingScaler, TurningScaler;
 
     public static double[] MotorScalars = new double[]{-1,1,-1,-1};
-    public static double[] Zeros = new double[]{-0.8,-1.8,-2.2,1.2};
+    public static double[] Zeros = new double[]{-1.5,-2.1,-2.5,1.1};
 
     public static double kgain = 2;
 
@@ -61,7 +61,7 @@ public class SwerveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException{
-        P = 0.25;
+        P = 0.15;
         kgain = 2;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         logger = new Logger(telemetry);
