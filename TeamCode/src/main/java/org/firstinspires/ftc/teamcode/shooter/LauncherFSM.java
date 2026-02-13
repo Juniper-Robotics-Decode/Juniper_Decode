@@ -51,7 +51,7 @@ public class LauncherFSM {
         this.auto = auto;
     }
 
-    public void updateState(boolean bPress, boolean yPress, boolean leftBumper, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2) {
+    public void updateState(boolean bPress, boolean yPress, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2) {
         flywheelFSM.updateState(bPress2,xPress2);
         turretFSM.updateState();
         pitchFSM.updateState(yPress2,aPress2);
@@ -96,17 +96,10 @@ public class LauncherFSM {
                 break;
             case RELOCALIZING:
                 Pose2D newPos = positionFSM.relocalize();
-                turretFSM.setTargetAngle(0,dPadUp2,dPadDown2,dPadLeft2,dPadRight2,leftBumper2);
-                telemetry.addData("-----------------Good to Relocalize-----------", "");
-                telemetry.addData("launcher new pos x", newPos.getX(DistanceUnit.METER));
-                telemetry.addData("launcher new pos y", newPos.getY(DistanceUnit.METER));
-                telemetry.addData("launcher new pos heading", newPos.getHeading(AngleUnit.DEGREES));
-                if(turretFSM.ALIGNED() && leftBumper) {
                         if(newPos != null) {
                             pinpoint.setPosition(newPos);
                             state = States.RELOCALIZED;
                         }
-                }
                 break;
         }
     }
@@ -127,10 +120,10 @@ public class LauncherFSM {
     public void log() {
         logger.log("---------SHOOTER----------","", Logger.LogLevels.PRODUCTION);
         logger.log("shooter state", state, Logger.LogLevels.DEBUG);
+        positionFSM.log();
         flywheelFSM.log();
         turretFSM.log();
         pitchFSM.log();
-        positionFSM.log();
     }
 
     public static boolean launcherPrepared() {

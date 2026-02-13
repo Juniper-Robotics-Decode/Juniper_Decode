@@ -10,7 +10,9 @@ import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.util.Timing;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -44,6 +46,8 @@ public class MainTeleOp extends LinearOpMode {
     private Logger logger;
     private HWMap hwMap;
     private RobotSettings robotSettings;
+    private GamepadEx gamepadE2;
+    private GamepadEx gamepadE1;
     private Follower follower;
 
     private Pinpoint pinpoint;
@@ -57,9 +61,13 @@ public class MainTeleOp extends LinearOpMode {
 
     private Timing.Timer loopTimer;
 
+
     @Override
     public void runOpMode() throws InterruptedException{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        gamepadE2 = new GamepadEx(gamepad2);
+        gamepadE1 = new GamepadEx(gamepad1);
 
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
@@ -83,34 +91,36 @@ public class MainTeleOp extends LinearOpMode {
         transferFSM = new TransferFSM(hwMap, telemetry,logger);
         intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
 
+        P = 0.008; I = 0; D = 0;
 
-        loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS);
-        double botHeading;
+        loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS); double botHeading;
+        logger.log("<b><u><i><font color='orange'>distance method</font></b></u></i>", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
+        if(robotSettings.alliance == RobotSettings.Alliance.RED) {
+            logger.log("<b><u><font color='red'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+        }else{
+            logger.log("<b><u><font color='blue'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+        }
+        logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","", Logger.LogLevels.PRODUCTION);
+        telemetry.update();
         waitForStart();
-
-        while (opModeIsActive()) {
+       while (opModeIsActive()) {
             loopTimer.start();
-            logger.log("ALLIANCE", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
-            logger.log("distance method", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
-
+            gamepadE2.readButtons();
             swerveDrivetrain.setHeadingControllerPIDF(P, I, D, F);
 
             double voltage = hwMap.getVoltageSensor().getVoltage();
 
-            logger.updateLoggingLevel(gamepad1.touchpad);
+            logger.updateLoggingLevel(gamepadE1.getButton(GamepadKeys.Button.LEFT_BUMPER));
 
-            if (gamepad1.options) {
+            if (gamepadE1.getButton(GamepadKeys.Button.START)) {
                 pinpoint.resetIMU();
             }
-            if(gamepad2.right_bumper) {
-                pinpoint.resetPos();
-            }
 
-            if(gamepad1.back && robotSettings.distanceMethod == RobotSettings.DistanceMethod.PINPOINT_ONLY) {
+            if(gamepadE1.getButton(GamepadKeys.Button.BACK) && robotSettings.distanceMethod == RobotSettings.DistanceMethod.PINPOINT_ONLY) {
                  robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
-            if(gamepad1.back && robotSettings.distanceMethod == RobotSettings.DistanceMethod.LIMELIGHT_ONLY) {
+            if(gamepadE1.getButton(GamepadKeys.Button.BACK) && robotSettings.distanceMethod == RobotSettings.DistanceMethod.LIMELIGHT_ONLY) {
                 robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
@@ -123,7 +133,7 @@ public class MainTeleOp extends LinearOpMode {
                 botHeading = (-pos.getHeading(RADIANS)) + Math.PI/2;
             }
 
-            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepad1.left_stick_x, gamepad1.left_stick_y))), (TurningScaler.Scale(gamepad1.right_stick_x, 0.01, 0.66, 4)));
+            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepadE1.getLeftX(), -gamepadE1.getLeftY()))), (TurningScaler.Scale(gamepadE1.getRightX(), 0.01, 0.66, 4)));
             drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(botHeading), HeadingRate.calculate(drive.heading));
 
             if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
@@ -136,24 +146,31 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setPose(drive, botHeading, 12.4);
             swerveDrivetrain.setLocked(locked);
             swerveDrivetrain.updateModules();
+            intakeFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.DPAD_UP), gamepadE1.getButton(GamepadKeys.Button.DPAD_LEFT));
+            transferFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.RIGHT_BUMPER));
+            launcherFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.B),gamepadE1.getButton(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_UP), gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),gamepadE2.wasJustPressed(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.A),gamepadE2.wasJustPressed(GamepadKeys.Button.B),gamepadE2.wasJustPressed(GamepadKeys.Button.X), gamepadE2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER), gamepadE2.getButton(GamepadKeys.Button.RIGHT_BUMPER));
 
          //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
-            logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
-            logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
-            logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
-            intakeFSM.updateState(gamepad1.dpad_up, gamepad1.dpad_left);
-            transferFSM.updateState(gamepad1.right_bumper);
-            launcherFSM.updateState(gamepad1.b,gamepad1.y,gamepad1.left_bumper,gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right,gamepad2.y,gamepad2.a,gamepad2.b,gamepad2.x, gamepad2.left_bumper, gamepad2.right_bumper);
-
-            intakeFSM.log();
-            transferFSM.log();
-            launcherFSM.log();
-            swerveDrivetrain.log();
-            telemetry.addData("Pose", drive);
+            logUpdate(botHeading, voltage, drive);
 
             telemetry.update();
         }
 
+    }
+    private void logUpdate(double botHeading, double voltage, Pose drive){
+        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
+        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
+        telemetry.addData("Pose", drive);
+        intakeFSM.log();
+        transferFSM.log();
+        swerveDrivetrain.log();
+        launcherFSM.positionFSM.log();
+        launcherFSM.turretFSM.log();
+        launcherFSM.pitchFSM.log();
+        launcherFSM.flywheelFSM.log();
+        launcherFSM.positionFSM.logLL();
+        launcherFSM.positionFSM.logPP();
     }
 
 }

@@ -124,7 +124,7 @@ public class MainAuto extends LinearOpMode {
         pos = pinpoint.getPos();
         double botHeading = -pos.getHeading(RADIANS);
 
-        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false,false);
+        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
         switch (pathState) {
             case 0:
                 transferFSM.updateState(false);
@@ -216,7 +216,7 @@ public class MainAuto extends LinearOpMode {
         pos = pinpoint.getPos();
         double botHeading = -pos.getHeading(RADIANS);
 
-        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false, false);
+        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false);
 
         switch (pathState) {
             /*case -1:

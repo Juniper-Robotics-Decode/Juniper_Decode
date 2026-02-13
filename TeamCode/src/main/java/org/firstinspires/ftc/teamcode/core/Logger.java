@@ -25,6 +25,7 @@ public class Logger {
 
     public Logger(Telemetry telemetry) {
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         state = LogLevels.PRODUCTION;
         mechanismState = MechanismLog.INTAKE_TRANSFER;
     }

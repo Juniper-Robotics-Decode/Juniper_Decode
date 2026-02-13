@@ -20,13 +20,14 @@ public class SwerveDrivetrain {
     public SwerveModule[] modules;
 
     private double[] ws = new double[4];
-    private double MotorScaling[] = new double[]{-1,1,1,1};
+    private double MotorScaling[] = new double[]{-1,1,-1,-1};
     private double max;
 
     double[] wa = new double[4];
     double[] lastwa = new double[4];
     private double kgain = 2;
-    private double offsets[] = new double[]{0.7,2.9,-2.6,0.8}; //use SwerveCalibration to find
+
+    private double offsets[] = new double[]{-0.8,-1.8,-2.2,1.2}; //use SwerveCalibration to find
     private boolean inverses[] = new boolean[]{false,false,false,false};
 
     private double trackwidth = 9.921;

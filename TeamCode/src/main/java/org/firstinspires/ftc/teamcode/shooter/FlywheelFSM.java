@@ -45,6 +45,7 @@ public class FlywheelFSM {
         this.hwMap = hwMap;
         flywheelMotor = new MotorWrapper(hwMap.getFlywheelMotor(),true,1, true);
         this.telemetry = telemetry;
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         state = States.STOPPED;
     }
 
@@ -119,14 +120,14 @@ public class FlywheelFSM {
     }
 
     public void log() {
-        logger.log("--------FLYWHEEL-------","", Logger.LogLevels.PRODUCTION);
+        logger.log("<font color='yellow'>--------FLYWHEEL-------</font>","", Logger.LogLevels.PRODUCTION);
         logger.log("flywheel stopping variable", stopping, Logger.LogLevels.DEBUG);
         logger.log("Flywheel FSM state", state, Logger.LogLevels.DEBUG);
         logger.log("Target Velocity RPM", targetVelocityRPM, Logger.LogLevels.PRODUCTION);
         logger.log("Target Velocity Ticks", targetVelocityTicks, Logger.LogLevels.DEBUG);
-        logger.log("Current Velocity Corrected", flywheelMotor.getVelocity(), Logger.LogLevels.PRODUCTION);
-        logger.log("FLywheel offset", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION );
-        logger.log("flywheel stopping varialbe", stopping, Logger.LogLevels.DEBUG);
+        logger.log("Current Velocity Corrected", flywheelMotor.getVelocity(), Logger.LogLevels.DEBUG);
+        logger.log("<b><font color='green'>FLywheel offset</font></b>", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION );
+        logger.log("flywheel stopping variable", stopping, Logger.LogLevels.DEBUG);
         logger.log("Flywheel current", flywheelMotor.getCurrent(), Logger.LogLevels.DEBUG);
     }
 

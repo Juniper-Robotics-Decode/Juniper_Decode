@@ -47,9 +47,11 @@ public class GateFSM {
             currentState = State.AT_UP;
         }
 
+/*
         telemetry.addData("Transfer Current Position ", transferServo.getLastReadPos());
         telemetry.addData("Transfer Target Position ", targetPosition);
         telemetry.addData("ServoFSM State ", currentState);
+*/
         }
 
     public boolean AT_DOWN() {
@@ -79,7 +81,7 @@ public class GateFSM {
 
         double error = targetPosition - transferServo.getLastReadPos();
 
-        telemetry.addData("error", error);
+//        telemetry.addData("error", error);
 
         transferServo.setPos(targetPosition);
     }

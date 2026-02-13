@@ -22,8 +22,8 @@ public class IntakeFSM {
         STOPPED,
     }
 
-    private RollerFSM Roller;
-    private IntakeServoFSM Servo;
+    public RollerFSM Roller;
+    public IntakeServoFSM Servo;
 
     private State currentState = State.RAMPING_UP_TO_INTAKE;
     private Telemetry telemetry;

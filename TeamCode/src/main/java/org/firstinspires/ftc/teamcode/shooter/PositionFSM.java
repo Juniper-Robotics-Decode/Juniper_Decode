@@ -99,6 +99,7 @@ public class PositionFSM {
         this.turretAngleProvider = turretAngleProvider;
         createVelocityMap();
         this.telemetry = telemetry;
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         this.robotSettings = robotSettings;
     }
 
@@ -303,51 +304,39 @@ public class PositionFSM {
 
 
     public void log() {
-        logger.log("----------POSITION FSM LOG----------", "", Logger.LogLevels.PRODUCTION);
+        logger.log("<font color='yellow'>----------POSITION FSM LOG----------</font>", "", Logger.LogLevels.PRODUCTION);
         logger.log("position FSM state", state, Logger.LogLevels.DEBUG);
-        logger.log("Current shooting Sensor", sensor, Logger.LogLevels.PRODUCTION);
+        logger.log("<font color='orange'>Current shooting Sensor</font>", sensor, Logger.LogLevels.PRODUCTION);
         logger.log("Flywheel Target", flywheelTargetVelocityRPM, Logger.LogLevels.DEBUG);
         logger.log("Pitch Target", pitchTargetAngle, Logger.LogLevels.DEBUG);
         logger.log("Turret Error", turretError, Logger.LogLevels.DEBUG);
-
-
-        logger.log("----------LIMELIGHT LOG----------", "", Logger.LogLevels.PRODUCTION);
+    }
+    public void logLL() {
+        logger.log("<font color='yellow'>----------LIMELIGHT LOG----------</font>", "", Logger.LogLevels.PRODUCTION);
         logger.log("X", limelightCamera.getX(), Logger.LogLevels.DEBUG);
         logger.log("Y", limelightCamera.getY(), Logger.LogLevels.DEBUG);
         logger.log("Z", limelightCamera.getZ(), Logger.LogLevels.DEBUG);
         logger.log("Flat Distance", limelightCamera.getFlatDistance(), Logger.LogLevels.DEBUG);
         logger.log("tx", limelightCamera.getTx(), Logger.LogLevels.DEBUG);
         logger.log("ty", limelightCamera.getTy(), Logger.LogLevels.DEBUG);
-        logger.log("Has target", limelightCamera.hasTarget(), Logger.LogLevels.PRODUCTION);
-        logger.log("----------LIMELIGHT LOG----------", "", Logger.LogLevels.PRODUCTION);
-        logger.log("Limelight x",limelightCamera.getxField(), Logger.LogLevels.DEBUG);
-        logger.log("Limelight y",limelightCamera.getyField(), Logger.LogLevels.DEBUG);
-        logger.log("----------PINPOINT LOG----------", "", Logger.LogLevels.PRODUCTION);
-        logger.log("Goal Distance", pinpoint.getGoalDistance(), Logger.LogLevels.PRODUCTION);
-        logger.log("pinpoint heading error", pinpoint.getHeadingErrorTrig(), Logger.LogLevels.PRODUCTION);
-        logger.log("pinpoint ready", pinpoint.pinpointReady(), Logger.LogLevels.PRODUCTION);
-        logger.log("Pinpoint x", pinpoint.getX(), Logger.LogLevels.PRODUCTION);
-        logger.log("Pinpoint y", pinpoint.getY(), Logger.LogLevels.PRODUCTION);
-        logger.log("----------PINPOINT LOG----------", "", Logger.LogLevels.PRODUCTION);
-
-        telemetry.addLine("----------PINPOINT LOG----------");
-        telemetry.addData("Goal Distance", pinpoint.getGoalDistance());
-        telemetry.addData("pinpoint heading error", pinpoint.getHeadingErrorTrig());
-        telemetry.addData("pinpoint ready", pinpoint.pinpointReady());
-        telemetry.addData("Robot x", pinpoint.getX());
-        telemetry.addData("Robot y", pinpoint.getY());
-        telemetry.addData("Robot heading", pinpoint.getHeading());
-        telemetry.addLine("----------PINPOINT LOG----------");
-        logger.log("----------POSITION FSM LOG----------", "", Logger.LogLevels.PRODUCTION);
-
-        /*
+        logger.log("Has target", limelightCamera.hasTarget(), Logger.LogLevels.DEBUG);
+        logger.log("<b><font color='pink'>Limelight X</b></font>", limelightCamera.getxField(), Logger.LogLevels.PRODUCTION);
+        logger.log("<b><font color='pink'>Limelight Y</b></font>", limelightCamera.getyField(), Logger.LogLevels.PRODUCTION);
+    }
+    public void logPP() {
+        logger.log("<font color='yellow'>----------PINPOINT LOG----------</font>", "", Logger.LogLevels.PRODUCTION);
+        logger.log("Goal Distance", pinpoint.getGoalDistance(), Logger.LogLevels.DEBUG);
+        logger.log("pinpoint heading error", pinpoint.getHeadingErrorTrig(), Logger.LogLevels.DEBUG);
+        logger.log("pinpoint ready", pinpoint.pinpointReady(), Logger.LogLevels.DEBUG);
+        logger.log("<b><font color='purple'>Pinpoint X</b></font>", pinpoint.getX(), Logger.LogLevels.PRODUCTION);
+        logger.log("<b><font color='purple'>Pinpoint Y</b></font>", pinpoint.getY(), Logger.LogLevels.PRODUCTION);
+        logger.log("<b><font color='purple'>Pinpoint Heading</b></font>", pinpoint.getHeading(), Logger.LogLevels.PRODUCTION);
+    }
+    /*
         if(newPoseRelocal != null) {
             telemetry.addData("Relocalization new Pos x", newPoseRelocal.getX(DistanceUnit.METER));
             telemetry.addData("Relocalization new Pos y", newPoseRelocal.getY(DistanceUnit.METER));
         }*/
-
-
-    }
 
     public Pose2D getRobotPos() {
         //if(limelightCamera.hasTarget()) {
