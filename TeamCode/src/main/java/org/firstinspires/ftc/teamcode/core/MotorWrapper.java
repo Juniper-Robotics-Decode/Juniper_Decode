@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.core;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -26,6 +27,7 @@ public class MotorWrapper {
         }
 
         this.ratio = ratio;
+        TICK_PER_REVOLUTION = 145.1;
     }
 
     // POWER
