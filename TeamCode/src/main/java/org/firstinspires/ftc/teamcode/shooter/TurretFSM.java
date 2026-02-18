@@ -26,7 +26,9 @@ public class TurretFSM {
     private double targetAngle;
     private PIDController pidController;
     public static double TOLERANCE = 3;
-    public static double P=0.015, I=0.1, D=0, F=0.2;
+    public static double P_Counter = 0.04;
+    public static double P_clock =  0.02;
+    public static double P=0.015, I=0.0, D=0, F=0.5;
     public static double gearRatio = 16.0/109.0;
 
     public static double UPPER_HARD_STOP = 0;
@@ -34,7 +36,7 @@ public class TurretFSM {
 
     public static double POWER_CAP = 1;
 
-    public static double TURRET_OFFSET = 3;
+    public static double TURRET_OFFSET = 0;
 
     private double MANUAL_OFFSET = 0;
 
@@ -85,12 +87,21 @@ public class TurretFSM {
             }
         }
 
+
+
 /*
         double delta = angleDelta(turretMotor.getScaledPos(), targetAngle);
         double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);*/
         double currentPos = turretMotor.getScaledPos();
         double error = targetAngle - currentPos;
 //        telemetry.addData("Error", error);
+
+        if (error < 0) {
+            P  = P_Counter;
+        }
+        else {
+            P = P_clock;
+        }
 
         double power = pidController.calculate(currentPos,targetAngle);
         if(Math.abs(error) >= TOLERANCE) {
@@ -146,7 +157,7 @@ public class TurretFSM {
 
         if(i >= 0) {
             if(PositionFSM.sensor == PositionFSM.Sensor.PINPOINT) {
-                targetAngle = -turretError + MANUAL_OFFSET;
+                targetAngle = -turretError + MANUAL_OFFSET - TURRET_OFFSET;
             }
             else {
                 if(i >= 50) {
@@ -185,6 +196,8 @@ public class TurretFSM {
         MANUAL_OFFSET = 0;
         targetAngle = 0;
     }
+
+
 
 
 }

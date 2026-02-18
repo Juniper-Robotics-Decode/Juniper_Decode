@@ -30,7 +30,7 @@ public class FullShooterTest extends LinearOpMode {
             robotSettings = RobotSettings.load();
             pinpoint = new Pinpoint(hwMap, robotSettings,false);
             gamepad = new GamepadEx(gamepad1);
-            launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint,robotSettings,logger);
+            launcherFSM = new LauncherFSM(hwMap,telemetry,robotSettings,logger);
         }catch (Exception e) {
             telemetry.addData("Exception", e.getMessage());
             telemetry.update();
@@ -39,7 +39,7 @@ public class FullShooterTest extends LinearOpMode {
         while(opModeIsActive()) {
             pinpoint.update();
             gamepad.readButtons();
-            launcherFSM.updateState(gamepad1.b,gamepad1.dpad_up,gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right,gamepad2.y,gamepad2.a,gamepad2.b,gamepad2.x, gamepad2.left_bumper,gamepad2.right_bumper);
+            launcherFSM.updateState(gamepad1.b,gamepad1.dpad_up,gamepad2.dpad_up,gamepad2.dpad_down,gamepad2.dpad_left,gamepad2.dpad_right,gamepad2.y,gamepad2.a,gamepad2.b,gamepad2.x, gamepad2.left_bumper,gamepad2.right_bumper, 0);
             log();
         }
     }

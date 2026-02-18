@@ -51,7 +51,7 @@ public class PositionFSM {
     private States state;
     public static Sensor sensor;
     private LimelightCamera limelightCamera;
-    private Pinpoint pinpoint;
+  //  private Pinpoint pinpoint;
     private InterpLUT velocityMapLL;
     private InterpLUT velocityMapPP;
 
@@ -89,11 +89,12 @@ public class PositionFSM {
 
     private Logger logger;
 
+    private double heading;
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings, Logger logger) {
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, DoubleSupplier turretAngleProvider, RobotSettings robotSettings, Logger logger) {
         this.logger = logger;
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
-        this.pinpoint = pinpoint;
+      //  this.pinpoint = pinpoint;
         state = States.NO_VALID_TARGET;
         sensor = Sensor.PINPOINT;
         this.turretAngleProvider = turretAngleProvider;
@@ -103,7 +104,8 @@ public class PositionFSM {
         this.robotSettings = robotSettings;
     }
 
-    public void updateState(boolean rightBumper2) {
+    public void updateState(boolean rightBumper2, double heading) {
+        this.heading = heading;
         if(rightBumper2 && !lastRightBumper) {
             resetOdo();
         }
@@ -112,8 +114,8 @@ public class PositionFSM {
         limelightCamera.update();
         chooseSensor();
 
-        if(limelightCamera.hasTarget() || pinpoint.pinpointReady()) {
-            if(sensor == Sensor.LIMELIGHT) {
+        if(limelightCamera.hasTarget()) {
+            /*if(sensor == Sensor.LIMELIGHT) {
                 if(limelightCamera.getFlatDistance() >= threshold4LL) {
                     state = States.ZONE_5;
                 }
@@ -130,30 +132,24 @@ public class PositionFSM {
                 findFlywheelTargetVelocity(limelightCamera.getFlatDistance());
                 findPitchTargetAngle();
                 findTurretError(limelightCamera.getTy());
-            }
-            else if(sensor == Sensor.PINPOINT) {
-                if (pinpoint.pinpointReady()) {
-                    if(pinpoint.getGoalDistance() >= threshold4PP) {
+            }*/
+
+                    if(limelightCamera.getGoalDistance() >= threshold4PP) {
                         state = States.ZONE_5;
                     }
-                    else if (pinpoint.getGoalDistance() >= threshold3PP) {
+                    else if (limelightCamera.getGoalDistance() >= threshold3PP) {
                         state = States.ZONE_4;
                     }
-                    else if (pinpoint.getGoalDistance() >= threshold2PP) {
+                    else if (limelightCamera.getGoalDistance() >= threshold2PP) {
                         state = States.ZONE_3;
-                    } else if (pinpoint.getGoalDistance() >= threshold1PP) {
+                    } else if (limelightCamera.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_2;
                     } else {
                         state = States.ZONE_1;
                     }
-                    findFlywheelTargetVelocity(pinpoint.getGoalDistance());
+                    findFlywheelTargetVelocity(limelightCamera.getGoalDistance());
                     findPitchTargetAngle();
-                    findTurretError(pinpoint.getHeadingErrorTrig());
-                }
-                else {
-                    state = States.NO_VALID_TARGET;
-                }
-            }
+                    findTurretError(limelightCamera.getTx());
         }
         else {
             state = States.NO_VALID_TARGET;
@@ -252,12 +248,12 @@ public class PositionFSM {
             sensor = Sensor.PINPOINT;
         }
         else if(robotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
-             if (!pinpoint.pinpointReady()) {
+            /* if (!pinpoint.pinpointReady()) {
                 sensor = Sensor.LIMELIGHT;
             }
             else {
                 sensor = Sensor.PINPOINT;
-            }
+            }*/
 //            if(Math.abs(pinpoint.getGoalDistance() - limelightCamera.getFlatDistance()) > 0.1 && pinpoint.pinpointReady() && limelightCamera.hasTarget()) {
 //                rumbleNotification = true;
 //            }
@@ -322,7 +318,7 @@ public class PositionFSM {
         logger.log("Has target", limelightCamera.hasTarget(), Logger.LogLevels.DEBUG);
         logger.log("<b><font color='pink'>Limelight X</b></font>", limelightCamera.getxField(), Logger.LogLevels.PRODUCTION);
         logger.log("<b><font color='pink'>Limelight Y</b></font>", limelightCamera.getyField(), Logger.LogLevels.PRODUCTION);
-    }
+    }/*
     public void logPP() {
         logger.log("<font color='yellow'>----------PINPOINT LOG----------</font>", "", Logger.LogLevels.PRODUCTION);
         logger.log("Goal Distance", pinpoint.getGoalDistance(), Logger.LogLevels.DEBUG);
@@ -331,7 +327,7 @@ public class PositionFSM {
         logger.log("<b><font color='purple'>Pinpoint X</b></font>", pinpoint.getX(), Logger.LogLevels.PRODUCTION);
         logger.log("<b><font color='purple'>Pinpoint Y</b></font>", pinpoint.getY(), Logger.LogLevels.PRODUCTION);
         logger.log("<b><font color='purple'>Pinpoint Heading</b></font>", pinpoint.getHeading(), Logger.LogLevels.PRODUCTION);
-    }
+    }*/
     /*
         if(newPoseRelocal != null) {
             telemetry.addData("Relocalization new Pos x", newPoseRelocal.getX(DistanceUnit.METER));
@@ -340,7 +336,7 @@ public class PositionFSM {
 
     public Pose2D getRobotPos() {
         //if(limelightCamera.hasTarget()) {
-            newPoseRelocal = new Pose2D(DistanceUnit.METER, limelightCamera.getxField(), limelightCamera.getyField(), AngleUnit.DEGREES, pinpoint.getHeading());
+            newPoseRelocal = new Pose2D(DistanceUnit.METER, limelightCamera.getxField(), limelightCamera.getyField(), AngleUnit.DEGREES, heading);
         //}
         return newPoseRelocal;
     }
@@ -349,12 +345,12 @@ public class PositionFSM {
         limelightCamera.update();
         X = limelightCamera.getxField();
         Y = limelightCamera.getyField();
-        pinpoint.update();
-        return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES,pinpoint.getHeading());
+       // pinpoint.update();
+        return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES,heading);
     }
 
     public void resetOdo() {
-        pinpoint.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,pinpoint.getHeading()));
+     //   pinpoint.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,pinpoint.getHeading()));
     }
 
 }

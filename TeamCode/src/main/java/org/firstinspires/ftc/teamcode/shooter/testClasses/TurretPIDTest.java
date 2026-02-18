@@ -29,6 +29,8 @@ public class TurretPIDTest extends LinearOpMode {
 
     private PIDController pidController;
     public static double TOLERANCE = 3;
+    public static double P_Counter = 0.04;
+    public static double P_clock =  0.02;
     public static double P=0.01, I=0.0, D=0, F=0.2;
     public static double gearRatio = 16.0/109.0;
 
@@ -39,7 +41,7 @@ public class TurretPIDTest extends LinearOpMode {
 
 
     Timing.Timer timer;
-    public static long sleepTime = 25;
+    public static long sleepTime = 45;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,6 +72,7 @@ public class TurretPIDTest extends LinearOpMode {
 
 
     public void updatePID() {
+
         pidController.setPID(P,I,D);
         pidController.setTolerance(TOLERANCE);
         turretMotor.readPosition();
@@ -87,6 +90,12 @@ public class TurretPIDTest extends LinearOpMode {
         double error = targetAngle - currentPos;
         telemetry.addData("Error", error);
 
+        if (error < 0) {
+            P  = P_Counter;
+        }
+        else {
+            P = P_clock;
+        }
         double power = pidController.calculate(currentPos,targetAngle);
         if(Math.abs(error) >= TOLERANCE) {
             power = power + (F * Math.signum(error));
@@ -96,6 +105,7 @@ public class TurretPIDTest extends LinearOpMode {
             power = signPower*POWER_CAP;
         }
         turretMotor.set(power);
+        telemetry.addData("power", turretMotor.get());
     }
 
 

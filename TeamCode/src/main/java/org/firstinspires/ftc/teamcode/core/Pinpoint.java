@@ -29,9 +29,9 @@ public class Pinpoint {  // TODO: add junit
        // odo.resetPosAndIMU();
 
        // Pose2D pose2D = new Pose2D(DistanceUnit.METER, 0, 0.0, AngleUnit.DEGREES, 0.0);
-      //  if (isAuto) {
+       /* if (isAuto) {*/
             odo.setPosition(robotSettings.startPosState.getPose2D());
-       // }
+        //}
 
         update();
     }
