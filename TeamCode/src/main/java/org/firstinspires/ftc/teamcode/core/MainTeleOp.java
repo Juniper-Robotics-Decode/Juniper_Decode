@@ -172,19 +172,19 @@ public class MainTeleOp extends LinearOpMode {
 
     }
     private void logUpdate(double botHeading, double voltage, Pose drive){
-        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
-        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
-        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
-        telemetry.addData("Pose", drive);
-        intakeFSM.log();
-        transferFSM.log();
-        swerveDrivetrain.log();
-        launcherFSM.positionFSM.log();
-        launcherFSM.turretFSM.log();
-        launcherFSM.pitchFSM.log();
         launcherFSM.flywheelFSM.log();
         launcherFSM.positionFSM.logLL();
        // launcherFSM.positionFSM.logPP();
+        launcherFSM.pitchFSM.log();
+        launcherFSM.turretFSM.log();
+        launcherFSM.positionFSM.log();
+        swerveDrivetrain.log();
+        transferFSM.log();
+        intakeFSM.log();
+        telemetry.addData("Pose", drive);
+        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
+        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
     }
 
 }
