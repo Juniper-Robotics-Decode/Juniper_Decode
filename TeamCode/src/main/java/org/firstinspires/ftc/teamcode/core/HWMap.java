@@ -6,11 +6,11 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class HWMap {
     // shooter
@@ -26,14 +26,30 @@ public class HWMap {
     // Transfer
     private final MotorEx transferMotor;
     private final Servo transferServo;
+    private final AnalogInput transferEncoder;
 
-    //Spindex
-    private MotorEx spindexMotor;
-    private RevColorSensorV3 colorSensor1;
-    private RevColorSensorV3 colorSensor2;
-    private RevColorSensorV3 colorSensor3;
-    private RevTouchSensor TCS1;
-    private AnalogInput AI1;
+    // Front Left Module Hardware
+    public DcMotorEx FLM;
+    public CRServoImplEx FLS;
+    public AnalogInput FLE;
+
+    // Front Right Module Hardware
+    public DcMotorEx FRM;
+    public CRServoImplEx FRS;
+    public AnalogInput FRE;
+
+    // Back Right Module Hardware
+    public DcMotorEx BRM;
+    public CRServoImplEx BRS;
+    public AnalogInput BRE;
+
+    // Back Left Module Hardware
+    public DcMotorEx BLM;
+    public CRServoImplEx BLS;
+    public AnalogInput BLE;
+
+    private VoltageSensor voltageSensor;
+
     private GoBildaPinpointDriver odo;
 
     public HWMap (HardwareMap hardwareMap) {
@@ -42,23 +58,32 @@ public class HWMap {
         turretMotor = new MotorEx(hardwareMap,"TM", Motor.GoBILDA.RPM_1150); // TODO: get right RPM
         pitchServo = new CRServo(hardwareMap, "PS");
         pitchEncoder = hardwareMap.get(AnalogInput.class, "PE");
+        transferEncoder = hardwareMap.get(AnalogInput.class, "TE");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150);
         transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312);
         transferServo = hardwareMap.get(Servo.class, "TS");
-        transferServo.setDirection(Servo.Direction.REVERSE);
+
+        FLM = hardwareMap.get(DcMotorEx.class, "FLM");
+        FRM = hardwareMap.get(DcMotorEx.class, "FRM");
+        BLM = hardwareMap.get(DcMotorEx.class, "BLM");
+        BRM = hardwareMap.get(DcMotorEx.class, "BRM");
+
+        FLS = hardwareMap.get(CRServoImplEx.class, "FLS");
+        FRS = hardwareMap.get(CRServoImplEx.class, "FRS");
+        BLS = hardwareMap.get(CRServoImplEx.class, "BLS");
+        BRS = hardwareMap.get(CRServoImplEx.class, "BRS");
+
+        FLE = hardwareMap.get(AnalogInput.class, "FLE");
+        FRE = hardwareMap.get(AnalogInput.class, "FRE");
+        BLE = hardwareMap.get(AnalogInput.class, "BLE");
+        BRE = hardwareMap.get(AnalogInput.class, "BRE");
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
-        colorSensor1 = hardwareMap.get(RevColorSensorV3.class, "colorSensor1");
-        colorSensor2 = hardwareMap.get(RevColorSensorV3.class, "colorSensor2");
-        colorSensor3 = hardwareMap.get(RevColorSensorV3.class, "colorSensor3");
-        TCS1 = hardwareMap.get(RevTouchSensor.class, "TCS1");
-        AI1 = hardwareMap.get(AnalogInput.class, "AI1");
-        spindexMotor = new MotorEx(hardwareMap,"spindexMotor");
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
-
 
     public Limelight3A getLimelight() {
         return limelight;
@@ -80,7 +105,6 @@ public class HWMap {
         return pitchEncoder;
     }
 
-
     public MotorEx getIntakeMotor() {
         return intakeMotor;
     }
@@ -93,32 +117,16 @@ public class HWMap {
         return transferServo;
     }
 
+
+    public AnalogInput getTransferEncoder() {
+        return transferEncoder;
+    }
+
     public GoBildaPinpointDriver getOdo() {
         return odo;
     }
 
-
-    public MotorEx getSpindexMotor() {
-        return spindexMotor;
+    public VoltageSensor getVoltageSensor() {
+        return voltageSensor;
     }
-
-    public RevColorSensorV3 getColorSensor1() {
-        return colorSensor1;
-    }
-
-    public RevColorSensorV3 getColorSensor2() {
-        return colorSensor2;
-    }
-
-    public RevColorSensorV3 getColorSensor3() {
-        return colorSensor3;
-    }
-
-    public RevTouchSensor getTouchSensor1() {
-        return TCS1;
-    }
-    public AnalogInput getAnalogInput1(){
-        return AI1;
-    }
-
 }

@@ -1,7 +1,11 @@
+
 package org.firstinspires.ftc.teamcode.core;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class MotorWrapper {
     private final MotorEx motorEx;
@@ -10,21 +14,27 @@ public class MotorWrapper {
     private double ratio;
     private final double TICK_PER_REVOLUTION;
 
-    public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio, double TICK_PER_REVOLUTION) {
+    public MotorWrapper(MotorEx motorEx, boolean velocityControl, double ratio, boolean inverse) {
         this.motorEx = motorEx;
-        this.TICK_PER_REVOLUTION = TICK_PER_REVOLUTION;
         if (velocityControl) {
             motorEx.setRunMode(Motor.RunMode.VelocityControl);
+
+            if (inverse) {
+                motorEx.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            }
+
         }
 
         this.ratio = ratio;
+        TICK_PER_REVOLUTION = 145.1;
     }
 
     // POWER
 
-/**
-     Description: The set method is a wrapper of the motor set method
-     @param : the power to set the motor at
+    /**
+     * Description: The set method is a wrapper of the motor set method
+     *
+     * @param : the power to set the motor at
      */
 
     public void set(double power) {
@@ -36,9 +46,11 @@ public class MotorWrapper {
     }
 
     // VELOCITY
-/**
-     Description: The following method reads the encoder to get velocity of the motor
-     @return: the velocity that is just read
+
+    /**
+     * Description: The following method reads the encoder to get velocity of the motor
+     *
+     * @return: the velocity that is just read
      */
 
     public void readVelocity() {
@@ -46,9 +58,10 @@ public class MotorWrapper {
     }
 
 
-/**
-     Description: The following method gets the velocity of the motor that was last read
-     @return: the velocity that was read before
+    /**
+     * Description: The following method gets the velocity of the motor that was last read
+     *
+     * @return: the velocity that was read before
      */
 
     public double getVelocity() {
@@ -60,15 +73,15 @@ public class MotorWrapper {
     }
 
     public void setVelocityConstants(double vP, double vI, double vD, double ks, double kv, double ka) {
-        motorEx.setVeloCoefficients(vP,vI,vD);
-        motorEx.setFeedforwardCoefficients(ks,kv,ka);
+        motorEx.setVeloCoefficients(vP, vI, vD);
+        motorEx.setFeedforwardCoefficients(ks, kv, ka);
 
     }
 
     // POSITION
 
     public void readPosition() {
-        lastReadPosition = (motorEx.getCurrentPosition()/TICK_PER_REVOLUTION)*360;
+        lastReadPosition = (motorEx.getCurrentPosition() / TICK_PER_REVOLUTION) * 360;
     }
 
     public double getTicksPerRev() {
@@ -84,15 +97,15 @@ public class MotorWrapper {
     }
 
     public double getScaledPos() {
-        return lastReadPosition*ratio;
+        return lastReadPosition * ratio;
+    }
+
+    public double getCurrent() {
+        return motorEx.motorEx.getCurrent(CurrentUnit.AMPS);
     }
 
     public void resetEncoder() {
         motorEx.stopAndResetEncoder();
-    }
-
-    public void setTarget(int target){
-        motorEx.setTargetPosition(target);
     }
 
 }

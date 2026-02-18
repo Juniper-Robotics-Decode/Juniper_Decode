@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.MainAuto;
+import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
 import java.util.List;
 
@@ -18,18 +19,22 @@ public class LimelightCamera {
     private double x_m = 0;
     private double y_m = 0;
     private double z_m = 0;
+    private double xField = 0;
+    private double yField = 0;
     private int targetID = 0;
     private double flatDistance_m = 0;
     private double tx_degrees = 0;
     private double ty_degrees = 0;
     private Telemetry telemetry;
+    private RobotSettings robotSettings;
 
-    public LimelightCamera(Limelight3A limelight3A, Telemetry telemetry) {
+    public LimelightCamera(Limelight3A limelight3A, Telemetry telemetry, RobotSettings robotSettings) {
         limelight = limelight3A;
         limelight.setPollRateHz(100);
         limelight.start();
         limelight.pipelineSwitch(1);
         this.telemetry = telemetry;
+        this.robotSettings = robotSettings;
     }
 
     public void update() {
@@ -51,14 +56,14 @@ public class LimelightCamera {
 
         LLResultTypes.FiducialResult fiducial = null;
         for (LLResultTypes.FiducialResult f : fiducials) {
-            if(MainAuto.ALLIANCE.equals("RED")) {
+            if(robotSettings.alliance == RobotSettings.Alliance.RED) {
                 if (f.getFiducialId() == 24) {
                     fiducial = f;
                     break;
                 }
             }
 
-            else if (MainAuto.ALLIANCE.equals("BLUE")) {
+            else if (robotSettings.alliance == RobotSettings.Alliance.BLUE) {
                 if (f.getFiducialId() == 20) {
                     fiducial = f;
                     break;
@@ -83,6 +88,9 @@ public class LimelightCamera {
         z_m = fiducial.getCameraPoseTargetSpace().getPosition().z;
         tx_degrees = result.getTx();
         ty_degrees = result.getTy();
+
+        xField = fiducial.getRobotPoseFieldSpace().getPosition().x;
+        yField = fiducial.getRobotPoseFieldSpace().getPosition().y;
 
         flatDistance_m = Math.sqrt(x_m * x_m + z_m * z_m);
     }
@@ -112,6 +120,14 @@ public class LimelightCamera {
 
     public double getFlatDistance() {
         return flatDistance_m;
+    }
+
+    public double getxField() {
+        return xField;
+    }
+
+    public double getyField() {
+        return yField;
     }
 
     public int getTargetID() {

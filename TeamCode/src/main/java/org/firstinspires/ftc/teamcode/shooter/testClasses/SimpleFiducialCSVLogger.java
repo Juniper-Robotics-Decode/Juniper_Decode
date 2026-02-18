@@ -63,7 +63,7 @@ public class SimpleFiducialCSVLogger extends LinearOpMode {
 
                     double z = fiducial.getCameraPoseTargetSpace().getPosition().z;
 
-                    double flatDistance = Math.sqrt(x * x + z * z);
+                    double flatDistance = Math.sqrt((x * x) + (y * y));
 
 
                     telemetry.addData("i", i);

@@ -1,253 +1,172 @@
 package org.firstinspires.ftc.teamcode.core;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.hypot;
-
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.offsets;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.scalars;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.xrate;
+import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.yrate;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServoImplEx;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.Swerve.Geo.MathUtils;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
-import org.firstinspires.ftc.teamcode.Swerve.Hardware.AbsoluteAnalogEncoder;
-import org.firstinspires.ftc.teamcode.Swerve.Module;
-import org.firstinspires.ftc.teamcode.shooter.ShooterFSM;
+import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
+import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.shooter.LauncherFSM;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
-import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 @Config
 @TeleOp
 public class MainTeleOp extends LinearOpMode {
+    private SwerveDrivetrain swerveDrivetrain;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    public double x, y, heading;
+    public boolean locked;
 
-    private DcMotorEx FLM = null;
-    private DcMotorEx FRM = null;
-    private DcMotorEx BLM = null;
-    private DcMotorEx BRM = null;
-
-    private CRServoImplEx FLS = null;
-    private CRServoImplEx FRS = null;
-    private CRServoImplEx BLS = null;
-    private CRServoImplEx BRS = null;
-
-    private AnalogInput FLE = null;
-    private AnalogInput FRE = null;
-    private AnalogInput BLE = null;
-    private AnalogInput BRE = null;
-
-    //FL, BL, BR, FR
-    private AbsoluteAnalogEncoder AFLE, AFRE, ABLE, ABRE;
-    public static double zeros[] = new double[]{-0.4, 1, 3.2, 0.3};
-    public static boolean inverses[] = new boolean[]{false,false,false,false};
-    public static double MotorScaling[] = new double[]{0.8,0.8,1,0.8}; //dont make negative inverse the encoder
-
-
-    GoBildaPinpointDriver odo;
-
-    public Module frontLeftModule, backLeftModule, backRightModule, frontRightModule;
-    public Module[] modules;
-
-    public static double x, y, heading;
-    private double BotHeading;
-    double[] ws = new double[4];
-    double[] wa = new double[4];
-
-    private double trackwidth = 13.0;
-    private double wheelbase = 13.0;
-    private double R;
-
-    private double Xoffset, Yoffset;
     private Pose2D pos;
 
-    private double MAX;
+    private SlewRateLimiter XRate, YRate, HeadingRate;
+    private JoystickScaling StrafingScaler, TurningScaler;
 
-
+    private Logger logger;
     private HWMap hwMap;
-    private GamepadEx gamepad;
+    private Pinpoint pinpoint;
+    private RobotSettings robotSettings;
+    private GamepadEx gamepadE2;
+    private GamepadEx gamepadE1;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
-    private ShooterFSM shooterFSM;
+    private LauncherFSM launcherFSM;
+
+    public static double P, I, D, F;
+
+
+    private Timing.Timer loopTimer;
+
 
     @Override
     public void runOpMode() throws InterruptedException{
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        gamepadE2 = new GamepadEx(gamepad2);
+        gamepadE1 = new GamepadEx(gamepad1);
 
-        FLM = hardwareMap.get(DcMotorEx.class, "FLM");
-        FRM = hardwareMap.get(DcMotorEx.class, "FRM");
-        BLM = hardwareMap.get(DcMotorEx.class, "BLM");
-        BRM = hardwareMap.get(DcMotorEx.class, "BRM");
+        XRate = new SlewRateLimiter(xrate);
+        YRate = new SlewRateLimiter(yrate);
 
-        FLS = hardwareMap.get(CRServoImplEx.class, "FLS");
-        FRS = hardwareMap.get(CRServoImplEx.class, "FRS");
-        BLS = hardwareMap.get(CRServoImplEx.class, "BLS");
-        BRS = hardwareMap.get(CRServoImplEx.class, "BRS");
+        HeadingRate = new SlewRateLimiter(headingrate);
+        StrafingScaler = new JoystickScaling();
+        TurningScaler = new JoystickScaling();
 
-        FLE = hardwareMap.get(AnalogInput.class, "FLE");
-        FRE = hardwareMap.get(AnalogInput.class, "FRE");
-        BLE = hardwareMap.get(AnalogInput.class, "BLE");
-        BRE = hardwareMap.get(AnalogInput.class, "BRE");
-
-        AFLE = new AbsoluteAnalogEncoder(FLE, 3.3);
-        AFRE = new AbsoluteAnalogEncoder(FRE, 3.3);
-        ABLE = new AbsoluteAnalogEncoder(BLE, 3.3);
-        ABRE = new AbsoluteAnalogEncoder(BRE, 3.3);
-
-        //FL, BL, BR, FR
-        AFLE.zero(zeros[0]);
-        AFLE.setInverted(inverses[0]);
-
-        ABLE.zero(zeros[1]);
-        ABLE.setInverted(inverses[1]);
-
-        ABRE.zero(zeros[2]);
-        ABRE.setInverted(inverses[2]);
-
-        AFRE.zero(zeros[3]);
-        AFRE.setInverted(inverses[3]);
-
-        frontLeftModule = new Module(FLM,FLS,AFLE,0.5,0.0,0.002,0.02);
-        backLeftModule = new Module(BLM,BLS,ABLE, 0.5,0.0,0.002,0.02);
-        backRightModule = new Module(BRM,BRS,ABRE,0.5,0.0,0.002,0.02);
-        frontRightModule = new Module(FRM,FRS,AFRE,0.5,0.0,0.002,0.02);
-
-        modules = new Module[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
-        for (Module m : modules) m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-
-        Xoffset = 10.5; Yoffset = 1;
-        odo.setOffsets(Xoffset, Yoffset);
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-
-        odo.resetPosAndIMU();
-        Pose2D startingpos = new Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0);
-        odo.setPosition(startingpos);
-
-        odo.recalibrateIMU();
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
+        logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
-        intakeFSM = new IntakeFSM(hwMap, telemetry);
-        transferFSM = new TransferFSM(hwMap, telemetry);
-        shooterFSM = new ShooterFSM(hwMap,telemetry);
+        robotSettings = RobotSettings.load();
+        pinpoint = new Pinpoint(hwMap, robotSettings, false);
 
+        swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
+        swerveDrivetrain.setOffsets(offsets);
+        swerveDrivetrain.setInverses(inverses);
+        swerveDrivetrain.setMotorScaling(scalars);
+
+        transferFSM = new TransferFSM(hwMap, telemetry,logger);
+        intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
+        launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger);
+
+        P = 0.008; I = 0; D = 0;
+
+        loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS); double botHeading;
+        logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","", Logger.LogLevels.PRODUCTION);
+        if(robotSettings.alliance == RobotSettings.Alliance.RED) {
+            logger.log("<b><u><font color='red'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+        }else{
+            logger.log("<b><u><font color='blue'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+        }
+        logger.log("<b><u><i><font color='orange'>distance method</font></b></u></i>", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
+        telemetry.update();
         waitForStart();
-        runtime.reset();
+       while (opModeIsActive()) {
+            loopTimer.start();
+            gamepadE2.readButtons();
+            swerveDrivetrain.setHeadingControllerPIDF(P, I, D, F);
 
-        while (opModeIsActive()) {
-            telemetry.addData("ALLIANCE", MainAuto.ALLIANCE);
-            AFLE.zero(zeros[0]);
-            AFLE.setInverted(inverses[0]);
+            double voltage = hwMap.getVoltageSensor().getVoltage();
 
-            ABLE.zero(zeros[1]);
-            ABLE.setInverted(inverses[1]);
+            logger.updateLoggingLevel(gamepadE1.getButton(GamepadKeys.Button.LEFT_BUMPER));
 
-            ABRE.zero(zeros[2]);
-            ABRE.setInverted(inverses[2]);
-
-            AFRE.zero(zeros[3]);
-            AFRE.setInverted(inverses[3]);
-
-            x = gamepad1.left_stick_x;
-            y = -gamepad1.left_stick_y;
-            heading = gamepad1.right_stick_x;
-
-            if (gamepad1.options) {
-                odo.resetPosAndIMU();
+            if (gamepadE1.getButton(GamepadKeys.Button.START)) {
+                pinpoint.resetIMU();
             }
 
-            odo.update();
-
-            pos = odo.getPosition();
-            BotHeading = -pos.getHeading(RADIANS);
-
-            if (abs(x) < 0.02){
-                x = 0;
-            }
-            if (abs(y) < 0.02){
-                y = 0;
-            }
-            if (abs(heading) < 0.02){
-                heading = 0;
+            if(gamepadE1.getButton(GamepadKeys.Button.BACK) && robotSettings.distanceMethod == RobotSettings.DistanceMethod.PINPOINT_ONLY) {
+                 robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
-            Pose drive = new Pose((new Point(x,y).rotate(BotHeading)), -heading);
-
-            double R = hypot(wheelbase, trackwidth);
-
-            double  a = drive.x - drive.heading * (wheelbase / R),
-                    b = drive.x + drive.heading * (wheelbase / R),
-                    c = drive.y - drive.heading * (trackwidth / R),
-                    d = drive.y + drive.heading * (trackwidth / R);
-
-            //FL, BL, BR, FR
-            ws = new double[]{hypot(b,c), hypot(a, d), hypot(b, d), hypot(a, c)};
-            wa = new double[]{atan2(b,c), atan2(a,d), atan2(b,d), atan2(a,c)};
-
-            MAX = MathUtils.max(ws);
-
-/*if (x == 0 && y == 0 && heading == 0){
-                wa = new double[]{atan2(1,1), atan2(-1, 1), atan2(-1, -1), atan2(1, -1)};
-            }*/
-
-
-            for (int i = 0; i < 4; i++) {
-                Module m = modules[i];
-                if (Math.abs(MAX) > 1) ws[i] /= MAX;
-                m.setMotorPower(Math.abs(ws[i])*MotorScaling[i]);
-                m.setTargetRotation(MathUtils.norm(wa[i]));
-                m.update();
-                odo.update();
+            if(gamepadE1.getButton(GamepadKeys.Button.BACK) && robotSettings.distanceMethod == RobotSettings.DistanceMethod.LIMELIGHT_ONLY) {
+                robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
-            intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
-            transferFSM.updateState(gamepad1.dpad_right, gamepad1.right_bumper);
-            shooterFSM.updateState(gamepad1.b);
+            pinpoint.update();
+            pos = pinpoint.getPos();
+            if(robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos())) {
+                botHeading = (-pos.getHeading(RADIANS)) - Math.PI/2;
+            }
+            else {
+                botHeading = (-pos.getHeading(RADIANS)) + Math.PI/2;
+            }
 
+            Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepadE1.getLeftX(), -gamepadE1.getLeftY()))), (TurningScaler.Scale(gamepadE1.getRightX(), 0.01, 0.66, 4)));
+            drive = new Pose(new Point(XRate.calculate(drive.x), YRate.calculate(drive.y)).rotate(botHeading), HeadingRate.calculate(drive.heading));
 
-            shooterFSM.log();
-            telemetry.addData("front left target angle", Arrays.toString(wa));
-            telemetry.addData("front left voltage", AFLE.getVoltage());
-            telemetry.addData("front right voltage", AFRE.getVoltage());
-            telemetry.addData("back left voltage", ABLE.getVoltage());
-            telemetry.addData("back right voltage", ABRE.getVoltage());
-            telemetry.addData("front left encoder angle", frontLeftModule.getcurrentposition());
-            telemetry.addData("front left angle", frontLeftModule.getModuleRotation());
-            telemetry.addData("front right angle", frontRightModule.getModuleRotation());
-            telemetry.addData("back left angle", backLeftModule.getModuleRotation());
-            telemetry.addData("back right angle", backRightModule.getModuleRotation());
-            telemetry.addData("x", x);
-            telemetry.addData("y", y);
-            telemetry.addData("heading", heading);
-            telemetry.addData("BotHeading", BotHeading);
-            telemetry.addData("rotated x", drive.x);
-            telemetry.addData("rotated y", drive.y);
+            if (drive.x == 0 && drive.y == 0 && drive.heading == 0) {
+                locked = true;
+            }
+            else {
+                locked = false;
+            }
+
+            swerveDrivetrain.setPose(drive, botHeading, 12.4);
+            swerveDrivetrain.setLocked(locked);
+            swerveDrivetrain.updateModules();
+            intakeFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.DPAD_UP), gamepadE1.getButton(GamepadKeys.Button.DPAD_LEFT));
+            transferFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.RIGHT_BUMPER));
+            launcherFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.B),gamepadE1.getButton(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_UP), gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),gamepadE2.wasJustPressed(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.A),gamepadE2.wasJustPressed(GamepadKeys.Button.B),gamepadE2.wasJustPressed(GamepadKeys.Button.X), gamepadE2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER), gamepadE2.getButton(GamepadKeys.Button.RIGHT_BUMPER));
+
+         //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
+            logUpdate(botHeading, voltage, drive);
 
             telemetry.update();
         }
 
+    }
+    private void logUpdate(double botHeading, double voltage, Pose drive){
+        launcherFSM.positionFSM.logPP();
+        launcherFSM.positionFSM.logLL();
+        launcherFSM.flywheelFSM.log();
+        launcherFSM.pitchFSM.log();
+        launcherFSM.turretFSM.log();
+        launcherFSM.positionFSM.log();
+        swerveDrivetrain.log();
+        transferFSM.log();
+        intakeFSM.log();
+        telemetry.addData("Pose", drive);
+        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
+        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
     }
 
 }

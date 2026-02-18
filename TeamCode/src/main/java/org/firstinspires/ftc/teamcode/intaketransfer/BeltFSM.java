@@ -12,7 +12,8 @@ public class BeltFSM {
 
     public enum State {
         STOPPED,
-        MOVING
+        MOVING,
+        REVERSING
     }
 
     private Telemetry telemetry;
@@ -20,11 +21,12 @@ public class BeltFSM {
     public static double power = .8;
     public static double movePower = 1;
     public static double stopPower = 0;
+    public static double reversePower = -1;
 
     public State State;
 
     public BeltFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1,537.7);
+        transferMotor = new MotorWrapper(intaketransferhwmap.getTransferMotor(), false, 1, true);
         this.telemetry = telemetry;
         State = State.STOPPED;
     }
@@ -40,7 +42,15 @@ public class BeltFSM {
         if (transferMotor.getVelocity() != 0) {
             State = State.MOVING;
         }
-        telemetry.addData("Current State ", State);
+
+        if (transferMotor.getCurrent() > 5 && State == State.MOVING){
+            State = State.REVERSING;
+        }
+
+        if (transferMotor.getVelocity() < 0){
+            State = State.REVERSING;
+        }
+        telemetry.addData("Current belt state ", State);
         telemetry.addData("Power ", power);
         telemetry.addData("Velocity ", transferMotor.getVelocity());
     }
@@ -57,6 +67,10 @@ public class BeltFSM {
         power = stopPower;
     }
 
+    public void Reverse() {
+        power = reversePower;
+    }
+
     public boolean MOVING() {
         return State == State.MOVING;
     }
@@ -64,8 +78,8 @@ public class BeltFSM {
     public boolean STOPPED() {
         return State == State.STOPPED;
     }
+
+    public boolean REVERSING() {
+        return State == State.REVERSING;
+    }
 }
-
-
-
-
