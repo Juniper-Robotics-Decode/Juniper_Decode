@@ -90,13 +90,13 @@ public class MainTeleOp extends LinearOpMode {
         P = 0.008; I = 0; D = 0;
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS); double botHeading;
-        logger.log("<b><u><i><font color='orange'>distance method</font></b></u></i>", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
+        logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","", Logger.LogLevels.PRODUCTION);
         if(robotSettings.alliance == RobotSettings.Alliance.RED) {
             logger.log("<b><u><font color='red'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
         }else{
             logger.log("<b><u><font color='blue'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
         }
-        logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","", Logger.LogLevels.PRODUCTION);
+        logger.log("<b><u><i><font color='orange'>distance method</font></b></u></i>", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
         telemetry.update();
         waitForStart();
        while (opModeIsActive()) {
@@ -154,19 +154,19 @@ public class MainTeleOp extends LinearOpMode {
 
     }
     private void logUpdate(double botHeading, double voltage, Pose drive){
-        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
-        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
-        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
-        telemetry.addData("Pose", drive);
-        intakeFSM.log();
-        transferFSM.log();
-        swerveDrivetrain.log();
-        launcherFSM.positionFSM.log();
-        launcherFSM.turretFSM.log();
-        launcherFSM.pitchFSM.log();
-        launcherFSM.flywheelFSM.log();
-        launcherFSM.positionFSM.logLL();
         launcherFSM.positionFSM.logPP();
+        launcherFSM.positionFSM.logLL();
+        launcherFSM.flywheelFSM.log();
+        launcherFSM.pitchFSM.log();
+        launcherFSM.turretFSM.log();
+        launcherFSM.positionFSM.log();
+        swerveDrivetrain.log();
+        transferFSM.log();
+        intakeFSM.log();
+        telemetry.addData("Pose", drive);
+        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
+        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
     }
 
 }
