@@ -192,7 +192,7 @@ public class PositionFSM {
         velocityMapPP.add(2.04, 2725);
         velocityMapPP.add(2.63, 3050);
         velocityMapPP.add(3.03, 3150);
-        velocityMapPP.add(3.74,3650);
+        velocityMapPP.add(3.74,3350);
         velocityMapPP.createLUT();
 
     }

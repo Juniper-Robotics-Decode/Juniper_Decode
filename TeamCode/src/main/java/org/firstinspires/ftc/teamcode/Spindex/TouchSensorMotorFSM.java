@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.Spindex;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,3 +78,4 @@ public class TouchSensorMotorFSM {
         return state == states.POSITION_3;
     }
 }
+*/

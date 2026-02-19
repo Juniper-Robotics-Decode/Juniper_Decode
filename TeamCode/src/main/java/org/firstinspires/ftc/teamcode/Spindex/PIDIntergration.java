@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -85,4 +86,4 @@ public class PIDIntergration extends LinearOpMode {
             rVals[2] = r; gVals[2] = g; bVals[2] = b;
         }
     }
-}
+}*/

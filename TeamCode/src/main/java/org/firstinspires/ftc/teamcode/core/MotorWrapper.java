@@ -27,7 +27,6 @@ public class MotorWrapper {
         }
 
         this.ratio = ratio;
-        TICK_PER_REVOLUTION = 145.1;
     }
 
     // POWER

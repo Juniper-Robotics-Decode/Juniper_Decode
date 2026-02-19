@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -86,4 +87,4 @@ public class SpindexFSM {
         else if(pocket == 2) { pocket2 = color(1); rVals[1] = r; gVals[1] = g; bVals[1] = b; }
         else if(pocket == 3) { pocket3 = color(2); rVals[2] = r; gVals[2] = g; bVals[2] = b; }
     }
-}
+}*/

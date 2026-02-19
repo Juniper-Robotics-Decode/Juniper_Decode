@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.Spindex;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,4 +23,4 @@ public class SpindexTeleOp extends LinearOpMode {
             telemetry.update();
         }
     }
-}
+}*/
