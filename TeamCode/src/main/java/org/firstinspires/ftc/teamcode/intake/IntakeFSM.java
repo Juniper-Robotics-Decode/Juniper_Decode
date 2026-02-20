@@ -19,6 +19,10 @@ public class IntakeFSM {
         READY_TO_INTAKE,
         EJECTING,
         STOPPED,
+        MOVING_DOWN,
+        MOVING_UP,
+        AT_UP,
+        AT_DOWN
     }
 
     private Logger logger;
@@ -45,20 +49,16 @@ public class IntakeFSM {
                 Roller.intake();
                 if (Roller.INTAKING()) {
                     currentState = State.READY_TO_INTAKE;
-                    if (Servo.AT_UP()) {
-                        Servo.MoveDown();
-                    }
                 }
+
                 break;
 
             case STOPPING:
                 Roller.stop();
                 if (Roller.STOPPED()) {
                     currentState = State.STOPPED;
-                    if (Servo.AT_UP()) {
-                        Servo.MoveDown();
-                    }
                 }
+
 
                 break;
 
@@ -66,12 +66,21 @@ public class IntakeFSM {
                 Roller.eject();
                 if (Roller.EJECTING()) {
                     currentState = State.EJECTING;
-                    Servo.MoveUp();
-                    if (Servo.AT_UP()) {
-                        Servo.MoveDown();
-                    }
                 }
+
+
                 break;
+            case MOVING_DOWN:
+                Servo.MoveDown();
+                if (Servo.AT_DOWN()){
+                currentState = State.AT_DOWN;
+            }
+
+            case MOVING_UP:
+                Servo.MoveUp();
+                if (Servo.AT_UP()){
+                    currentState = State.AT_UP;
+                }
         }
     }
 
@@ -89,6 +98,14 @@ public class IntakeFSM {
             currentState = State.STOPPING;
         } else if (D_Pad_Left_Press && currentState == State.STOPPED) {
             currentState = State.RAMPING_UP_TO_INTAKE;
+        }
+
+        if (Servo.AT_DOWN() && Roller.INTAKING() || Roller.EJECTING()) {
+            currentState = State.MOVING_UP;
+        }
+
+        if (Servo.AT_UP() && Roller.INTAKING()){
+            currentState = State.MOVING_UP;
         }
 
         /*

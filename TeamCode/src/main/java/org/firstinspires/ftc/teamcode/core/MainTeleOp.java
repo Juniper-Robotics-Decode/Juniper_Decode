@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.JoystickScaling;
 import org.firstinspires.ftc.teamcode.Swerve.Limiters.SlewRateLimiter;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.Swerve.Swerve.swerveDrivetrain;
 import org.firstinspires.ftc.teamcode.shooter.LauncherFSM;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @Config
 @TeleOp(name = "", group = "0")
 public class MainTeleOp extends LinearOpMode {
-    private SwerveDrivetrain swerveDrivetrain;
+    private swerveDrivetrain swerveDrivetrain;
 
     public double x, y, heading;
     public boolean locked;
@@ -77,7 +77,7 @@ public class MainTeleOp extends LinearOpMode {
         robotSettings = new RobotSettings();
         pinpoint = new Pinpoint(hwMap, robotSettings);
 
-        swerveDrivetrain = new SwerveDrivetrain(hwMap);
+        swerveDrivetrain = new swerveDrivetrain(hwMap);
 
         swerveDrivetrain.setOffsets(offsets);
         swerveDrivetrain.setInverses(inverses);

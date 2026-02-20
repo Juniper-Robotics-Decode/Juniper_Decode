@@ -37,7 +37,7 @@ public class IntakeServoFSM {
 
     public IntakeServoFSM(HWMap intaketransferhwmap, Logger logger) {
         intakeServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        transferPostitionTimer = new Timing.Timer(1, TimeUnit.MILLISECONDS); // Original length 1000
+        transferPostitionTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS); // Original length 1000
         this.logger = logger;
         currentState = State.AT_DOWN;
         intakeServo.setPosition(positionDown);
@@ -53,14 +53,20 @@ public class IntakeServoFSM {
             transferPostitionTimer.start();
         }
 
-        if (targetPosition == positionUp) {
-            currentState = State.AT_UP;
-        }
-
-        if (targetPosition == positionDown) {
-            currentState = State.AT_DOWN;
+        if (transferPostitionTimer.done()) {
+            transferPostitionTimer.pause();
+            if (targetPosition == positionUp) {
+                currentState = State.AT_UP;
+            }
+            if (targetPosition == positionDown) {
+                currentState = State.AT_DOWN;
+            }
+            if (targetPosition == positionDown) {
+                currentState = State.AT_DOWN;
+            }
         }
     }
+
 
     public boolean AT_DOWN() {
         return currentState == State.AT_DOWN;
@@ -69,7 +75,6 @@ public class IntakeServoFSM {
     public boolean AT_UP() {
         return currentState == State.AT_UP;
     }
-
 
     public void MoveUp() {
         targetPosition = positionUp;
