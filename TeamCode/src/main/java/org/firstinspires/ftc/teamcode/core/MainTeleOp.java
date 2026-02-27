@@ -47,7 +47,7 @@ public class MainTeleOp extends LinearOpMode {
 
     private Logger logger;
     private HWMap hwMap;
-  //  private Pinpoint pinpoint;
+    private Pinpoint pinpoint;
     private RobotSettings robotSettings;
     private GamepadEx gamepadE2;
     private GamepadEx gamepadE1;
@@ -84,7 +84,7 @@ public class MainTeleOp extends LinearOpMode {
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
-        //pinpoint = new Pinpoint(hwMap, robotSettings, false);
+        pinpoint = new Pinpoint(hwMap, robotSettings, false);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
@@ -94,7 +94,7 @@ public class MainTeleOp extends LinearOpMode {
 
         transferFSM = new TransferFSM(hwMap, telemetry,logger);
         intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
-        launcherFSM = new LauncherFSM(hwMap,telemetry, robotSettings, logger);
+        launcherFSM = new LauncherFSM(hwMap,telemetry, robotSettings, logger, pinpoint);
 
         P = 0.008; I = 0; D = 0;
 
@@ -129,9 +129,9 @@ public class MainTeleOp extends LinearOpMode {
                 robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
-           /* pinpoint.update();
+            pinpoint.update();
             pos = pinpoint.getPos();
-           */
+
            if(robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos())) {
                 botHeading = (-(imu.getRobotYawPitchRollAngles().getYaw(RADIANS) + robotSettings.startPosState.getPose2D().getHeading(RADIANS)) - Math.PI/2);
             }
@@ -174,7 +174,7 @@ public class MainTeleOp extends LinearOpMode {
     private void logUpdate(double botHeading, double voltage, Pose drive){
         launcherFSM.flywheelFSM.log();
         launcherFSM.positionFSM.logLL();
-       // launcherFSM.positionFSM.logPP();
+        launcherFSM.positionFSM.logPP();
         launcherFSM.pitchFSM.log();
         launcherFSM.turretFSM.log();
         launcherFSM.positionFSM.log();

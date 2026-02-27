@@ -93,7 +93,7 @@ public class MainAuto extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
 
-        // pinpoint = new Pinpoint(hwMap,robotSettings, true);
+         pinpoint = new Pinpoint(hwMap,robotSettings, true);
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
@@ -110,7 +110,7 @@ public class MainAuto extends LinearOpMode {
 
         logger = new Logger(telemetry);
 
-        launcherFSM = new LauncherFSM(hwMap,telemetry,robotSettings,logger);
+        launcherFSM = new LauncherFSM(hwMap,telemetry,robotSettings,logger,pinpoint);
 
         transferFSM = new TransferFSM(hwMap,telemetry,logger);
 

@@ -38,13 +38,13 @@ public class LauncherFSM {
     private boolean startOfAuto = false;
 
 
-    public LauncherFSM(HWMap hardwareMap, Telemetry telemetry, RobotSettings robotSettings, Logger logger) {
+    public LauncherFSM(HWMap hardwareMap, Telemetry telemetry, RobotSettings robotSettings, Logger logger, Pinpoint pinpoint) {
         this.logger = logger;
         this.pinpoint = pinpoint;
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry, logger);
         turretFSM = new TurretFSM(hardwareMap,telemetry, logger);
         pitchFSM = new PitchFSM(hardwareMap,telemetry, flywheelFSM::getError, logger);
-        positionFSM = new PositionFSM(hardwareMap,telemetry, turretFSM::getCurrentAngle, robotSettings, logger);
+        positionFSM = new PositionFSM(hardwareMap,telemetry, turretFSM::getCurrentAngle, robotSettings, logger, pinpoint);
         this.telemetry = telemetry;
         state = States.PREPARING_TO_SHOOT;
     }
@@ -53,7 +53,7 @@ public class LauncherFSM {
         flywheelFSM.updateState(bPress2,xPress2);
         turretFSM.updateState();
         pitchFSM.updateState(yPress2,aPress2);
-        positionFSM.updateState(rightBumper2, heading);
+        positionFSM.updateState(rightBumper2);
         findTargetState(bPress, yPress);
 
         switch (state) {
