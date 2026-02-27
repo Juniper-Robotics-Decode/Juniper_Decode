@@ -216,6 +216,21 @@ public class PositionFSM {
 
     }
 
+    public double getFlywheelTargetVelocity(double distance_m) {
+        if(distance_m <= 0.5 || distance_m >= 3.5 || Double.isNaN(distance_m)) {
+            return defaultFlywheelVelocity;
+        }
+        else {
+            if(sensor == Sensor.LIMELIGHT) {
+                return velocityMapLL.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
+            }
+            else {
+                return velocityMapPP.get(distance_m + PINPOINT_OFFSET);
+            }
+        }
+
+    }
+
     public void findPitchTargetAngle() {
         if(state == States.NO_VALID_TARGET) {
             return;

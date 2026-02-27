@@ -11,11 +11,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 public class Pinpoint {  // TODO: add junit
 
     GoBildaPinpointDriver odo;
-    Pose2D pos;
-    public double x, y, heading;
+    Pose2D pos, vel;
+    public double x, y, heading, xVel, yVel, hVel = 0;
+    public double XVelocityOffset, YVelocityOffset = 0;
     public static double Xoffset, Yoffset;
     private RobotSettings robotSettings;
-
 
 
     public Pinpoint(HWMap hwMap, RobotSettings robotSettings, boolean isAuto) {
@@ -43,9 +43,13 @@ public class Pinpoint {  // TODO: add junit
     public void update() {
         odo.update();
         pos = odo.getPosition();
+        vel = odo.getVelocity();
         x = pos.getX(DistanceUnit.METER);
         y= pos.getY(DistanceUnit.METER);
         heading = pos.getHeading(AngleUnit.DEGREES);
+        xVel = vel.getX(DistanceUnit.METER);
+        yVel = vel.getY(DistanceUnit.METER);
+        hVel = vel.getHeading(AngleUnit.DEGREES);
     }
 
     public void updateHeadingOnly() {
@@ -70,6 +74,9 @@ public class Pinpoint {  // TODO: add junit
     public double getY() {
         return y;
     }
+    public double getXV(){return xVel;}
+    public double getYV(){return yVel;}
+    public double getHV(){return hVel;}
 
     public void resetIMU() {
         if(robotSettings.alliance == RobotSettings.Alliance.RED){
@@ -83,8 +90,17 @@ public class Pinpoint {  // TODO: add junit
         odo.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,heading));
     }
 
+    public void setVelocityOffsets(double XVOffset, double YVOffset){
+        XVelocityOffset = XVOffset;
+        YVelocityOffset = YVOffset;
+    }
+
     public double getGoalDistance() {
         return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));
+    }
+
+    public double getGoalDistanceAdjusted(double xTempOffset, double yTempOffset) {
+        return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x + xTempOffset), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y + yTempOffset), 2));
     }
 
     public void setPosition(Pose2D pose2D) {

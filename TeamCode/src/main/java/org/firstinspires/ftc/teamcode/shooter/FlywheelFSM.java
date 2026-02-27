@@ -107,6 +107,10 @@ public class FlywheelFSM {
         return (RPMVelocity*28)/60;
     }
 
+    public double getTargetVelocityRPM(){
+        return targetVelocityRPM;
+    }
+
     public boolean AT_TARGET_VELOCITY() {
         return state == States.AT_TARGET_VELOCITY;
     }

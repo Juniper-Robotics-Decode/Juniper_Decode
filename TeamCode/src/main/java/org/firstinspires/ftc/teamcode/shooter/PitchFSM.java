@@ -115,6 +115,8 @@ public class PitchFSM {
         targetAngle = pitchTargetAngle;
     }
 
+    public double getTargetAngle() {return targetAngle;}
+
     public boolean ALIGNED() {
         return state == States.ALIGNED;
     }

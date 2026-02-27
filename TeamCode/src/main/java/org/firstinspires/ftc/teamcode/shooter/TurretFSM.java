@@ -37,6 +37,7 @@ public class TurretFSM {
     public static double TURRET_OFFSET = 3;
 
     private double MANUAL_OFFSET = 0;
+    private double VELOCITY_OFFSET = 0;
 
     public boolean isCalibrating = false;
 
@@ -109,6 +110,10 @@ public class TurretFSM {
 
     private double angleDeltaSign(double measuredAngle, double targetAngle) {
         return -(Math.signum(normalizeDegrees(targetAngle - measuredAngle) - (360 - normalizeDegrees(targetAngle - measuredAngle))));
+    }
+
+    public void setVelocityOffset(double offset){
+        VELOCITY_OFFSET = offset;
     }
 
     public void setTargetAngle(double turretError, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean leftBumper2) {
