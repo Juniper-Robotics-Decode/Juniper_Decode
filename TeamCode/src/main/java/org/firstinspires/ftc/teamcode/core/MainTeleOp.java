@@ -15,8 +15,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.util.Timing;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.hardware.rev.Rev9AxisImuOrientationOnRobot;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
@@ -48,7 +51,6 @@ public class MainTeleOp extends LinearOpMode {
     private RobotSettings robotSettings;
     private GamepadEx gamepadE2;
     private GamepadEx gamepadE1;
-    private Follower follower;
 
     private Pinpoint pinpoint;
     private GamepadEx gamepad;
@@ -61,9 +63,12 @@ public class MainTeleOp extends LinearOpMode {
 
     private Timing.Timer loopTimer;
 
+    private Pose drive;
+
 
     @Override
     public void runOpMode() throws InterruptedException{
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         gamepadE2 = new GamepadEx(gamepad2);
@@ -90,6 +95,7 @@ public class MainTeleOp extends LinearOpMode {
         launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger, false);
         transferFSM = new TransferFSM(hwMap, telemetry,logger);
         intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
+
 
         P = 0.008; I = 0; D = 0;
 
@@ -158,19 +164,19 @@ public class MainTeleOp extends LinearOpMode {
 
     }
     private void logUpdate(double botHeading, double voltage, Pose drive){
-        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
-        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
-        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
-        telemetry.addData("Pose", drive);
-        intakeFSM.log();
-        transferFSM.log();
-        swerveDrivetrain.log();
-        launcherFSM.positionFSM.log();
-        launcherFSM.turretFSM.log();
-        launcherFSM.pitchFSM.log();
         launcherFSM.flywheelFSM.log();
         launcherFSM.positionFSM.logLL();
         launcherFSM.positionFSM.logPP();
+        launcherFSM.pitchFSM.log();
+        launcherFSM.turretFSM.log();
+        launcherFSM.positionFSM.log();
+        swerveDrivetrain.log();
+        transferFSM.log();
+        intakeFSM.log();
+        telemetry.addData("Pose", drive);
+        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
+        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
     }
 
 }

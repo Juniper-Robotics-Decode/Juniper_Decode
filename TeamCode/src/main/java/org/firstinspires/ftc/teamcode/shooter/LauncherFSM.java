@@ -69,7 +69,7 @@ public class LauncherFSM {
 
 
                 if(endOfAuto) {
-                   turretFSM.setTargetAngle(0, dPadUp2,dPadDown2,dPadLeft2,dPadRight2, leftBumper2);
+                   turretFSM.setTargetAngle(-5, dPadUp2,dPadDown2,dPadLeft2,dPadRight2, leftBumper2);
                 }
                 else {
                     turretFSM.setTargetAngle(positionFSM.getTurretError(), dPadUp2,dPadDown2,dPadLeft2,dPadRight2, leftBumper2);
@@ -105,6 +105,7 @@ public class LauncherFSM {
     }
 
     public void findTargetState(boolean bPress, boolean yPress) {
+
         if(bPress) {
             state = States.TOGGLING_FLYWHEEL;
         }
@@ -117,6 +118,9 @@ public class LauncherFSM {
 
     }
 
+    public void setEndOfAuto(boolean endOfAuto) {
+        this.endOfAuto = endOfAuto;
+    }
     public void log() {
         logger.log("---------SHOOTER----------","", Logger.LogLevels.PRODUCTION);
         logger.log("shooter state", state, Logger.LogLevels.DEBUG);
@@ -124,10 +128,5 @@ public class LauncherFSM {
         flywheelFSM.log();
         turretFSM.log();
         pitchFSM.log();
-    }
-
-
-    public void setEndOfAuto(boolean endOfAuto) {
-        this.endOfAuto = endOfAuto;
     }
 }

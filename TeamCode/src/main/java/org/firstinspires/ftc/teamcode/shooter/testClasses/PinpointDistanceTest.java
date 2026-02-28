@@ -28,6 +28,8 @@ import org.firstinspires.ftc.teamcode.core.Pinpoint;
 @TeleOp
 public class PinpointDistanceTest extends LinearOpMode {
 
+    HWMap hwMap;
+
     private SwerveDrivetrain swerveDrivetrain;
 
 
@@ -43,17 +45,18 @@ public class PinpointDistanceTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        hwMap = new HWMap(hardwareMap);
+        RobotSettings robotSettings = RobotSettings.load();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        logger = new Logger(telemetry);
+
         XRate = new SlewRateLimiter(xrate);
         YRate = new SlewRateLimiter(yrate);
         HeadingRate = new SlewRateLimiter(headingrate);
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-        RobotSettings robotSettings = new RobotSettings();
-        HWMap hwMap = new HWMap(hardwareMap);
-        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings,false);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        logger = new Logger(telemetry);
+        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings, false);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
@@ -61,11 +64,11 @@ public class PinpointDistanceTest extends LinearOpMode {
         swerveDrivetrain.setInverses(inverses);
         swerveDrivetrain.setMotorScaling(scalars);
 
-        telemetry.addLine("Alliance" + robotSettings.alliance);
-        telemetry.addData("start Pos", robotSettings.startPosState.getPose2D());
-        telemetry.update();
 
-        waitForStart();
+            telemetry.addData("Alliance", robotSettings.alliance);
+            telemetry.addData("start Pos", robotSettings.startPosState.getPose2D());
+            telemetry.update();
+            waitForStart();
 
         while (opModeIsActive()) {
             if (gamepad1.options) {
