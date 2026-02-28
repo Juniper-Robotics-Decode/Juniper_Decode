@@ -151,8 +151,10 @@ public class TurretFSM {
 
         if(i >= 0) {
             if(PositionFSM.sensor == PositionFSM.Sensor.PINPOINT) {
-                targetAngle = -turretError + MANUAL_OFFSET;
+                targetAngle = -turretError + MANUAL_OFFSET - TURRET_OFFSET;
             }
+
+            /*
             else {
                 if(i >= 50) {
                     targetAngle = turretMotor.getScaledPos() + turretError + TURRET_OFFSET + MANUAL_OFFSET;
@@ -162,7 +164,7 @@ public class TurretFSM {
                     targetAngle = targetAngle;
                     i++;
                 }
-            }
+            }*/
         }
 
 //        telemetry.addData("Turret target angle counter", i);

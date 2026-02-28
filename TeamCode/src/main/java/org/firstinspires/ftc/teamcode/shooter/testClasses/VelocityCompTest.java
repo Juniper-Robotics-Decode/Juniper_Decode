@@ -26,7 +26,7 @@ public class VelocityCompTest extends LinearOpMode{
 
     double vXNew, vYNew, aX, aY, t, tLast, tTotal = 0;
     double tShoot = 0.5;//TODO: make this the time it takes to launch an artifact in seconds
-    double timeConstant = 10;
+    double timeConstant = 10;//t=27.5+0.247x+2.55x^2-1.49x^3
     double goalXFinalOffset, goalYFinalOffset, goalXShootOffset, goalYShootOffset, turretOffset = 0;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,8 +49,9 @@ public class VelocityCompTest extends LinearOpMode{
             vYNew = pinpoint.getYV();
             aX = (vXNew)/tLast;
             aY = (vYNew)/tLast;
-            tTotal = launcherFSM.flywheelFSM.getTargetVelocityRPM()/timeConstant;
+//            tTotal = launcherFSM.flywheelFSM.getTargetVelocityRPM()/timeConstant;
 //            goalXShootOffset = (-vXNew * tShoot) + (-aX * Math.pow(tShoot,2)/2);
+//            tTotal = 27.5+0.247x+2.55x^2-1.49x^3
 //            goalYShootOffset = (-vYNew * tShoot) + (-aY * Math.pow(tShoot,2)/2);
 //            double goalDist = pinpoint.getGoalDistanceAdjusted(goalXShootOffset,goalYShootOffset);
 //            double vO = launcherFSM.positionFSM.getFlywheelTargetVelocity(goalDist);

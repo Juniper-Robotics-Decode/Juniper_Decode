@@ -1,58 +1,72 @@
 package org.firstinspires.ftc.teamcode.intaketransfer;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.Logger;
+
+
+import java.util.concurrent.TimeUnit;
 
 @Config
 public class GateFSM {
 
     public enum State {
+        MOVING_TO_POSITION,
         AT_UP,
-        AT_DOWN,
+        AT_DOWN
     }
 
     private Telemetry telemetry;
-    private AxonServoWrapper transferServo;
+    private ServoWrapper transferServo;
     public State currentState;
-    public static double positionUp = .38;
-    public static double positionDown = 0.58;
-    public static double targetPosition = positionDown;
+    public double currentPosition = 0;
+    public static double targetPosition = 0.55;
+    public static double positionUp = .85;
+    public static double positionDown = 0.55;
+    Timing.Timer timer;
 
-    public static double UPPER_HARD_STOP = 1;
-    public static double LOWER_HARD_STOP = 0;
 
-    public static double TOLERANCE_DOWN = 0.07;
-
-    public static double TOLERANCE_UP = 0.07;
-
-    private Logger logger;
-
-    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
-        this.logger = logger;
-        transferServo = new AxonServoWrapper(intaketransferhwmap.getTransferServo(),intaketransferhwmap.getTransferEncoder(),false,false,0);
+    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
+        transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
+        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
-        transferServo.setPos(targetPosition);
     }
 
     public void updateState() {
-        updatePID();
-        if(transferServo.getLastReadPos() <= positionDown + TOLERANCE_DOWN && transferServo.getLastReadPos() >= positionDown - TOLERANCE_DOWN) {
-            currentState = State.AT_DOWN;
-        }
-        else if (transferServo.getLastReadPos() >= positionUp) {
-            currentState = State.AT_UP;
+
+
+        telemetry.addData("Current Position  ", transferServo.getPosition());
+        telemetry.addData("Elapsed Time: ", timer.elapsedTime());
+        telemetry.addData("Target Postion ", targetPosition);
+        telemetry.addData("ServoFSM State ", currentState);
+
+
+        double percentError = Math.abs((transferServo.getPosition() - targetPosition) / targetPosition);
+        telemetry.addData("Percent Error", percentError);
+        if (!timer.isTimerOn() && percentError >= 0.001) {
+            currentState = State.MOVING_TO_POSITION;
+            transferServo.setPosition(targetPosition);
+            timer.start();
         }
 
-/*
-        telemetry.addData("Transfer Current Position ", transferServo.getLastReadPos());
-        telemetry.addData("Transfer Target Position ", targetPosition);
-        telemetry.addData("ServoFSM State ", currentState);
-*/
+        if (timer.done()) {
+            timer.pause();
+            if (targetPosition == positionUp) {
+                currentState = State.AT_UP;
+            }
+            if (targetPosition == positionDown) {
+                currentState = State.AT_DOWN;
+            }
+            if (targetPosition == positionDown) {
+                currentState = State.AT_DOWN;
+            }
+            // else if(currentState = A)
+
         }
+    }
 
     public boolean AT_DOWN() {
         return currentState == State.AT_DOWN;
@@ -69,27 +83,7 @@ public class GateFSM {
     public void MoveDown() {
         targetPosition = positionDown;
     }
-
-    public void updatePID() {
-        if(targetPosition > UPPER_HARD_STOP) {
-            targetPosition = UPPER_HARD_STOP;
-        }
-        else if (targetPosition < LOWER_HARD_STOP) {
-            targetPosition = LOWER_HARD_STOP;
-        }
-        transferServo.readPos();
-
-        double error = targetPosition - transferServo.getLastReadPos();
-
-//        telemetry.addData("error", error);
-
-        transferServo.setPos(targetPosition);
-    }
-
-    public void log(){
-        logger.log("Current Position ", transferServo.getLastReadPos(), Logger.LogLevels.DEBUG);
-        logger.log("Target Position ", targetPosition, Logger.LogLevels.DEBUG);
-        logger.log("ServoFSM State ", currentState, Logger.LogLevels.DEBUG);
-    }
-
 }
+
+
+
