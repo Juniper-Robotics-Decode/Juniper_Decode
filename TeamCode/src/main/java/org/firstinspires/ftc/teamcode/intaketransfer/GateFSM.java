@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 
 import java.util.concurrent.TimeUnit;
@@ -20,17 +21,19 @@ public class GateFSM {
 
     private Telemetry telemetry;
     private ServoWrapper transferServo;
+    private Logger logger;
     public State currentState;
     public double currentPosition = 0;
-    public static double targetPosition = 0.55;
-    public static double positionUp = .85;
-    public static double positionDown = 0.55;
+    public static double targetPosition = 0.8;
+    public static double positionUp = 0.45;
+    public static double positionDown = 0.8;
     Timing.Timer timer;
 
 
-    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
+    public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
+        this.logger = logger;
         transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+        timer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
     }
@@ -82,6 +85,11 @@ public class GateFSM {
 
     public void MoveDown() {
         targetPosition = positionDown;
+    }
+    public void log(){
+        logger.log("gate state: ",currentState, Logger.LogLevels.PRODUCTION);
+        logger.log("gate pos: ",currentPosition, Logger.LogLevels.PRODUCTION);
+        logger.log("gate timer: ",timer.elapsedTime(), Logger.LogLevels.PRODUCTION);
     }
 }
 
