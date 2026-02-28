@@ -17,12 +17,6 @@ public class Pinpoint {  // TODO: add junit
     private RobotSettings robotSettings;
 
 
-    // TODO: need to convert coordinates
-    // coordinates for Pinpoint derived from Pedro
-    // x = -y
-    // y = x
-    // theta = thetaPedro + 90
-
     public Pinpoint(HWMap hwMap, RobotSettings robotSettings, boolean isAuto) {
         odo = hwMap.getOdo();
         this.robotSettings = robotSettings;
@@ -84,15 +78,12 @@ public class Pinpoint {  // TODO: add junit
 
     public void resetIMU() {
         if(robotSettings.alliance == RobotSettings.Alliance.RED){
-            odo.setPosition(new Pose2D(DistanceUnit.METER, 1.64, 0.16, AngleUnit.DEGREES, 180));
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, 17.32283, AngleUnit.DEGREES, 180));
         } else{
-            odo.setPosition(new Pose2D(DistanceUnit.METER, 1.64, -0.16, AngleUnit.DEGREES, 180));
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, -17.32283, AngleUnit.DEGREES, 180));
         }
     }
 
-    public void resetPos() {
-        odo.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,heading));
-    }
 
     public double getGoalDistance() {
         return Math.sqrt(Math.pow((138 - x), 2) + Math.pow((138 - y), 2));

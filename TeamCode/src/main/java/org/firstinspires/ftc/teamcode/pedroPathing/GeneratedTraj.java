@@ -216,24 +216,26 @@ public class GeneratedTraj extends LinearOpMode {
                     setPathState(11);
                 }
                 break;
-            case 12:
+            case 11:
                 if(!follower.isBusy()) {
                     transferFSM.updateState(false);
                     actionTimer.resetTimer();
+                    pathState = 12;
+                }
+                break;
+            case 12:
+                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
+                    transferFSM.updateState(true);
                     pathState = 13;
                 }
                 break;
             case 13:
-                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
                     transferFSM.updateState(true);
-                    pathState = 14;
-                }
-                break;
-            case 14:
-                    transferFSM.updateState(true);
-                    launcherFSM.setEndOfAuto(true);
-                    PoseStorage.currentPose = follower.getPose();
-                    setPathState(-1);
+                    if(transferFSM.TRANSFERED()) {
+                        launcherFSM.setEndOfAuto(true);
+                       // PoseStorage.currentPose = follower.getPose();
+                        setPathState(-1);
+                    }
                 break;
         }
     }
