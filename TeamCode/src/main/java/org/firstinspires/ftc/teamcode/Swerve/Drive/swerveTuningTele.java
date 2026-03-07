@@ -6,7 +6,7 @@ import static java.lang.Math.abs;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,7 +40,7 @@ public class swerveTuningTele extends LinearOpMode{
     private SlewRateLimiter XRate, YRate, HeadingRate;
     public static double xrate = 2.5, yrate = 2.5, headingrate = 2.2;
 
-    public static double offsets[] = new double[]{-1.5,0.5,-2.5,1.1};
+    public static double offsets[] = new double[]{-0.7,-0.8,-2.5,1.1};
     public static boolean inverses[] = new boolean[]{false, false, false, false};
     public static double scalars[] = new double[]{-1, 1, -1, -1};
 
@@ -61,7 +61,7 @@ public class swerveTuningTele extends LinearOpMode{
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
         Xoffset = 10.5; Yoffset = 1; //find in CAD
-        odo.setOffsets(Xoffset, Yoffset);
+        odo.setOffsets(Xoffset, Yoffset, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 

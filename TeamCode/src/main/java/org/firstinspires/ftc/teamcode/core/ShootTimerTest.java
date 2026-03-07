@@ -23,7 +23,7 @@ public class ShootTimerTest extends LinearOpMode{
     Logger logger;
     GamepadEx gamepad;
     RobotSettings robotSettings;
-    LimelightCamera limelight;
+//    LimelightCamera limelight;
     Pinpoint pinpoint;
     LauncherFSM launcherFSM;
 
@@ -41,7 +41,7 @@ public class ShootTimerTest extends LinearOpMode{
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
         pinpoint = new Pinpoint(hwMap, robotSettings,false);
-        limelight = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
+//        limelight = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
         gamepad = new GamepadEx(gamepad1);
         launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint,robotSettings,logger);
         transferFSM = new TransferFSM(hwMap,telemetry,logger);
@@ -50,8 +50,10 @@ public class ShootTimerTest extends LinearOpMode{
         waitForStart();
         elapsedTime.reset();
         while(opModeIsActive()){
+            double d = pinpoint.getGoalDistance();//limelight.getFlatDistance();
+            double tTotal = 27.5+(0.247*d)+(2.55*(Math.pow(d,2)))-(1.49*(Math.pow(d,3)));
             logger.updateLoggingLevel(gamepad1.left_bumper);
-//            pinpoint.update();
+            pinpoint.update();
             gamepad.readButtons();
             intakeFSM.updateState(gamepad1.dpad_up, gamepad1.dpad_left);
             transferFSM.updateState(gamepad1.right_bumper);
@@ -74,12 +76,13 @@ public class ShootTimerTest extends LinearOpMode{
                 avg = total/(n+=1);
                 elapsedTime.reset();
                 logger.log("t", timer, Logger.LogLevels.PRODUCTION);
-                logger.log("x", limelight.getFlatDistance(), Logger.LogLevels.PRODUCTION);
+                logger.log("x",pinpoint.getGoalDistance(), Logger.LogLevels.PRODUCTION);
             }
             logger.log("Timer: ", timer, Logger.LogLevels.PRODUCTION);
             logger.log("Etime: ", elapsedTime, Logger.LogLevels.PRODUCTION);;
             logger.log("Avg: ", avg, Logger.LogLevels.PRODUCTION);
-            logger.log("dist: ", limelight.getFlatDistance(), Logger.LogLevels.PRODUCTION);
+            logger.log("dist: ", pinpoint.getGoalDistance(), Logger.LogLevels.PRODUCTION);
+            logger.log("tTotal",tTotal, Logger.LogLevels.PRODUCTION);
             launcherFSM.positionFSM.logPP();
             launcherFSM.positionFSM.logLL();
             launcherFSM.flywheelFSM.log();

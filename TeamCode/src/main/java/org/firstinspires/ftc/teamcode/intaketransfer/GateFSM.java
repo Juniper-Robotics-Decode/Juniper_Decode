@@ -24,9 +24,9 @@ public class GateFSM {
     private Logger logger;
     public State currentState;
     public double currentPosition = 0;
-    public static double targetPosition = 0.8;
-    public static double positionUp = 0.45;
-    public static double positionDown = 0.8;
+    public static double targetPosition = 0.49;
+    public static double positionUp = 0.27;
+    public static double positionDown = 0.49;
     Timing.Timer timer;
 
 

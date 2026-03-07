@@ -149,7 +149,7 @@ public class MainTeleOp extends LinearOpMode {
          //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
             logUpdate(botHeading, voltage, drive);
 
-            telemetry.update();
+                telemetry.update();
         }
 
     }

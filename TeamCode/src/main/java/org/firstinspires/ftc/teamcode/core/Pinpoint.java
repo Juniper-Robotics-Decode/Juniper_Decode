@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.core;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,7 +22,7 @@ public class Pinpoint {  // TODO: add junit
         odo = hwMap.getOdo();
         this.robotSettings = robotSettings;
         Xoffset = -132.5; Yoffset = 14.075;
-        odo.setOffsets(Xoffset, Yoffset);
+        odo.setOffsets(Xoffset, Yoffset, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections( GoBildaPinpointDriver.EncoderDirection.FORWARD,  GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
@@ -43,18 +43,17 @@ public class Pinpoint {  // TODO: add junit
     public void update() {
         odo.update();
         pos = odo.getPosition();
-        vel = odo.getVelocity();
         x = pos.getX(DistanceUnit.METER);
         y= pos.getY(DistanceUnit.METER);
         heading = pos.getHeading(AngleUnit.DEGREES);
-        xVel = vel.getX(DistanceUnit.METER);
-        yVel = vel.getY(DistanceUnit.METER);
-        hVel = vel.getHeading(AngleUnit.DEGREES);
+        xVel = odo.getVelX(DistanceUnit.METER);
+        yVel = odo.getVelY(DistanceUnit.METER);
+        hVel = odo.getHeadingVelocity(AngleUnit.DEGREES.getUnnormalized());
     }
 
     public void updateHeadingOnly() {
-        odo.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
-        heading = Math.toDegrees(odo.getHeading());
+        odo.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
+        heading = odo.getHeading(AngleUnit.DEGREES);
     }
 
     public Pose2D getPos() {
@@ -97,6 +96,10 @@ public class Pinpoint {  // TODO: add junit
 
     public double getGoalDistance() {
         return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));
+    }
+
+    public double getGoalDistanceV() {
+        return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x + XVelocityOffset), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y + YVelocityOffset), 2));
     }
 
     public double getGoalDistanceAdjusted(double xTempOffset, double yTempOffset) {
