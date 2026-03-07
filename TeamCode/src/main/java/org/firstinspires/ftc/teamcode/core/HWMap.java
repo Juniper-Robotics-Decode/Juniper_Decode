@@ -129,4 +129,5 @@ public class HWMap {
     public VoltageSensor getVoltageSensor() {
         return voltageSensor;
     }
+
 }
