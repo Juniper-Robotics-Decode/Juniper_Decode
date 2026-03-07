@@ -187,20 +187,19 @@ public class PositionFSM {
 
         velocityMapPP = new InterpLUT();
 
-
-        velocityMapPP.add(0.5,2500);
-        velocityMapPP.add(1.19, 2500);
-        velocityMapPP.add(1.44, 2550);
-        velocityMapPP.add(2.04, 2725);
-        velocityMapPP.add(2.63, 3050);
-        velocityMapPP.add(3.03, 3150);
-        velocityMapPP.add(3.74,3650);
+        velocityMapPP.add(19.685,2500);
+        velocityMapPP.add(46.85039, 2500);
+        velocityMapPP.add(56.69291, 2550);
+        velocityMapPP.add(80.31496, 2725);
+        velocityMapPP.add(103.5433, 3050);
+        velocityMapPP.add(119.2913, 3150);
+        velocityMapPP.add(147.2441,3650);
         velocityMapPP.createLUT();
 
     }
 
     public void findFlywheelTargetVelocity(double distance_m) {
-        if(distance_m <= 0.5 || distance_m >= 3.5 || Double.isNaN(distance_m)) {
+        if(distance_m <= 20 || distance_m >= 147 || Double.isNaN(distance_m)) {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {

@@ -17,7 +17,7 @@ public class Pinpoint {  // TODO: add junit
     private RobotSettings robotSettings;
 
 
-    public Pinpoint(HWMap hwMap, RobotSettings robotSettings, boolean isAuto) {
+    public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
         odo = hwMap.getOdo();
         this.robotSettings = robotSettings;
         Xoffset = -132.5; Yoffset = 14.075;
@@ -31,13 +31,12 @@ public class Pinpoint {  // TODO: add junit
 
        // Pose2D pose2D = new Pose2D(DistanceUnit.METER, 0, 0.0, AngleUnit.DEGREES, 0.0);
        /* if (isAuto) {*/
-       // odo.setPosition(robotSettings.startPosState.getPose2D());
         //}
 
     //  odo.setPosition(robotSettings.startPosState.getPose2D());
 
 
-        odo.setPosition(new Pose2D(DistanceUnit.INCH,86.720, 137.685,AngleUnit.DEGREES,0));
+        odo.setPosition(robotSettings.startPosState.getPose2D());
         update();
     }
 
@@ -77,11 +76,11 @@ public class Pinpoint {  // TODO: add junit
     }
 
     public void resetIMU() {
-        if(robotSettings.alliance == RobotSettings.Alliance.RED){
-            odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, 17.32283, AngleUnit.DEGREES, 180));
-        } else{
-            odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, -17.32283, AngleUnit.DEGREES, 180));
-        }
+   //     if(robotSettings.alliance == RobotSettings.Alliance.RED){
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, 89, 8, AngleUnit.DEGREES, 0));
+     //   } else{
+         //   odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, -17.32283, AngleUnit.DEGREES, 180));
+       // }
     }
 
 

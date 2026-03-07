@@ -24,8 +24,6 @@ public class HWMap {
     //intake
     private final MotorEx intakeMotor;
 
-    // Transfer
-    private final MotorEx transferMotor;
     private final Servo transferServo;
     private final AnalogInput transferEncoder;
 
@@ -63,18 +61,17 @@ public class HWMap {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150);
-        transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312);
         transferServo = hardwareMap.get(Servo.class, "TS");
 
         FLM = hardwareMap.get(DcMotorEx.class, "FLM");
         FRM = hardwareMap.get(DcMotorEx.class, "FRM");
         BLM = hardwareMap.get(DcMotorEx.class, "BLM");
         BRM = hardwareMap.get(DcMotorEx.class, "BRM");
-
+/*
         FLS = hardwareMap.get(CRServoImplEx.class, "FLS");
         FRS = hardwareMap.get(CRServoImplEx.class, "FRS");
         BLS = hardwareMap.get(CRServoImplEx.class, "BLS");
-        BRS = hardwareMap.get(CRServoImplEx.class, "BRS");
+        BRS = hardwareMap.get(CRServoImplEx.class, "BRS");*/
 
         FLE = hardwareMap.get(AnalogInput.class, "FLE");
         FRE = hardwareMap.get(AnalogInput.class, "FRE");
@@ -116,9 +113,6 @@ public class HWMap {
         return intakeMotor;
     }
 
-    public MotorEx getTransferMotor() {
-        return transferMotor;
-    }
 
     public Servo getTransferServo() {
         return transferServo;

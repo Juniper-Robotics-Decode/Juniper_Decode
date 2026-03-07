@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.core;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.headingrate;
 import static org.firstinspires.ftc.teamcode.Swerve.Drive.swerveTuningTele.inverses;
@@ -21,6 +22,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Point;
 import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
@@ -84,8 +87,11 @@ public class MainTeleOp extends LinearOpMode {
         logger = new Logger(telemetry);
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
-        pinpoint = new Pinpoint(hwMap, robotSettings, false);
+        pinpoint = new Pinpoint(hwMap, robotSettings);
 
+        if(PoseStorage.currentPose != null) {
+            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, PoseStorage.currentPose.getX(),PoseStorage.currentPose.getY(), AngleUnit.DEGREES, PoseStorage.currentPose.getHeading()));
+        }
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
@@ -133,10 +139,10 @@ public class MainTeleOp extends LinearOpMode {
             pinpoint.update();
             pos = pinpoint.getPos();
             if(robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos())) {
-                botHeading = (-pos.getHeading(RADIANS)) - Math.PI/2;
+                botHeading = -pos.getHeading(RADIANS);
             }
             else {
-                botHeading = (-pos.getHeading(RADIANS)) + Math.PI/2;
+                botHeading = -pos.getHeading(RADIANS);
             }
 
             Pose drive = new Pose((StrafingScaler.ScaleVector(new Point(-gamepadE1.getLeftX(), -gamepadE1.getLeftY()))), (TurningScaler.Scale(gamepadE1.getRightX(), 0.01, 0.66, 4)));

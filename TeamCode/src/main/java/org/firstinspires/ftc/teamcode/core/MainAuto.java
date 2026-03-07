@@ -93,7 +93,7 @@ public class MainAuto extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
 
-         pinpoint = new Pinpoint(hwMap,robotSettings, true);
+         pinpoint = new Pinpoint(hwMap,robotSettings);
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
@@ -141,7 +141,7 @@ public class MainAuto extends LinearOpMode {
         }
 
 
-        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false, botHeading);
+        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
         switch (pathState) {
             case 0:
                 transferFSM.updateState(false);
@@ -243,7 +243,7 @@ public class MainAuto extends LinearOpMode {
             botHeading = (-(imu.getRobotYawPitchRollAngles().getYaw(RADIANS) + robotSettings.startPosState.getPose2D().getHeading(RADIANS)) + Math.PI/2);
         }
 
-        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false, botHeading);
+        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false);
 
         switch (pathState) {
             case 0:
@@ -328,7 +328,7 @@ public class MainAuto extends LinearOpMode {
             botHeading = (-(imu.getRobotYawPitchRollAngles().getYaw(RADIANS) + robotSettings.startPosState.getPose2D().getHeading(RADIANS)) + Math.PI/2);
         }
 
-        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false, botHeading);
+        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false);
 
         switch (pathState) {
             case 0:

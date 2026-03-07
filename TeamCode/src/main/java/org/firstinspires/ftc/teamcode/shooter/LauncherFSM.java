@@ -45,7 +45,7 @@ public class LauncherFSM {
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry, logger);
         turretFSM = new TurretFSM(hardwareMap,telemetry, logger);
         pitchFSM = new PitchFSM(hardwareMap,telemetry, flywheelFSM::getError, logger);
-        positionFSM = new PositionFSM(hardwareMap,telemetry, pinpoint, turretFSM::getCurrentAngle, robotSettings, logger);
+        positionFSM = new PositionFSM(hardwareMap,telemetry, turretFSM::getCurrentAngle, robotSettings, logger, pinpoint);
         this.telemetry = telemetry;
         state = States.PREPARING_TO_SHOOT;
         this.auto = auto;

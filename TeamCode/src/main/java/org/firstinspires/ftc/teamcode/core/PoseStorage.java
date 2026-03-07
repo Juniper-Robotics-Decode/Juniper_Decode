@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.core;
 
 import com.pedropathing.geometry.Pose;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 public class PoseStorage {
-    public static Pose currentPose = new Pose(0, 0, 0);
+    public static Pose currentPose = null;
 }

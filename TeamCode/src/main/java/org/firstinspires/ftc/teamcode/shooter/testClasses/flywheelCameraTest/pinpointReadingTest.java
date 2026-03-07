@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.shooter.testClasses.flywheelCameraTest;
 
 import com.pedropathing.localization.GoBildaPinpointDriver;
@@ -28,3 +29,4 @@ public class pinpointReadingTest extends LinearOpMode {
         }
     }
 }
+*/
