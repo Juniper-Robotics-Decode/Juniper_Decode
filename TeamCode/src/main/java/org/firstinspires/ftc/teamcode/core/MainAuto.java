@@ -112,7 +112,7 @@ public class MainAuto extends LinearOpMode {
 
         launcherFSM = new LauncherFSM(hwMap,telemetry,robotSettings,logger);
 
-        transferFSM = new TransferFSM(hwMap,telemetry,logger);
+      /*  transferFSM = new TransferFSM(hwMap,telemetry,logger);*/
 
         waitForStart();
 
@@ -125,7 +125,7 @@ public class MainAuto extends LinearOpMode {
                 farSide();
             }
             launcherFSM.log();
-            transferFSM.log();
+           /* transferFSM.log();*/
             telemetry.update();
         }
     }
@@ -176,10 +176,10 @@ public class MainAuto extends LinearOpMode {
                 swerveDrivetrain.setLocked(locked);
                 swerveDrivetrain.updateModules();
 
-                transferFSM.updateState(true);
+               /* transferFSM.updateState(true);
                 if(transferFSM.TRANSFERED()) {
                     pathState = 2;
-                }
+                }*/
                 break;
             case 2:
                 transferFSM.updateState(false);
@@ -256,12 +256,12 @@ public class MainAuto extends LinearOpMode {
                     pathState = 1;
                 }
                 break;
-            case 1:
+           /* case 1:
                 transferFSM.updateState(true);
                 if(transferFSM.TRANSFERED()) {
                     pathState = 2;
                 }
-                break;
+                break;*/
             case 2:
                 transferFSM.updateState(false);
                 if (!pathTimer1_FAR.isTimerOn()) {
@@ -341,12 +341,12 @@ public class MainAuto extends LinearOpMode {
                     pathState = 1;
                 }
                 break;
-            case 1:
+           /* case 1:
                 transferFSM.updateState(true);
                 if(transferFSM.TRANSFERED()) {
                     pathState = 2;
                 }
-                break;
+                break;*/
             case 2:
                 transferFSM.updateState(false);
                 if (!pathTimer1_FAR.isTimerOn()) {

@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
-import org.firstinspires.ftc.teamcode.core.Logger;
+import org.firstinspires.ftc.teamcode.core.TestHardwareMap;
 
 
 import java.util.concurrent.TimeUnit;
@@ -12,103 +12,94 @@ import java.util.concurrent.TimeUnit;
 public class TransferFSM {
 
     public enum State {
-        RESTING,
-        AT_REST,
-        TRANSFERING,
-        TRANSFERED
+        MOVING_DOWN,
+        MOVING_UP,
+        START_TO_MOVE,
+        STOPPING,
+        AT_DOWN,
+        AT_UP,
+        MOVING_FORWARD,
+        STOPPED,
+        REVERSING,
     }
 
-    private State currentState = State.AT_REST;
+    private State currentState = State.START_TO_MOVE;
+    private BeltFSM Belt;
     private Telemetry telemetry;
     private GateFSM transferServoFSM;
     public static Timing.Timer autoMoveTimer;
-    public static Timing.Timer upTimer;
-    private double counter = 0;
-    boolean lastRightBumper;
-    private boolean hasCountedCurrentCycle = false;
-    private Logger logger;
 
-    public static long DOWN_TIME = 1000;
-    public static long UP_TIME = 500;
 
-    public TransferFSM(HWMap hardwareMap, Telemetry telemetry, Logger logger) {
-        this.logger = logger;
+    public TransferFSM(TestHardwareMap hardwareMap, Telemetry telemetry) {
+        Belt = new BeltFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
-        transferServoFSM = new GateFSM(hardwareMap, telemetry, logger);
-        autoMoveTimer = new Timing.Timer(DOWN_TIME, TimeUnit.MILLISECONDS);
-        upTimer = new Timing.Timer(UP_TIME,TimeUnit.MILLISECONDS);
+        transferServoFSM = new GateFSM(hardwareMap, telemetry);
+        autoMoveTimer = new Timing.Timer(3, TimeUnit.SECONDS);
     }
 
     public void updateState(boolean Right_Bumper) {
+        Belt.updateState();
         transferServoFSM.updateState();
         findTargetState(Right_Bumper);
 
         switch (currentState) {
-            case TRANSFERING:
-                if(transferServoFSM.AT_DOWN()) {
-                    if(!upTimer.isTimerOn()) {
-                        upTimer.start();
-                    }
-                    upTimer.start();
-                    hasCountedCurrentCycle = false;
-                    if(autoMoveTimer.done() || counter == 0) {
-                        autoMoveTimer.pause();
-                        transferServoFSM.MoveUp();
-                    }
-                    if(counter >= 2) {
-                        counter = 0;
-                        currentState = State.TRANSFERED;
-                    } else {
-                        if(autoMoveTimer.done() || counter == 0) {
-                            autoMoveTimer.pause();
-                            transferServoFSM.MoveUp();
-                        }
-                    }
-                }
-                else if(transferServoFSM.AT_UP() && upTimer.done()) {
-                    upTimer.pause();
-                    transferServoFSM.MoveDown();
-                    if(!autoMoveTimer.isTimerOn()) {
-                        autoMoveTimer.start();
-                    }
-                    if (!hasCountedCurrentCycle) {
-                        counter++;
-                        hasCountedCurrentCycle = true;
-                    }
+
+            case START_TO_MOVE:
+                Belt.Move();
+                if (Belt.MOVING()) {
+                    currentState = State.MOVING_FORWARD;
                 }
                 break;
-            case RESTING:
+
+            case MOVING_DOWN:
                 transferServoFSM.MoveDown();
-                if(transferServoFSM.AT_DOWN()) {
-                    counter = 0;
-                    currentState = State.AT_REST;
+                if (transferServoFSM.AT_DOWN()) {
+                    currentState = State.AT_DOWN;
                 }
                 break;
+
+            case MOVING_UP:
+                transferServoFSM.MoveUp();
+                if (transferServoFSM.AT_UP()) {
+                    currentState = State.AT_UP;
+                }
+                break;
+
+            case STOPPING:
+                Belt.Stop();
+                if (Belt.STOPPED()) {
+                    currentState = State.STOPPED;
+                }
+                break;
+
+            case REVERSING:
+                Belt.Reverse();
+                if (Belt.REVERSING()) {
+                    currentState = State.REVERSING;
+                }
         }
+        telemetry.addData("Transfer Current State ", currentState);
+        telemetry.addData("Auto Move Timer ", autoMoveTimer.elapsedTime());
     }
 
     public void findTargetState(boolean Right_Bumper) {
-        if(Right_Bumper && !lastRightBumper) {
-            currentState = State.TRANSFERING;
+
+
+        if (Right_Bumper && transferServoFSM.AT_UP()) {
+            currentState = State.MOVING_DOWN;
         }
-        else if (currentState != State.TRANSFERING) {
-            currentState = State.RESTING;
+
+        if (currentState == State.AT_UP && transferServoFSM.AT_DOWN()){
+            currentState = State.AT_DOWN;
         }
-        lastRightBumper = Right_Bumper;
 
-    }
+        if (Right_Bumper && transferServoFSM.AT_DOWN()) {
+            currentState = State.MOVING_UP;
+        }
 
-    public boolean TRANSFERING() {
-        return currentState == State.TRANSFERING;
-    }
-
-    public boolean TRANSFERED() {
-        return currentState == State.TRANSFERED;
-    }
-
-    public void log() {
-        logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
-        transferServoFSM.log();
-        logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        if (autoMoveTimer.done() && transferServoFSM.AT_UP()) {
+            autoMoveTimer.pause();
+            currentState = State.MOVING_DOWN;
+        }
     }
 }

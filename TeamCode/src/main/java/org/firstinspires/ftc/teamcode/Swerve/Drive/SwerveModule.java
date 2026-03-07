@@ -19,8 +19,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.core.Logger;
 
-import java.util.Locale;
-
 @Config
 public class SwerveModule {
 
@@ -140,11 +138,11 @@ public class SwerveModule {
     public double getMotorCurrent() { return motor.getCurrent(CurrentUnit.AMPS);}
 
     public void log() {
-        logger.log("Motor power", lastMotorPower, Logger.LogLevels.DEBUG);
-        logger.log("Wheel Flipped", wheelFlipped, Logger.LogLevels.DEBUG);
-        logger.log("Target Position", lastTargetPosition, Logger.LogLevels.DEBUG);
-        logger.log("Current Position", getCurrentRotation(), Logger.LogLevels.DEBUG);
-        logger.log("Servo Power", lastServoPower, Logger.LogLevels.DEBUG);
-        logger.log("Motor Current", motor.getCurrent(CurrentUnit.AMPS), Logger.LogLevels.DEBUG);
+        logger.log("Motor power", lastMotorPower);
+        logger.log("Wheel Flipped", wheelFlipped);
+        logger.log("Target Position", lastTargetPosition);
+        logger.log("Current Position", getCurrentRotation());
+        logger.log("Servo Power", lastServoPower);
+        logger.log("Motor Current", motor.getCurrent(CurrentUnit.AMPS));
     }
 }

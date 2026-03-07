@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
-import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
 
 public class LauncherFSM {
 
@@ -118,11 +115,11 @@ public class LauncherFSM {
         this.endOfAuto = endOfAuto;
     }
     public void log() {
-        logger.log("---------SHOOTER----------","", Logger.LogLevels.PRODUCTION);
-        logger.log("shooter state", state, Logger.LogLevels.DEBUG);
+        logger.log("---------SHOOTER----------","");
+        logger.log("shooter state", state);
         positionFSM.log();
         flywheelFSM.log();
-        turretFSM.log();
+     /*   turretFSM.log();*/
         pitchFSM.log();
     }
 }

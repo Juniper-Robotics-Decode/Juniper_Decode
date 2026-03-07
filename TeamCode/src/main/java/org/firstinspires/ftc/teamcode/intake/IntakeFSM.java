@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
+import org.firstinspires.ftc.teamcode.core.TestHardwareMap;
 import org.firstinspires.ftc.teamcode.intaketransfer.IntakeServoFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 
@@ -33,17 +34,18 @@ public class IntakeFSM {
 
     Logger logger;
 
-    public IntakeFSM(HWMap hardwareMap, Telemetry telemetry, TransferFSM transferFSM, Logger logger) {
-        this.transferFSM = transferFSM;
+    public IntakeFSM(TestHardwareMap hardwareMap, Telemetry telemetry) {
         autoReverseTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
-        Roller = new RollerFSM(hardwareMap, telemetry, logger);
+        Roller = new RollerFSM(hardwareMap, telemetry);
         Servo = new IntakeServoFSM(hardwareMap, telemetry);
         this.telemetry = telemetry;
         this.logger = logger;
+        telemetry.addData("Current Intake state", currentState);
     }
 
     public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press) {
         Roller.updateState();
+        Servo.updateState();
 
         findTargetState(D_Pad_Up_Press, D_Pad_Left_Press);
         switch (currentState) {
@@ -52,9 +54,7 @@ public class IntakeFSM {
                 Roller.intake();
                 if (Roller.INTAKING()) {
                     currentState = State.READY_TO_INTAKE;
-                    if (Servo.AT_UP()) {
-                        Servo.MoveDown();
-                    }
+                    Servo.MoveDown();
                 }
                 break;
 
@@ -62,9 +62,7 @@ public class IntakeFSM {
                 Roller.stop();
                 if (Roller.STOPPED()) {
                     currentState = State.STOPPED;
-                    if (Servo.AT_UP()) {
-                        Servo.MoveDown();
-                    }
+                    Servo.MoveDown();
                 }
 
                 break;
@@ -74,15 +72,14 @@ public class IntakeFSM {
                 if (Roller.EJECTING()) {
                     currentState = State.EJECTING;
                     Servo.MoveUp();
-                    if (Servo.AT_UP()) {
-                        Servo.MoveDown();
-                    }
                 }
                 break;
 
 
         }
+        telemetry.addData("Intake Current State", currentState);
     }
+
 
     public void findTargetState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press) {
 
@@ -113,8 +110,8 @@ public class IntakeFSM {
                                                                                                     */
     }
 
-    public void log(){
-        logger.log("Intake Current State ", currentState, Logger.LogLevels.DEBUG);
+    /*public void log(){
+        logger.log("Intake Current State ", currentState);
         Roller.log();
-    }
+    }*/
 }

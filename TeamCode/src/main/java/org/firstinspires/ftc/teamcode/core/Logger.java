@@ -30,9 +30,10 @@ public class Logger {
         mechanismState = MechanismLog.INTAKE_TRANSFER;
     }
 
-    public void log(String caption, Object data, LogLevels logLevel) {
+    public void log(String caption, Object data) {
         switch (state) {
-            case DEBUG:
+            /*case DEBUG:
+                LogLevels logLevel = new LogLevels()
                 if (!(logLevel == LogLevels.DRIVER_DATA)) {
                     telemetry.addData(caption, data);
 
@@ -46,8 +47,8 @@ public class Logger {
             case DRIVER_DATA:
                 if (logLevel == LogLevels.DRIVER_DATA) {
                     telemetry.addData(caption, data);
-                }
-                break;
+                }*//*
+                break;*/
         }
     }
 

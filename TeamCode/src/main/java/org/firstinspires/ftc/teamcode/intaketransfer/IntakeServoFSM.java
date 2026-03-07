@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.TestHardwareMap;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,24 +21,24 @@ public class IntakeServoFSM {
     private Telemetry telemetry;
     private ServoWrapper intakeServo;
     public State currentState;
-    public static double targetPosition = .6;
+    public static double targetPosition = .7;
     public static double positionUp = 1;
-    public static double positionDown = .6;
+    public static double positionDown = .7;
     static Timing.Timer transferPostitionTimer;
 
-    public IntakeServoFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
-        intakeServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        transferPostitionTimer = new Timing.Timer(1, TimeUnit.SECONDS); // Original length 1000
+    public IntakeServoFSM(TestHardwareMap intaketransferhwmap, Telemetry telemetry) {
+        intakeServo = new ServoWrapper(intaketransferhwmap.getIntakeServo());
+        transferPostitionTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS); // Original length 1000
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
+        intakeServo.setPosition(positionDown);
     }
 
     public void updateState() {
-
-        telemetry.addData("Current Position ", intakeServo.getPosition());
+        telemetry.addData("intake servo current Position ", intakeServo.getPosition());
         telemetry.addData("Elapsed Time ", transferPostitionTimer.elapsedTime());
-        telemetry.addData("Target Position ", targetPosition);
-        telemetry.addData("ServoFSM State ", currentState);
+        telemetry.addData("Intake servo target Position ", targetPosition);
+        telemetry.addData("intake servo State ", currentState);
 
 
         double percentError = Math.abs((intakeServo.getPosition() - targetPosition) / targetPosition);
@@ -49,23 +49,17 @@ public class IntakeServoFSM {
             transferPostitionTimer.start();
         }
 
-        if (targetPosition == positionUp) {
+
+        if (targetPosition == positionUp ) {
+            intakeServo.setPosition(positionUp);
             currentState = State.AT_UP;
         }
 
         if (targetPosition == positionDown) {
+            intakeServo.setPosition(positionDown);
             currentState = State.AT_DOWN;
         }
     }
-
-    public boolean AT_DOWN() {
-        return currentState == State.AT_DOWN;
-    }
-
-    public boolean AT_UP() {
-        return currentState == State.AT_UP;
-    }
-
 
     public void MoveUp() {
         targetPosition = positionUp;
@@ -73,5 +67,13 @@ public class IntakeServoFSM {
 
     public void MoveDown() {
         targetPosition = positionDown;
+    }
+
+    public boolean AT_UP(){
+        return currentState == State.AT_UP;
+    }
+
+    public boolean AT_DOWN(){
+        return currentState == State.AT_DOWN;
     }
 }

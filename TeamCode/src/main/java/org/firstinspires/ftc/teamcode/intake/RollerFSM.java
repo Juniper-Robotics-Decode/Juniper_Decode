@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.intake;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
+import org.firstinspires.ftc.teamcode.core.TestHardwareMap;
 
 @Config
 public class RollerFSM {
@@ -18,7 +18,7 @@ public class RollerFSM {
     public static double targetVelocity = 2790;
     public static double stoppingTargetVelocity = 0;
     public static double intakingTargetVelocity = 2790;
-    public static double ejectingTargetVelocity = -1400;
+    public static double ejectingTargetVelocity = -1000;
     public static double INTAKE_SLOW_VELO_FOR_TRANSFER = 500;
     public static double jammingCurrentThreshold = 5;
     public static double jammingVelocityThreshold = 1000;
@@ -34,7 +34,7 @@ public class RollerFSM {
 //        RAMPING_UP_TO_EJECT
     }
 
-    public RollerFSM(HWMap hwMap, Telemetry telemetry, Logger logger) {
+    public RollerFSM( TestHardwareMap hwMap, Telemetry telemetry) {
         intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, true);
         this.telemetry = telemetry;
         State = State.INTAKING;
@@ -42,16 +42,20 @@ public class RollerFSM {
     }
 
     public void updateState() {
+        telemetry.addData("Roller FSM State ", State);
+        telemetry.addData("Current Velocity ", currentVelocity);
+        telemetry.addData("Target Velocity ", targetVelocity);
+        telemetry.addData("Intake motor current ", intakeMotor.getCurrent());
 
         if (currentVelocity == 0) {
             State = State.STOPPED;
         }
 
-        if (currentVelocity > 50) {
+        if (currentVelocity < 50) {
             State = State.INTAKING;
         }
 
-        if (currentVelocity < 0) {
+        if (currentVelocity > 0) {
             State = State.EJECTING;
         }
 
@@ -112,9 +116,9 @@ public class RollerFSM {
     }
 
     public void log() {
-        logger.log("Roller FSM State ", State, Logger.LogLevels.DEBUG);
-        logger.log("Current Velocity ", currentVelocity, Logger.LogLevels.DEBUG);
-        logger.log("Target Velocity ", targetVelocity, Logger.LogLevels.DEBUG);
-        logger.log("Intake motor current ", intakeMotor.getCurrent(), Logger.LogLevels.DEBUG);
+        logger.log("Roller FSM State ", State);
+        logger.log("Current Velocity ", currentVelocity);
+        logger.log("Target Velocity ", targetVelocity);
+        logger.log("Intake motor current ", intakeMotor.getCurrent());
     }
 }

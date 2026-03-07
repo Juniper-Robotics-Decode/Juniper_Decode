@@ -178,14 +178,7 @@ public class TurretFSM {
         return state == States.ALIGNED;
     }
 
-    public void log() {
-        logger.log("<font color='yellow'>-----------Turret-------</font>", "", Logger.LogLevels.PRODUCTION);
-        logger.log("<b><font color='green'>Turret Manual offset</font></b>", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
-        logger.log("turret state", state, Logger.LogLevels.DEBUG);
-        logger.log("turret target angle", targetAngle, Logger.LogLevels.PRODUCTION);
-        logger.log("turret current angle", turretMotor.getScaledPos(), Logger.LogLevels.PRODUCTION);
-        logger.log("turret motor current", turretMotor.getCurrent(), Logger.LogLevels.DEBUG);
-    }
+
 
     public double getCurrentAngle() {
         return turretMotor.getScaledPos();

@@ -120,11 +120,11 @@ public class PitchFSM {
     }
 
     public void log() {
-        logger.log("<font color='yellow'>-----------Pitch-------</font>", "", Logger.LogLevels.PRODUCTION);
-        logger.log("<b><font color='green'>pitch Manual offset</font></b>", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
-        logger.log("pitch state", state, Logger.LogLevels.DEBUG);
-        logger.log("pitch target angle", targetAngle, Logger.LogLevels.PRODUCTION);
-        logger.log("pitch current angle", pitchServo.getScaledPos(), Logger.LogLevels.PRODUCTION);
+        logger.log("<font color='yellow'>-----------Pitch-------</font>", "");
+        logger.log("<b><font color='green'>pitch Manual offset</font></b>", MANUAL_OFFSET);
+        logger.log("pitch state", state);
+        logger.log("pitch target angle", targetAngle);
+        logger.log("pitch current angle", pitchServo.getScaledPos());
     }
 
     private void adjustForFlywheel() {

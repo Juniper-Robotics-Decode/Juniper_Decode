@@ -80,7 +80,7 @@ public class RelocalizeTest extends LinearOpMode {
                 limelightCamera.update();
                 pinpoint.update();
                 turretFSM.updateState();
-                turretFSM.log();
+              /*  turretFSM.log();*/
 
             if (gamepad1.options) {
                 pinpoint.resetIMU();

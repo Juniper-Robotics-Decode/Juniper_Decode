@@ -14,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.util.Timing;
-import com.qualcomm.hardware.rev.Rev9AxisImuOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -92,20 +91,20 @@ public class MainTeleOp extends LinearOpMode {
         swerveDrivetrain.setInverses(inverses);
         swerveDrivetrain.setMotorScaling(scalars);
 
-        transferFSM = new TransferFSM(hwMap, telemetry,logger);
-        intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
+        /*transferFSM = new TransferFSM(hwMap, telemetry,logger);
+        intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);*/
         launcherFSM = new LauncherFSM(hwMap,telemetry, robotSettings, logger);
 
         P = 0.008; I = 0; D = 0;
 
         loopTimer = new Timing.Timer(300000000, TimeUnit.MILLISECONDS); double botHeading;
-        logger.log("<b><u><i><font color='orange'>distance method</font></b></u></i>", robotSettings.distanceMethod, Logger.LogLevels.PRODUCTION);
+        logger.log("<b><u><i><font color='orange'>distance method</font></b></u></i>", robotSettings.distanceMethod);
         if(robotSettings.alliance == RobotSettings.Alliance.RED) {
-            logger.log("<b><u><font color='red'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+            logger.log("<b><u><font color='red'>ALLIANCE</font></u></b>", robotSettings.alliance);
         }else{
-            logger.log("<b><u><font color='blue'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
+            logger.log("<b><u><font color='blue'>ALLIANCE</font></u></b>", robotSettings.alliance);
         }
-        logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","", Logger.LogLevels.PRODUCTION);
+        logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","");
         telemetry.update();
         waitForStart();
        while (opModeIsActive()) {
@@ -176,15 +175,14 @@ public class MainTeleOp extends LinearOpMode {
         launcherFSM.positionFSM.logLL();
        // launcherFSM.positionFSM.logPP();
         launcherFSM.pitchFSM.log();
-        launcherFSM.turretFSM.log();
+        /*launcherFSM.turretFSM.log();*/
         launcherFSM.positionFSM.log();
         swerveDrivetrain.log();
-        transferFSM.log();
-        intakeFSM.log();
+      /*  transferFSM.log();*/
         telemetry.addData("Pose", drive);
-        logger.log("battery voltage", voltage, Logger.LogLevels.DEBUG);
-        logger.log("loop time", loopTimer.elapsedTime(), Logger.LogLevels.DEBUG);
-        logger.log("Bot Heading", botHeading, Logger.LogLevels.DEBUG);
+        logger.log("battery voltage", voltage);
+        logger.log("loop time", loopTimer.elapsedTime());
+        logger.log("Bot Heading", botHeading);
     }
 
 }

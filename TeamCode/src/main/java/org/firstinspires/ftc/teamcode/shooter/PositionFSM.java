@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 import org.firstinspires.ftc.teamcode.shooter.wrappers.LimelightCamera;
-import org.firstinspires.ftc.teamcode.core.Pinpoint;
 
 import java.util.function.DoubleSupplier;
 
@@ -300,24 +299,24 @@ public class PositionFSM {
 
 
     public void log() {
-        logger.log("<font color='yellow'>----------POSITION FSM LOG----------</font>", "", Logger.LogLevels.PRODUCTION);
-        logger.log("position FSM state", state, Logger.LogLevels.DEBUG);
-        logger.log("<font color='orange'>Current shooting Sensor</font>", sensor, Logger.LogLevels.PRODUCTION);
-        logger.log("Flywheel Target", flywheelTargetVelocityRPM, Logger.LogLevels.DEBUG);
-        logger.log("Pitch Target", pitchTargetAngle, Logger.LogLevels.DEBUG);
-        logger.log("Turret Error", turretError, Logger.LogLevels.DEBUG);
+        logger.log("<font color='yellow'>----------POSITION FSM LOG----------</font>", "");
+        logger.log("position FSM state", state);
+        logger.log("<font color='orange'>Current shooting Sensor</font>", sensor);
+        logger.log("Flywheel Target", flywheelTargetVelocityRPM);
+        logger.log("Pitch Target", pitchTargetAngle);
+        logger.log("Turret Error", turretError);
     }
     public void logLL() {
-        logger.log("<font color='yellow'>----------LIMELIGHT LOG----------</font>", "", Logger.LogLevels.PRODUCTION);
-        logger.log("X", limelightCamera.getX(), Logger.LogLevels.DEBUG);
-        logger.log("Y", limelightCamera.getY(), Logger.LogLevels.DEBUG);
-        logger.log("Z", limelightCamera.getZ(), Logger.LogLevels.DEBUG);
-        logger.log("Flat Distance", limelightCamera.getFlatDistance(), Logger.LogLevels.DEBUG);
-        logger.log("tx", limelightCamera.getTx(), Logger.LogLevels.DEBUG);
-        logger.log("ty", limelightCamera.getTy(), Logger.LogLevels.DEBUG);
-        logger.log("Has target", limelightCamera.hasTarget(), Logger.LogLevels.DEBUG);
-        logger.log("<b><font color='pink'>Limelight X</b></font>", limelightCamera.getxField(), Logger.LogLevels.PRODUCTION);
-        logger.log("<b><font color='pink'>Limelight Y</b></font>", limelightCamera.getyField(), Logger.LogLevels.PRODUCTION);
+        logger.log("<font color='yellow'>----------LIMELIGHT LOG----------</font>", "");
+        logger.log("X", limelightCamera.getX());
+        logger.log("Y", limelightCamera.getY());
+        logger.log("Z", limelightCamera.getZ());
+        logger.log("Flat Distance", limelightCamera.getFlatDistance());
+        logger.log("tx", limelightCamera.getTx());
+        logger.log("ty", limelightCamera.getTy());
+        logger.log("Has target", limelightCamera.hasTarget());
+        logger.log("<b><font color='pink'>Limelight X</b></font>", limelightCamera.getxField());
+        logger.log("<b><font color='pink'>Limelight Y</b></font>", limelightCamera.getyField());
     }/*
     public void logPP() {
         logger.log("<font color='yellow'>----------PINPOINT LOG----------</font>", "", Logger.LogLevels.PRODUCTION);

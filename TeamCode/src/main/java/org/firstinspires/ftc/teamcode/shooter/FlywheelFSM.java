@@ -120,15 +120,15 @@ public class FlywheelFSM {
     }
 
     public void log() {
-        logger.log("<font color='yellow'>--------FLYWHEEL-------</font>","", Logger.LogLevels.PRODUCTION);
-        logger.log("flywheel stopping variable", stopping, Logger.LogLevels.DEBUG);
-        logger.log("Flywheel FSM state", state, Logger.LogLevels.DEBUG);
-        logger.log("Target Velocity RPM", targetVelocityRPM, Logger.LogLevels.PRODUCTION);
-        logger.log("Target Velocity Ticks", targetVelocityTicks, Logger.LogLevels.DEBUG);
-        logger.log("Current Velocity Corrected", flywheelMotor.getVelocity(), Logger.LogLevels.DEBUG);
-        logger.log("<b><font color='green'>FLywheel offset</font></b>", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION );
-        logger.log("flywheel stopping variable", stopping, Logger.LogLevels.DEBUG);
-        logger.log("Flywheel current", flywheelMotor.getCurrent(), Logger.LogLevels.DEBUG);
+        logger.log("<font color='yellow'>--------FLYWHEEL-------</font>","");
+        logger.log("flywheel stopping variable", stopping);
+        logger.log("Flywheel FSM state", state);
+        logger.log("Target Velocity RPM", targetVelocityRPM);
+        logger.log("Target Velocity Ticks", targetVelocityTicks);
+        logger.log("Current Velocity Corrected", flywheelMotor.getVelocity());
+        logger.log("<b><font color='green'>FLywheel offset</font></b>", MANUAL_OFFSET);
+        logger.log("flywheel stopping variable", stopping);
+        logger.log("Flywheel current", flywheelMotor.getCurrent());
     }
 
     public void voltageCompensation() {

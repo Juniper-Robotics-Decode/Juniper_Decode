@@ -8,15 +8,20 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Swerve.Geo.Pose;
 import org.firstinspires.ftc.teamcode.intake.IntakeFSM;
+import org.firstinspires.ftc.teamcode.intake.RollerFSM;
 import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
+import org.slf4j.LoggerFactory;
 
 @Config
 @TeleOp
 public class intakeTransferIntegratedTest extends LinearOpMode {
 
 
-    private HWMap hwmap;
+
+    private TestHardwareMap testHardwareMap;
     private GamepadEx gamepad;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
@@ -27,11 +32,11 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        hwmap = new HWMap(hardwareMap);
+        testHardwareMap = new TestHardwareMap(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
         logger = new Logger(telemetry);
-        transferFSM = new TransferFSM(hwmap, telemetry, logger);
-        intakeFSM = new IntakeFSM(hwmap, telemetry, transferFSM,logger);
+        transferFSM = new TransferFSM(testHardwareMap, telemetry);
+        intakeFSM = new IntakeFSM(testHardwareMap, telemetry);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -41,6 +46,5 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
             transferFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER));
 
         }
-
     }
 }
