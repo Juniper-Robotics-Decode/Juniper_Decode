@@ -45,41 +45,21 @@ public class TransferFSM {
 
         switch (currentState) {
             case TRANSFERING:
-                if(transferServoFSM.AT_DOWN()) {
-                    if(!upTimer.isTimerOn()) {
-                        upTimer.start();
-                    }
-                    upTimer.start();
-                    hasCountedCurrentCycle = false;
-                    if(autoMoveTimer.done() || counter == 0) {
-                        autoMoveTimer.pause();
-                        transferServoFSM.MoveUp();
-                    }
-                    if(counter >= 2) {
-                        counter = 0;
-                        currentState = State.TRANSFERED;
-                    } else {
-                        if(autoMoveTimer.done() || counter == 0) {
-                            autoMoveTimer.pause();
-                            transferServoFSM.MoveUp();
-                        }
-                    }
-                }
-                else if(transferServoFSM.AT_UP() && upTimer.done()) {
-                    upTimer.pause();
+                if (Right_Bumper) {
                     transferServoFSM.MoveDown();
-                    if(!autoMoveTimer.isTimerOn()) {
-                        autoMoveTimer.start();
-                    }
-                    if (!hasCountedCurrentCycle) {
-                        counter++;
-                        hasCountedCurrentCycle = true;
+                    autoMoveTimer.pause();
+                    upTimer.pause();
+                    hasCountedCurrentCycle = false;
+                } else {
+                    transferServoFSM.MoveUp();
+                    if (transferServoFSM.AT_UP()) {
+                        currentState = State.AT_REST;
                     }
                 }
                 break;
             case RESTING:
-                transferServoFSM.MoveDown();
-                if(transferServoFSM.AT_DOWN()) {
+                transferServoFSM.MoveUp();
+                if (transferServoFSM.AT_UP()) {
                     counter = 0;
                     currentState = State.AT_REST;
                 }
@@ -88,14 +68,12 @@ public class TransferFSM {
     }
 
     public void findTargetState(boolean Right_Bumper) {
-        if(Right_Bumper && !lastRightBumper) {
+        if (Right_Bumper) {
             currentState = State.TRANSFERING;
-        }
-        else if (currentState != State.TRANSFERING) {
+        } else if (currentState != State.TRANSFERING) {
             currentState = State.RESTING;
         }
         lastRightBumper = Right_Bumper;
-
     }
 
     public boolean TRANSFERING() {

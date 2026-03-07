@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
-
 @Config
 public class TurretFSM {
     public enum States{
