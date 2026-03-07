@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.apache.commons.collections.set.PredicatedSortedSet;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.MotorWrapper;
@@ -16,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Config
+/*
 @TeleOp
 public class TurretReset extends LinearOpMode {
     public DcMotorEx turretMotor;
@@ -61,31 +64,38 @@ public class TurretReset extends LinearOpMode {
         } catch (IOException e) {}
     }
 }
+*/
 
-/*
 @TeleOp
 public class TurretReset extends LinearOpMode {
-    //motor moves @0.1 till voltage spikes, when that happens stop motor
-    //make thresholds but if dont work thats fine
-    //make new motor wrapper
     public MotorWrapper turretMotor;
     private HWMap HWMap;
     public double currentAMPS;
+    public double currentAngle;
+    boolean resseted = false;
+    public Gamepad gamepad;
     public void runOpMode() {
         HWMap = new HWMap(hardwareMap);
+        gamepad = gamepad1;
         turretMotor = new MotorWrapper(HWMap.getTurretMotor(), false, 1, false);
         waitForStart();
         while(opModeIsActive()){
             currentAMPS = turretMotor.getCurrent();
-            if(currentAMPS < 3.5){
-                turretMotor.set(0.1);
-            } else {
-                turretMotor.set(0);
+            currentAngle = turretMotor.getAngle();
+            while (gamepad1.a){
+                if(currentAMPS < 4.25){
+                    turretMotor.set(1);
+                } else {
+                    turretMotor.set(0);
+                    turretMotor.resetEncoder();
+                    break;
+                }
             }
             telemetry.addData("CurrentAMPS", currentAMPS);
             telemetry.addData("Motor Speed", turretMotor.get());
+            telemetry.addData("CurrentAngle", currentAngle);
+            telemetry.addData("Reset Done?", resseted);
             telemetry.update();
         }
     }
 }
-*/
