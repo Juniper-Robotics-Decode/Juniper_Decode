@@ -6,7 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.MainAuto;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.RobotSettings;
 
 import java.util.List;
@@ -16,13 +16,13 @@ public class LimelightCamera {
     private Limelight3A limelight;
 
     private boolean hasValidTarget = false;
-    private double x_m = 0;
-    private double y_m = 0;
-    private double z_m = 0;
+    private double x_in = 0;
+    private double y_in = 0;
+    private double z_in = 0;
     private double xField = 0;
     private double yField = 0;
     private int targetID = 0;
-    private double flatDistance_m = 0;
+    private double flatDistance_in = 0;
     private double tx_degrees = 0;
     private double ty_degrees = 0;
     private Telemetry telemetry;
@@ -83,16 +83,16 @@ public class LimelightCamera {
         targetID = fiducial.getFiducialId();
 
 
-        x_m = fiducial.getCameraPoseTargetSpace().getPosition().x;
-        y_m = fiducial.getCameraPoseTargetSpace().getPosition().y;
-        z_m = fiducial.getCameraPoseTargetSpace().getPosition().z;
+        x_in = (fiducial.getCameraPoseTargetSpace().getPosition().x)/DistanceUnit.mPerInch;
+        y_in = (fiducial.getCameraPoseTargetSpace().getPosition().y)/DistanceUnit.mPerInch;
+        z_in = (fiducial.getCameraPoseTargetSpace().getPosition().z)/DistanceUnit.mPerInch;
         tx_degrees = result.getTx();
         ty_degrees = result.getTy();
 
-        xField = fiducial.getRobotPoseFieldSpace().getPosition().x;
+        xField = (fiducial.getRobotPoseFieldSpace().getPosition().x)/DistanceUnit.mPerInch + 72;
         yField = fiducial.getRobotPoseFieldSpace().getPosition().y;
 
-        flatDistance_m = Math.sqrt(x_m * x_m + z_m * z_m);
+        flatDistance_in = Math.sqrt(x_in * x_in + z_in * z_in);
     }
 
 
@@ -101,15 +101,15 @@ public class LimelightCamera {
     }
 
     public double getX() {
-        return x_m;
+        return x_in;
     }
 
     public double getY() {
-        return y_m;
+        return y_in;
     }
 
     public double getZ() {
-        return z_m;
+        return z_in;
     }
 
     public double getTx() {
@@ -119,7 +119,7 @@ public class LimelightCamera {
     public double getTy() {return ty_degrees;}
 
     public double getFlatDistance() {
-        return flatDistance_m;
+        return flatDistance_in;
     }
 
     public double getxField() {

@@ -173,15 +173,15 @@ public class PositionFSM {
         // FOR Limelight
         velocityMapLL = new InterpLUT();
 
-        // distance (m) , velocity (rpm)
+        // distance (in) , velocity (rpm)
 
-        velocityMapLL.add(0.5,2500);
-        velocityMapLL.add(1.35, 2550);
-        velocityMapLL.add(1.58, 2625);
-        velocityMapLL.add(2.21, 3050);
-        velocityMapLL.add(2.85, 3400);
-        velocityMapLL.add(3.25, 3700);
-        velocityMapLL.add(3.5,4000);
+        velocityMapLL.add(19.685,2500);
+        velocityMapLL.add(53.14961, 2550);
+        velocityMapLL.add(62.20472, 2625);
+        velocityMapLL.add(87.00787, 3050);
+        velocityMapLL.add(112.2047, 3400);
+        velocityMapLL.add(127.9528, 3700);
+        velocityMapLL.add(137.795,4000);
         velocityMapLL.createLUT();
 
 
@@ -190,13 +190,13 @@ public class PositionFSM {
         velocityMapPP = new InterpLUT();
 
 
-        velocityMapPP.add(0.5,2500);
-        velocityMapPP.add(1.19, 2500);
-        velocityMapPP.add(1.44, 2550);
-        velocityMapPP.add(2.04, 2725);
-        velocityMapPP.add(2.63, 3050);
-        velocityMapPP.add(3.03, 3150);
-        velocityMapPP.add(3.74,3650);
+        velocityMapPP.add(19.685,2500);
+        velocityMapPP.add(46.85039, 2500);
+        velocityMapPP.add(56.69291, 2550);
+        velocityMapPP.add(80.31496, 2725);
+        velocityMapPP.add(103.5433, 3050);
+        velocityMapPP.add(119.2913, 3150);
+        velocityMapPP.add(147.2441,3650);
         velocityMapPP.createLUT();
 
     }

@@ -17,9 +17,8 @@ import java.io.IOException;
 @Config
 public class RobotSettings {
     public enum Alliance{
-        RED(new Pose2D(DistanceUnit.METER, -1.432, 1.5, AngleUnit.DEGREES, 136.4)),
-        BLUE (new Pose2D(DistanceUnit.METER, -1.482, -1.48, AngleUnit.DEGREES, 223.6));
-
+        RED(new Pose2D(DistanceUnit.METER, 131, 128, AngleUnit.DEGREES, 136.4)),
+        BLUE (new Pose2D(DistanceUnit.METER, 131, 128, AngleUnit.DEGREES, 136.4));
         private Pose2D pose2D;
 
         Alliance(Pose2D pos) {
@@ -37,10 +36,10 @@ public class RobotSettings {
         LIMELIGHT_AND_PINPOINT
     }
     public enum StartPos{
-        CLOSE_RED (new Pose2D(DistanceUnit.METER, -1.419,1.224, AngleUnit.DEGREES, 40.4)),
-        FAR_RED (new Pose2D(DistanceUnit.METER, 1.64, 0.16, AngleUnit.DEGREES, 180)),
-        CLOSE_BLUE (new Pose2D(DistanceUnit.METER, -1.419,-1.224, AngleUnit.DEGREES, 319.6)),
-        FAR_BLUE((new Pose2D(DistanceUnit.METER, 1.64, -0.16, AngleUnit.DEGREES, 180)));
+        CLOSE_RED (new Pose2D(DistanceUnit.INCH,120 ,127.87, AngleUnit.DEGREES, 319.6)),
+        FAR_RED (new Pose2D(DistanceUnit.INCH, 89, 8, AngleUnit.DEGREES, 0)),
+        CLOSE_BLUE (new Pose2D(DistanceUnit.INCH, -1.419,-1.224, AngleUnit.DEGREES, 319.6)),
+        FAR_BLUE((new Pose2D(DistanceUnit.INCH, 89, 8, AngleUnit.DEGREES, 0)));
 
         private Pose2D pose2D;
 

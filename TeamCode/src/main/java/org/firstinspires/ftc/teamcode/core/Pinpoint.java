@@ -43,11 +43,11 @@ public class Pinpoint {  // TODO: add junit
     public void update() {
         odo.update();
         pos = odo.getPosition();
-        x = pos.getX(DistanceUnit.METER);
-        y= pos.getY(DistanceUnit.METER);
+        x = pos.getX(DistanceUnit.INCH);
+        y= pos.getY(DistanceUnit.INCH);
         heading = pos.getHeading(AngleUnit.DEGREES);
-        xVel = odo.getVelX(DistanceUnit.METER);
-        yVel = odo.getVelY(DistanceUnit.METER);
+        xVel = odo.getVelX(DistanceUnit.INCH);
+        yVel = odo.getVelY(DistanceUnit.INCH);
         hVel = odo.getHeadingVelocity(AngleUnit.DEGREES.getUnnormalized());
     }
 
@@ -78,15 +78,15 @@ public class Pinpoint {  // TODO: add junit
     public double getHV(){return hVel;}
 
     public void resetIMU() {
-        if(robotSettings.alliance == RobotSettings.Alliance.RED){
-            odo.setPosition(new Pose2D(DistanceUnit.METER, 1.64, 0.16, AngleUnit.DEGREES, 180));
-        } else{
-            odo.setPosition(new Pose2D(DistanceUnit.METER, 1.64, -0.16, AngleUnit.DEGREES, 180));
-        }
+        //     if(robotSettings.alliance == RobotSettings.Alliance.RED){
+        odo.setPosition(new Pose2D(DistanceUnit.INCH, 89, 8, AngleUnit.DEGREES, 0));
+        //   } else{
+        //   odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, -17.32283, AngleUnit.DEGREES, 180));
+        // }
     }
 
     public void resetPos() {
-        odo.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,heading));
+        odo.setPosition(new Pose2D(DistanceUnit.INCH,1.2,0,AngleUnit.DEGREES,heading));
     }
 
     public void setVelocityOffsets(double XVOffset, double YVOffset){
