@@ -20,7 +20,7 @@ public class Pinpoint {  // TODO: add junit
     public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
         odo = hwMap.getOdo();
         this.robotSettings = robotSettings;
-        Xoffset = -132.5; Yoffset = 14.075;
+        Xoffset = -127.6669; Yoffset = -52.23;
 
         odo.setOffsets(Xoffset, Yoffset, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);

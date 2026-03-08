@@ -41,9 +41,9 @@ public class swerveTuningTele extends LinearOpMode{
     private SlewRateLimiter XRate, YRate, HeadingRate;
     public static double xrate = 2.5, yrate = 2.5, headingrate = 2.5;
 
-    public static double offsets[] = new double[]{-1.9,-0.8,-2.5,1.1};
+    public static double offsets[] = new double[]{2.25,-1.15,-0.8,0.9};
     public static boolean inverses[] = new boolean[]{false, false, false, false};
-    public static double scalars[] = new double[]{-1, 1, -1, -1};
+    public static double scalars[] = new double[]{1, 1, 1, 1};
 
     public static int i;
     public static boolean gamepad;
@@ -127,7 +127,6 @@ public class swerveTuningTele extends LinearOpMode{
             swerveDrivetrain.setInverses(inverses);
 
             swerveDrivetrain.setPose(drive, BotHeading, 12.4);
-            swerveDrivetrain.updateModule(i);
 
             telemetry.addData("x", drive.x);
             telemetry.addData("y", drive.y);

@@ -31,7 +31,7 @@ public class TurretFSM {
     public static double P=0.02, I=0.02, D=0.001, F=0;
     public static double gearRatio = 16.0/109.0;
 
-    public static double UPPER_HARD_STOP = 0;
+    public static double UPPER_HARD_STOP = 90;
     public static double LOWER_HARD_STOP = -90;
 
     public static double POWER_CAP = 1;
@@ -154,7 +154,7 @@ public class TurretFSM {
         lastLeft = dPadLeft2;
         lastRight = dPadRight2;
 
-        targetAngle = -turretError + MANUAL_OFFSET - TURRET_OFFSET;
+        targetAngle = turretError - MANUAL_OFFSET + TURRET_OFFSET;
 
 /*
         if(i >= 0) {

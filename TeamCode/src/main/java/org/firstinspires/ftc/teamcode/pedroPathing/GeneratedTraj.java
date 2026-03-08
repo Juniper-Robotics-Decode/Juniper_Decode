@@ -343,7 +343,7 @@ public class GeneratedTraj extends LinearOpMode {
         pinpoint = new Pinpoint(hwMap,robotSettings);
         launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger, true);
         transferFSM = new TransferFSM(hwMap, telemetry,logger);
-        intakeFSM = new IntakeFSM(hwMap, telemetry,transferFSM,logger);
+        intakeFSM = new IntakeFSM(hwMap, telemetry,logger);
 
         waitForStart();
         while (opModeIsActive()) {

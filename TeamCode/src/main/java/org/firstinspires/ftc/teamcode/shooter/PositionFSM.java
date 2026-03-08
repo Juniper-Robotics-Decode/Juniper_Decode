@@ -188,8 +188,8 @@ public class PositionFSM {
         velocityMapPP = new InterpLUT();
 
         velocityMapPP.add(19.685,2500);
-        velocityMapPP.add(46.85039, 2500);
-        velocityMapPP.add(56.69291, 2550);
+        velocityMapPP.add(46.85039, 2850); // pitch down 3/4
+        velocityMapPP.add(56.69291, 3250); // pitch has 2 hash marks left below
         velocityMapPP.add(80.31496, 2725);
         velocityMapPP.add(103.5433, 3050);
         velocityMapPP.add(119.2913, 3150);

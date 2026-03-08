@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.shooter.testClasses;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -56,7 +55,7 @@ public class PinpointDistanceTest extends LinearOpMode {
         StrafingScaler = new JoystickScaling();
         TurningScaler = new JoystickScaling();
 
-        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings, false);
+        Pinpoint pinpoint = new Pinpoint(hwMap, robotSettings);
 
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
@@ -124,4 +123,3 @@ public class PinpointDistanceTest extends LinearOpMode {
         }
     }
 }
-*/

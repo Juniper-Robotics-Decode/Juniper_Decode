@@ -32,7 +32,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     public static double targetAngle;
 
     private PIDFController pidfController;
-    public static double TOLERANCE = 1;
+    public static double TOLERANCEPITCH = 1;
     public static double P=0.1, I=0, D=0, F=0;
     public static double gearRatio = 1.0/12.0;
 
@@ -52,6 +52,8 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     private Logger logger;
 
+    private double TOLERANCE_FLYWHEEL = 100;
+
     @Override
     public void runOpMode() throws InterruptedException {
         logger = new Logger(telemetry);
@@ -59,7 +61,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         robotSettings = RobotSettings.load();
 
         transferFSM = new TransferFSM(hwMap, telemetry, logger);
-        intakeFSM = new IntakeFSM(hwMap,telemetry, transferFSM,logger);
+        intakeFSM = new IntakeFSM(hwMap,telemetry, logger);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -69,7 +71,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pidfController = new PIDFController(P,I,D,F);
-        pidfController.setTolerance(TOLERANCE);
+        pidfController.setTolerance(TOLERANCEPITCH);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -122,7 +124,13 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         motor.setFeedforwardCoefficients(ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
         targetVelocityTicks = -targetVelocityTicks;
-        motor.setVelocity(targetVelocityTicks);
+        double error = targetVelocityTicks - motor.getCorrectedVelocity();
+        if(error > TOLERANCE_FLYWHEEL) {
+            motor.set(-1);
+        }
+        else {
+            motor.setVelocity(targetVelocityTicks);
+        }
         telemetry.addData("Target Velocity RPM", targetVelocityRPM);
         telemetry.addData("Target Velocity Ticks", targetVelocityTicks);
         telemetry.addData("Current Velocity Corrected", motor.getCorrectedVelocity());
@@ -130,6 +138,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
         //motor.setVelocity(targetVelocity,RADIANS);
     }
+
     private static double convertRPMToTicks(double RPMVelocity) {
         return (RPMVelocity*28)/60;
     }
@@ -143,7 +152,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
             targetAngle = LOWER_HARD_STOP;
         }
         pidfController.setPIDF(P,I,D,F);
-        pidfController.setTolerance(TOLERANCE);
+        pidfController.setTolerance(TOLERANCEPITCH);
         pitchServo.readPos();
 
         double error = targetAngle - pitchServo.getScaledPos();

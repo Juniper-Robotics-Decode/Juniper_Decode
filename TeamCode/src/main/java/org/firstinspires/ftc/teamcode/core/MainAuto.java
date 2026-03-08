@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.core;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -218,9 +219,11 @@ public class MainAuto extends LinearOpMode {
                 break;
         }
 
+*/
 /*
             telemetry.addData("Bot Heading", botHeading);
-            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*/
+            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*//*
+
 
 
         telemetry.addData("TIMER1", pathTimer1_CLOSE.elapsedTime());
@@ -401,3 +404,4 @@ public class MainAuto extends LinearOpMode {
 
     }
 }
+*/

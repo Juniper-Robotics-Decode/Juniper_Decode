@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.util.Timing;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
-import org.firstinspires.ftc.teamcode.shooter.LauncherFSM;
 
 
 import java.util.concurrent.TimeUnit;
@@ -13,13 +12,13 @@ import java.util.concurrent.TimeUnit;
 public class TransferFSM {
 
     public enum State {
-        RESTING,
-        AT_REST,
-        TRANSFERING,
-        TRANSFERED
+        OPENING,
+        OPENED,
+        CLOSING,
+        CLOSED
     }
 
-    private State currentState = State.AT_REST;
+    private State currentState = State.OPENED;
     private Telemetry telemetry;
     private GateFSM transferServoFSM;
     public static Timing.Timer autoMoveTimer;
@@ -46,8 +45,12 @@ public class TransferFSM {
         findTargetState(Right_Bumper);
 
         switch (currentState) {
-            case TRANSFERING:
-                if(transferServoFSM.AT_DOWN()) {
+            case CLOSING:
+                transferServoFSM.MoveUp();
+                if(transferServoFSM.AT_UP()) {
+                    currentState = State.CLOSED;
+                }
+                /*if(transferServoFSM.AT_DOWN()) {
                     if(!upTimer.isTimerOn()) {
                         upTimer.start();
                     }
@@ -77,41 +80,40 @@ public class TransferFSM {
                         counter++;
                         hasCountedCurrentCycle = true;
                     }
-                }
+                }*/
                 break;
-            case RESTING:
+            case OPENING:
                 transferServoFSM.MoveDown();
                 if(transferServoFSM.AT_DOWN()) {
-                    counter = 0;
-                    currentState = State.AT_REST;
+                    currentState = State.OPENED;
                 }
                 break;
         }
     }
 
     public void findTargetState(boolean Right_Bumper) {
-        if(Right_Bumper && !lastRightBumper) {
-            currentState = State.TRANSFERING;
+        if(Right_Bumper) {
+            currentState = State.OPENING;
         }
-        else if (currentState != State.TRANSFERING) {
-            currentState = State.RESTING;
+        else {
+            currentState = State.CLOSING;
         }
         lastRightBumper = Right_Bumper;
 
     }
 
     public boolean TRANSFERING() {
-        return currentState == State.TRANSFERING;
+        return currentState == State.CLOSING;
     }
 
 
     public void log() {
-        logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
+        logger.log("Transfer Current State ", currentState, Logger.LogLevels.PRODUCTION);
         transferServoFSM.log();
-        logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.PRODUCTION);
     }
 
     public boolean TRANSFERED() {
-        return currentState == State.TRANSFERED;
+        return currentState == State.CLOSED;
     }
 }
