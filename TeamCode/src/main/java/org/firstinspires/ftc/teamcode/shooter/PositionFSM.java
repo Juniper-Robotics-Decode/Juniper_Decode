@@ -133,20 +133,20 @@ public class PositionFSM {
             }
             else if(sensor == Sensor.PINPOINT) {
                 if (pinpoint.pinpointReady()) {
-                    if(pinpoint.getGoalDistance() >= threshold4PP) {
+                    if(pinpoint.getGoalDistanceV() >= threshold4PP) {
                         state = States.ZONE_5;
                     }
-                    else if (pinpoint.getGoalDistance() >= threshold3PP) {
+                    else if (pinpoint.getGoalDistanceV() >= threshold3PP) {
                         state = States.ZONE_4;
                     }
-                    else if (pinpoint.getGoalDistance() >= threshold2PP) {
+                    else if (pinpoint.getGoalDistanceV() >= threshold2PP) {
                         state = States.ZONE_3;
-                    } else if (pinpoint.getGoalDistance() >= threshold1PP) {
+                    } else if (pinpoint.getGoalDistanceV() >= threshold1PP) {
                         state = States.ZONE_2;
                     } else {
                         state = States.ZONE_1;
                     }
-                    findFlywheelTargetVelocity(pinpoint.getGoalDistance());
+                    findFlywheelTargetVelocity(pinpoint.getGoalDistanceV());
                     findPitchTargetAngle();
                     findTurretError(pinpoint.getHeadingErrorTrig());
                 }

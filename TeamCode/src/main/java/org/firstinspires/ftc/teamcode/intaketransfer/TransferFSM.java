@@ -55,7 +55,7 @@ public class TransferFSM {
                         autoMoveTimer.pause();
                         transferServoFSM.MoveUp();
                     }
-                    if(counter >= 2) {
+                    if(counter >= 1) {
                         counter = 0;
                         currentState = State.TRANSFERED;
                     } else {
