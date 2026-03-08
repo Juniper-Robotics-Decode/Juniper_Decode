@@ -38,7 +38,7 @@ public class TransferFSM {
         autoMoveTimer = new Timing.Timer(DOWN_TIME, TimeUnit.MILLISECONDS);
         upTimer = new Timing.Timer(UP_TIME,TimeUnit.MILLISECONDS);
     }
-//
+
     public void updateState(boolean Right_Bumper) {
         transferServoFSM.updateState();
         findTargetState(Right_Bumper);
