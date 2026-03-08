@@ -89,8 +89,8 @@ public class LimelightCamera {
         tx_degrees = result.getTx();
         ty_degrees = result.getTy();
 
-        xField = (fiducial.getRobotPoseFieldSpace().getPosition().x)/DistanceUnit.mPerInch + 72;
-        yField = fiducial.getRobotPoseFieldSpace().getPosition().y;
+        xField = (fiducial.getRobotPoseFieldSpace().getPosition().y)/DistanceUnit.mPerInch + 72;
+        yField = -(fiducial.getRobotPoseFieldSpace().getPosition().x)/DistanceUnit.mPerInch + 72;
 
         flatDistance_in = Math.sqrt(x_in * x_in + z_in * z_in);
     }
