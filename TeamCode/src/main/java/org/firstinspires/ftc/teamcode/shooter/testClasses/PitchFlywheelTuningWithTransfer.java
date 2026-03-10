@@ -36,8 +36,8 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     public static double P=0.1, I=0, D=0, F=0;
     public static double gearRatio = 1.0/12.0;
 
-    public static double UPPER_HARD_STOP = 28;
-    public static double LOWER_HARD_STOP = 10;
+    public static double UPPER_HARD_STOP = 25;
+    public static double LOWER_HARD_STOP = 0;
 
 
     public static double vP=3, vI=0, vD=0, vF = 0;

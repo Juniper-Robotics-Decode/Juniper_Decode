@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
-
 import static java.lang.Math.cos;
+import static java.lang.Math.signum;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.core.Logger;
 
@@ -23,13 +22,10 @@ public class SwerveModule {
     private final Logger logger;
 
     private double offset;
+    private double lastTargetPosition;
     private boolean inverse;
 
-    private double lastMotorPower;
-    private double lastServoPower;
-    private double lastTargetPosition;
-
-    public static double P = 0.5, I = 0, D = 0.01, Kstatic = 0.02;
+    public static double P = 0.35, I = 0, D = 0.01, Kstatic = 0.0;
     private final PIDController rotationController = new PIDController(P, I, D);
 
     public SwerveModule(DcMotorEx motor, CRServo servo, AnalogInput encoder, double offset, boolean inverse, Logger logger) {
@@ -39,7 +35,6 @@ public class SwerveModule {
         this.offset = offset;
         this.inverse = inverse;
         this.logger = logger;
-
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -50,16 +45,30 @@ public class SwerveModule {
         if (Math.abs(error) > Math.PI / 2) {
             drivePower *= -1;
             targetAngle = normalizeRadians(targetAngle + Math.PI);
+            error = normalizeRadians(targetAngle - currentAngle);
         }
 
-        rotationController.setPID(P, I, D);
-        double steeringPower = rotationController.calculate(getCurrentRotation(), targetAngle);
+        if (Math.abs(error) < 0.04){
+            error = 0;
+        }
 
-        lastServoPower = Range.clip(steeringPower, -1, 1);
-        lastMotorPower = drivePower;
+        double cosScaler = cos(error);
+        drivePower *= cosScaler;
+
+        rotationController.setPID(P, I, D);
+        double steeringPower = rotationController.calculate(currentAngle, targetAngle);
+
+        double lastServoPower;
+        if (Math.abs(error) < 0.04) {
+            lastServoPower = 0;
+        } else {
+            lastServoPower = Range.clip(steeringPower + (signum(error) * Kstatic), -1, 1);
+        }
+
+        double lastMotorPower = drivePower;
         lastTargetPosition = targetAngle;
 
-        servo.setPower(lastServoPower + ((error > 0.02) ? 0 : Kstatic));
+        servo.setPower(lastServoPower);
         motor.setPower(lastMotorPower);
     }
 
@@ -69,32 +78,18 @@ public class SwerveModule {
         return normalizeRadians(pos - offset);
     }
 
-    public double getTrueX() { return getCurrentRotation(); }
-
-    public double getMotorCurrent() {
-        return motor.getCurrent(CurrentUnit.AMPS);
-    }
-
-    public void setMode(DcMotor.RunMode mode) {
-        motor.setMode(mode);
-    }
-
+    public void setMode(DcMotor.RunMode mode) { motor.setMode(mode); }
     public void setOffset(double offset) { this.offset = offset; }
-
     public void setInverse(boolean inverse) { this.inverse = inverse; }
-
-    public void setPID(double P, double I, double D){ rotationController.setPID(P,I,D); }
+    public void setPID (double P, double I, double D) {
+        SwerveModule.P = P; SwerveModule.I = I; SwerveModule.D = D;
+    }
 
     public void log(int index) {
         if (logger != null) {
             String prefix = "Mod" + index + " ";
-
             logger.log(prefix + "Target", lastTargetPosition, Logger.LogLevels.PRODUCTION);
             logger.log(prefix + "Current", getCurrentRotation(), Logger.LogLevels.PRODUCTION);
-
-            logger.log(prefix + "Servo Pwr", lastServoPower, Logger.LogLevels.DEBUG);
-            logger.log(prefix + "Motor Pwr", lastMotorPower, Logger.LogLevels.DEBUG);
-            logger.log(prefix + "Amps", motor.getCurrent(CurrentUnit.AMPS), Logger.LogLevels.DEBUG);
         }
     }
 }

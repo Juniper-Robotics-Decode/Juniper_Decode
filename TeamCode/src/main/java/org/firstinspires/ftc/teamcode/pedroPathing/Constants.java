@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
+
+
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .forwardZeroPowerAcceleration(-117.118)
@@ -36,7 +38,7 @@ public class Constants {
 
 //            .headingPIDFSwitch(Math.toRadians(15))
 //            .translationalPIDFSwitch(5)
-            .mass(7.801789);
+            .mass(8.845051);
 
 
 
@@ -49,22 +51,23 @@ public class Constants {
 
 
 
+
     private static CoaxialPod leftFront(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"FLM","FLS","FLE",
-                new PIDFCoefficients(0.5*(Math.PI/180.0), 0.0, 0.008*(Math.PI/180.0),0),
+                new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(-1.9),
-                new Pose(4.963582677,4.96063),
+                Math.toDegrees(2.25),
+                new Pose(4.251,4.815),
                 0,3.3,
                 false);
     }
 
     private static CoaxialPod rightFront(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"FRM","FRS","FRE",
-                new PIDFCoefficients(0.5*(Math.PI/180.0), 0.0, 0.008*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(-0.8),
-                new Pose(4.963582677,-4.96063),
+                new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
+                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
+                Math.toDegrees(-1.5),
+                new Pose(4.251,-4.815),
                 0,3.3,
                 false);
     }
@@ -72,20 +75,20 @@ public class Constants {
 
     private static CoaxialPod leftBack(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"BLM","BLS","BLE",
-                new PIDFCoefficients(0.5*(Math.PI/180.0), 0.0, 0.008*(Math.PI/180.0),0),
+                new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.FORWARD,DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(1.1),
-                new Pose(-4.963582677,4.96063),
+                Math.toDegrees(0.9),
+                new Pose(-4.251,4.815),
                 0,3.3,
                 false);
     }
 
     private static CoaxialPod rightBack(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"BRM","BRS","BRE",
-                new PIDFCoefficients(0.5*(Math.PI/180.0), 0.0, 0.008*(Math.PI/180.0),0),
+                new PIDFCoefficients(0.035*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(-2.5),
-                new Pose(-4.963582677,-4.96063),
+                Math.toDegrees(-0.8),
+                new Pose(-4.251,-4.815),
                 0,3.3,
                 false);
     }
@@ -94,8 +97,8 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5.2165354) // -132.5 mm
-            .strafePodX(0.554133858) // 14.074 mm
+            .forwardPodY(-5.026338583) // -132.5 mm
+            .strafePodX(2.0562992) // 14.074 mm
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("odo")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
