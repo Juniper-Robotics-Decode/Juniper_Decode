@@ -54,6 +54,11 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     private double TOLERANCE_FLYWHEEL = 100;
 
+    public static double pitchReductionFactor = 0.1;
+
+    public static double boostPower = -1;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         logger = new Logger(telemetry);
@@ -123,10 +128,11 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         motor.setVeloCoefficients(vP,vI,vD);
         motor.setFeedforwardCoefficients(ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
-        targetVelocityTicks = -targetVelocityTicks;
+        //targetVelocityTicks = targetVelocityTicks;
         double error = targetVelocityTicks - motor.getCorrectedVelocity();
+        adjustForFlywheel(error);
         if(error > TOLERANCE_FLYWHEEL) {
-            motor.set(-1);
+
         }
         else {
             motor.setVelocity(targetVelocityTicks);
@@ -135,6 +141,8 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         telemetry.addData("Target Velocity Ticks", targetVelocityTicks);
         telemetry.addData("Current Velocity Corrected", motor.getCorrectedVelocity());
         telemetry.addData("Current Velocity Get", motor.getVelocity());
+        telemetry.addData("flywheel error", error);
+        telemetry.addData("flywheel power", power);
 
         //motor.setVelocity(targetVelocity,RADIANS);
     }
@@ -162,6 +170,13 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         double power = pidfController.calculate(pitchServo.getScaledPos(),targetAngle);
         telemetry.addData("power", power);
         pitchServo.set(power);
+    }
+
+    private void adjustForFlywheel(double error) {
+        double flywheelError = error;
+        if(flywheelError > 40) {
+            targetAngle = targetAngle + flywheelError * pitchReductionFactor;
+        }
     }
 
 }
