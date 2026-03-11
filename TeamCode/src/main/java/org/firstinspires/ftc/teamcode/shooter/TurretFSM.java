@@ -25,17 +25,17 @@ public class TurretFSM {
     private double targetAngle;
     private PIDController pidController;
     public static double TOLERANCE = 3;
-    public static double P_Counter = 0.04;
+    public static double P_Counter = 0.02;
     public static double P_clock =  0.02;
-    public static double P=0.015, I=0.0, D=0, F=0.5;
-    public static double gearRatio = 16.0/109.0;
+    public static double P=0.02, I=0.02, D=0.001, F=0;
+    public static double gearRatio = 20.0/152.0;
 
-    public static double UPPER_HARD_STOP = 0;
+    public static double UPPER_HARD_STOP = 90;
     public static double LOWER_HARD_STOP = -90;
 
     public static double POWER_CAP = 1;
 
-    public static double TURRET_OFFSET = 0;
+    public static double TURRET_OFFSET = 3;
 
     private double MANUAL_OFFSET = 0;
 
@@ -91,7 +91,7 @@ public class TurretFSM {
 /*
         double delta = angleDelta(turretMotor.getScaledPos(), targetAngle);
         double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);*/
-        double currentPos = turretMotor.getScaledPos();
+        double currentPos = turretMotor.getScaledPos() + 90;
         double error = targetAngle - currentPos;
 //        telemetry.addData("Error", error);
 
@@ -153,7 +153,9 @@ public class TurretFSM {
         lastLeft = dPadLeft2;
         lastRight = dPadRight2;
 
+        targetAngle = turretError - MANUAL_OFFSET + TURRET_OFFSET;
 
+/*
         if(i >= 0) {
             if(PositionFSM.sensor == PositionFSM.Sensor.PINPOINT) {
                 targetAngle = -turretError + MANUAL_OFFSET - TURRET_OFFSET;
@@ -168,7 +170,7 @@ public class TurretFSM {
                     i++;
                 }
             }
-        }
+        }*/
 
 //        telemetry.addData("Turret target angle counter", i);
     }
@@ -182,12 +184,12 @@ public class TurretFSM {
         logger.log("<b><font color='green'>Turret Manual offset</font></b>", MANUAL_OFFSET, Logger.LogLevels.PRODUCTION);
         logger.log("turret state", state, Logger.LogLevels.DEBUG);
         logger.log("turret target angle", targetAngle, Logger.LogLevels.PRODUCTION);
-        logger.log("turret current angle", turretMotor.getScaledPos(), Logger.LogLevels.PRODUCTION);
+        logger.log("turret current angle", turretMotor.getScaledPos() + 90, Logger.LogLevels.PRODUCTION);
         logger.log("turret motor current", turretMotor.getCurrent(), Logger.LogLevels.DEBUG);
     }
 
     public double getCurrentAngle() {
-        return turretMotor.getScaledPos();
+        return turretMotor.getScaledPos() + 90;
     }
 
     public void resetTurret() {

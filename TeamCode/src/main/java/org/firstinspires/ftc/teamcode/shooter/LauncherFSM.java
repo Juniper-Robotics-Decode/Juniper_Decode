@@ -21,9 +21,9 @@ public class LauncherFSM {
         RELOCALIZED
     }
 
-    public FlywheelFSM flywheelFSM;
-    public TurretFSM turretFSM;
-    public PitchFSM pitchFSM;
+    public  FlywheelFSM flywheelFSM;
+    public  TurretFSM turretFSM;
+    public  PitchFSM pitchFSM;
     public PositionFSM positionFSM;
     private Pinpoint pinpoint;
     private States state;
@@ -33,44 +33,48 @@ public class LauncherFSM {
 
     private Telemetry telemetry;
 
-    private boolean endOfAuto = false;
+    boolean auto = false;
 
-    private boolean startOfAuto = false;
+    public static double AUTO_RPM = 2700;
 
+    boolean endOfAuto = false;
 
-    public LauncherFSM(HWMap hardwareMap, Telemetry telemetry, RobotSettings robotSettings, Logger logger) {
+    public LauncherFSM(HWMap hardwareMap, Telemetry telemetry, Pinpoint pinpoint, RobotSettings robotSettings, Logger logger, boolean auto) {
         this.logger = logger;
         this.pinpoint = pinpoint;
         flywheelFSM = new FlywheelFSM(hardwareMap,telemetry, logger);
         turretFSM = new TurretFSM(hardwareMap,telemetry, logger);
         pitchFSM = new PitchFSM(hardwareMap,telemetry, flywheelFSM::getError, logger);
-        positionFSM = new PositionFSM(hardwareMap,telemetry, turretFSM::getCurrentAngle, robotSettings, logger);
+        positionFSM = new PositionFSM(hardwareMap,telemetry, turretFSM::getCurrentAngle, robotSettings, logger, pinpoint);
         this.telemetry = telemetry;
         state = States.PREPARING_TO_SHOOT;
+        this.auto = auto;
     }
 
-    public void updateState(boolean bPress, boolean yPress, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2, double heading) {
+    public void updateState(boolean bPress, boolean yPress, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2) {
         flywheelFSM.updateState(bPress2,xPress2);
         turretFSM.updateState();
         pitchFSM.updateState(yPress2,aPress2);
-        positionFSM.updateState(rightBumper2, heading);
+        positionFSM.updateState(rightBumper2);
         findTargetState(bPress, yPress);
 
         switch (state) {
             case PREPARING_TO_SHOOT:
-                if(!flywheelStopping) {
+                if(!flywheelStopping && !auto) {
                     flywheelFSM.setTargetVelocityRPM(positionFSM.getFlywheelTargetVelocityRPM());
                 }
-/*
-                if (auto) {
+                if(auto) {
+                    flywheelFSM.setTargetVelocityRPM(AUTO_RPM);
+                }
 
-                }*/
+
                 if(endOfAuto) {
-                    turretFSM.setTargetAngle(-5, dPadUp2,dPadDown2,dPadLeft2,dPadRight2, leftBumper2);
+                   turretFSM.setTargetAngle(-5, dPadUp2,dPadDown2,dPadLeft2,dPadRight2, leftBumper2);
                 }
                 else {
                     turretFSM.setTargetAngle(positionFSM.getTurretError(), dPadUp2,dPadDown2,dPadLeft2,dPadRight2, leftBumper2);
                 }
+
                 pitchFSM.setTargetAngle(positionFSM.getPitchTargetAngle());
                 if(flywheelFSM.AT_TARGET_VELOCITY() && turretFSM.ALIGNED() && pitchFSM.ALIGNED()) {
                     state = States.PREPARED_TO_SHOOT;

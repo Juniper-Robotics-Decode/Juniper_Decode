@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.Swerve.Drive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -6,7 +7,9 @@ import static java.lang.Math.abs;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+
+import com.pedropathing.follower.Follower;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -32,17 +35,16 @@ public class swerveTuningTele extends LinearOpMode{
     public double x, y, heading;
     public double BotHeading;
     public boolean locked;
-
-    GoBildaPinpointDriver odo;
+    private GoBildaPinpointDriver odo;
     private double Xoffset, Yoffset;
     private Pose2D pos;
 
     private SlewRateLimiter XRate, YRate, HeadingRate;
-    public static double xrate = 2.5, yrate = 2.5, headingrate = 2.2;
+    public static double xrate = 2.5, yrate = 2.5, headingrate = 2.5;
 
-    public static double offsets[] = new double[]{-1.5,-0.8,-2.5,1.1};
+    public static double offsets[] = new double[]{2.25,-1.15,-0.8,0.9};
     public static boolean inverses[] = new boolean[]{false, false, false, false};
-    public static double scalars[] = new double[]{-1, 1, -1, -1};
+    public static double scalars[] = new double[]{1, 1, 1, 1};
 
     public static int i;
     public static boolean gamepad;
@@ -61,7 +63,7 @@ public class swerveTuningTele extends LinearOpMode{
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
         Xoffset = 10.5; Yoffset = 1; //find in CAD
-        odo.setOffsets(Xoffset, Yoffset);
+        odo.setOffsets(Xoffset, Yoffset,DistanceUnit.CM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
@@ -126,7 +128,6 @@ public class swerveTuningTele extends LinearOpMode{
             swerveDrivetrain.setInverses(inverses);
 
             swerveDrivetrain.setPose(drive, BotHeading, 12.4);
-            swerveDrivetrain.updateModule(i);
 
             telemetry.addData("x", drive.x);
             telemetry.addData("y", drive.y);
@@ -136,4 +137,4 @@ public class swerveTuningTele extends LinearOpMode{
             telemetry.update();
         }
     }
-}
+}*/

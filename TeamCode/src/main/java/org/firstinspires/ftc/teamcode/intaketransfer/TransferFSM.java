@@ -12,13 +12,13 @@ import java.util.concurrent.TimeUnit;
 public class TransferFSM {
 
     public enum State {
-        RESTING,
-        AT_REST,
-        TRANSFERING,
-        TRANSFERED
+        OPENING,
+        OPENED,
+        CLOSING,
+        CLOSED
     }
 
-    private State currentState = State.AT_REST;
+    private State currentState = State.OPENED;
     private Telemetry telemetry;
     private GateFSM transferServoFSM;
     public static Timing.Timer autoMoveTimer;
@@ -30,7 +30,8 @@ public class TransferFSM {
 
     public static long DOWN_TIME = 1000;
     public static long UP_TIME = 500;
-//e
+
+
     public TransferFSM(HWMap hardwareMap, Telemetry telemetry, Logger logger) {
         this.logger = logger;
         this.telemetry = telemetry;
@@ -44,49 +45,75 @@ public class TransferFSM {
         findTargetState(Right_Bumper);
 
         switch (currentState) {
-            case TRANSFERING:
-                if (Right_Bumper) {
-                    transferServoFSM.MoveDown();
-                    autoMoveTimer.pause();
-                    upTimer.pause();
+            case CLOSING:
+                transferServoFSM.MoveUp();
+                if(transferServoFSM.AT_UP()) {
+                    currentState = State.CLOSED;
+                }
+                /*if(transferServoFSM.AT_DOWN()) {
+                    if(!upTimer.isTimerOn()) {
+                        upTimer.start();
+                    }
+                    upTimer.start();
                     hasCountedCurrentCycle = false;
-                } else {
-                    transferServoFSM.MoveUp();
-                    if (transferServoFSM.AT_UP()) {
-                        currentState = State.AT_REST;
+                    if(autoMoveTimer.done() || counter == 0) {
+                        autoMoveTimer.pause();
+                        transferServoFSM.MoveUp();
+                    }
+                    if(counter >= 0) {
+                        counter = 0;
+                        currentState = State.TRANSFERED;
+                    } else {
+                        if(autoMoveTimer.done() || counter == 0) {
+                            autoMoveTimer.pause();
+                            transferServoFSM.MoveUp();
+                        }
                     }
                 }
+                else if(transferServoFSM.AT_UP() && upTimer.done()) {
+                    upTimer.pause();
+                    transferServoFSM.MoveDown();
+                    if(!autoMoveTimer.isTimerOn()) {
+                        autoMoveTimer.start();
+                    }
+                    if (!hasCountedCurrentCycle) {
+                        counter++;
+                        hasCountedCurrentCycle = true;
+                    }
+                }*/
                 break;
-            case RESTING:
-                transferServoFSM.MoveUp();
-                if (transferServoFSM.AT_UP()) {
-                    counter = 0;
-                    currentState = State.AT_REST;
+            case OPENING:
+                transferServoFSM.MoveDown();
+                if(transferServoFSM.AT_DOWN()) {
+                    currentState = State.OPENED;
                 }
                 break;
         }
     }
 
     public void findTargetState(boolean Right_Bumper) {
-        if (Right_Bumper) {
-            currentState = State.TRANSFERING;
-        } else if (currentState != State.TRANSFERING) {
-            currentState = State.RESTING;
+        if(Right_Bumper) {
+            currentState = State.OPENING;
+        }
+        else {
+            currentState = State.CLOSING;
         }
         lastRightBumper = Right_Bumper;
+
     }
 
     public boolean TRANSFERING() {
-        return currentState == State.TRANSFERING;
+        return currentState == State.CLOSING;
+    }
+
+
+    public void log() {
+        logger.log("Transfer Current State ", currentState, Logger.LogLevels.PRODUCTION);
+        transferServoFSM.log();
+        logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.PRODUCTION);
     }
 
     public boolean TRANSFERED() {
-        return currentState == State.TRANSFERED;
-    }
-
-    public void log() {
-        logger.log("Transfer Current State ", currentState, Logger.LogLevels.DEBUG);
-        transferServoFSM.log();
-        logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.DEBUG);
+        return currentState == State.CLOSED;
     }
 }

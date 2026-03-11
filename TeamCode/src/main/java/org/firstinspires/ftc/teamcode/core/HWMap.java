@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.core;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class HWMap {
+
     // shooter
     private final MotorEx flywheelMotor;
     private final MotorEx turretMotor;
@@ -22,9 +23,8 @@ public class HWMap {
 
     //intake
     private final MotorEx intakeMotor;
+    private final Servo intakeServo;
 
-    // Transfer
-    private final MotorEx transferMotor;
     private final Servo transferServo;
     private final AnalogInput transferEncoder;
 
@@ -50,7 +50,7 @@ public class HWMap {
 
     private VoltageSensor voltageSensor;
 
-    private GoBildaPinpointDriver odo;
+    private final GoBildaPinpointDriver odo;
 
     public HWMap (HardwareMap hardwareMap) {
         flywheelMotor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
@@ -62,7 +62,8 @@ public class HWMap {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         intakeMotor = new MotorEx(hardwareMap, "IM", Motor.GoBILDA.RPM_1150);
-        transferMotor = new MotorEx(hardwareMap, "TRM", Motor.GoBILDA.RPM_312);
+
+        intakeServo = hardwareMap.get(Servo.class, "IS");
         transferServo = hardwareMap.get(Servo.class, "TS");
 
         FLM = hardwareMap.get(DcMotorEx.class, "FLM");
@@ -83,8 +84,14 @@ public class HWMap {
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
+
     }
 
+
+
+    public GoBildaPinpointDriver getOdo() {
+        return odo;
+    }
     public Limelight3A getLimelight() {
         return limelight;
     }
@@ -109,9 +116,6 @@ public class HWMap {
         return intakeMotor;
     }
 
-    public MotorEx getTransferMotor() {
-        return transferMotor;
-    }
 
     public Servo getTransferServo() {
         return transferServo;
@@ -122,11 +126,11 @@ public class HWMap {
         return transferEncoder;
     }
 
-    public GoBildaPinpointDriver getOdo() {
-        return odo;
-    }
-
     public VoltageSensor getVoltageSensor() {
         return voltageSensor;
+    }
+
+    public Servo getIntakeServo() {
+        return intakeServo;
     }
 }

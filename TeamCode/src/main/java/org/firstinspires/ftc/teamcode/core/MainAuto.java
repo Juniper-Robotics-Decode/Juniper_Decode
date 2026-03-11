@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.core;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -93,7 +94,7 @@ public class MainAuto extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
 
-        // pinpoint = new Pinpoint(hwMap,robotSettings, true);
+         pinpoint = new Pinpoint(hwMap,robotSettings);
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
 
         swerveDrivetrain.setOffsets(offsets);
@@ -110,7 +111,7 @@ public class MainAuto extends LinearOpMode {
 
         logger = new Logger(telemetry);
 
-        launcherFSM = new LauncherFSM(hwMap,telemetry,robotSettings,logger);
+        launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger, true);
 
         transferFSM = new TransferFSM(hwMap,telemetry,logger);
 
@@ -141,7 +142,7 @@ public class MainAuto extends LinearOpMode {
         }
 
 
-        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false, botHeading);
+        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
         switch (pathState) {
             case 0:
                 transferFSM.updateState(false);
@@ -218,9 +219,11 @@ public class MainAuto extends LinearOpMode {
                 break;
         }
 
+*/
 /*
             telemetry.addData("Bot Heading", botHeading);
-            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*/
+            telemetry.addData("Swerve Tele \n",swerveDrivetrain.getTele());*//*
+
 
 
         telemetry.addData("TIMER1", pathTimer1_CLOSE.elapsedTime());
@@ -243,7 +246,7 @@ public class MainAuto extends LinearOpMode {
             botHeading = (-(imu.getRobotYawPitchRollAngles().getYaw(RADIANS) + robotSettings.startPosState.getPose2D().getHeading(RADIANS)) + Math.PI/2);
         }
 
-        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false, botHeading);
+        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false);
 
         switch (pathState) {
             case 0:
@@ -328,7 +331,7 @@ public class MainAuto extends LinearOpMode {
             botHeading = (-(imu.getRobotYawPitchRollAngles().getYaw(RADIANS) + robotSettings.startPosState.getPose2D().getHeading(RADIANS)) + Math.PI/2);
         }
 
-        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false, botHeading);
+        launcherFSM.updateState(false, false, false, false, false, false, false, false, false, false, false, false);
 
         switch (pathState) {
             case 0:
@@ -401,3 +404,4 @@ public class MainAuto extends LinearOpMode {
 
     }
 }
+*/
