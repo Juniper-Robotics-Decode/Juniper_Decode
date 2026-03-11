@@ -19,7 +19,7 @@ public class FlywheelFSM {
 
     public static double ks=0, kv=1.7, ka=0;  // 1.37 for just the first half
 
-    public static double TOLERANCE = 300; // ticks
+    public static double TOLERANCE = 75; // ticks
 
 
     public static double targetVelocityRPM;
@@ -50,7 +50,7 @@ public class FlywheelFSM {
     }
 
     public void updateState(boolean bPress2, boolean xPress2) {
-      //  voltageCompensation();
+        //  voltageCompensation();
         if(bPress2) {
             MANUAL_OFFSET = MANUAL_OFFSET + 100;
         }
