@@ -132,7 +132,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         double error = targetVelocityTicks - motor.getCorrectedVelocity();
         adjustForFlywheel(error);
         if(error > TOLERANCE_FLYWHEEL) {
-
+            motor.set(boostPower);
         }
         else {
             motor.setVelocity(targetVelocityTicks);
@@ -142,7 +142,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         telemetry.addData("Current Velocity Corrected", motor.getCorrectedVelocity());
         telemetry.addData("Current Velocity Get", motor.getVelocity());
         telemetry.addData("flywheel error", error);
-        telemetry.addData("flywheel power", power);
+        telemetry.addData("flywheel power", motor.get());
 
         //motor.setVelocity(targetVelocity,RADIANS);
     }
