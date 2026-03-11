@@ -142,7 +142,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         telemetry.addData("Current Velocity Corrected", motor.getCorrectedVelocity());
         telemetry.addData("Current Velocity Get", motor.getVelocity());
         telemetry.addData("flywheel error", error);
-        telemetry.addData("flywheel power", power);
+//        telemetry.addData("flywheel power", power);
 
         //motor.setVelocity(targetVelocity,RADIANS);
     }
