@@ -52,12 +52,13 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     private Logger logger;
 
-    private double TOLERANCE_FLYWHEEL = 100;
+    public static double TOLERANCE_FLYWHEEL = 100;
 
     public static double pitchReductionFactor = 0.1;
 
-    public static double boostPower = -1;
+    public static double boostPower = 1;
 
+    public static double pitchAngle = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -73,7 +74,6 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         motor.setRunMode(Motor.RunMode.VelocityControl);
 
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
-        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pidfController = new PIDFController(P,I,D,F);
         pidfController.setTolerance(TOLERANCEPITCH);
@@ -89,6 +89,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
             updatePIDPitch();
             telemetry.addData("pitch target angle", targetAngle);
+            telemetry.addData("pitch target angle corrected", pitchAngle);
             telemetry.addData("pitch servo current angle", pitchServo.getServoAngle());
             telemetry.addData("pitch current angle", pitchServo.getScaledPos());
 
@@ -153,29 +154,32 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
 
     public void updatePIDPitch() {
-        if(targetAngle > UPPER_HARD_STOP) {
-            targetAngle = UPPER_HARD_STOP;
+        if(pitchAngle > UPPER_HARD_STOP) {
+            pitchAngle = UPPER_HARD_STOP;
         }
-        else if (targetAngle < LOWER_HARD_STOP) {
-            targetAngle = LOWER_HARD_STOP;
+        else if (pitchAngle < LOWER_HARD_STOP) {
+            pitchAngle = LOWER_HARD_STOP;
         }
         pidfController.setPIDF(P,I,D,F);
         pidfController.setTolerance(TOLERANCEPITCH);
         pitchServo.readPos();
 
-        double error = targetAngle - pitchServo.getScaledPos();
+        double error = pitchAngle - pitchServo.getScaledPos();
 
         telemetry.addData("error", error);
 
-        double power = pidfController.calculate(pitchServo.getScaledPos(),targetAngle);
+        double power = pidfController.calculate(pitchServo.getScaledPos(),pitchAngle);
         telemetry.addData("power", power);
         pitchServo.set(power);
     }
 
     private void adjustForFlywheel(double error) {
         double flywheelError = error;
-        if(flywheelError > 40) {
-            targetAngle = targetAngle + flywheelError * pitchReductionFactor;
+        if(flywheelError > 100 && flywheelError < 1000) {
+            double offset = flywheelError * pitchReductionFactor;
+            pitchAngle = targetAngle + offset;
+        } else {
+            pitchAngle = targetAngle;
         }
     }
 
