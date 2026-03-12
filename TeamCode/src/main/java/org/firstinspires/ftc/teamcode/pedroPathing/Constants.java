@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import static java.lang.Math.hypot;
+
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
@@ -13,22 +15,25 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveDrivetrain;
+import org.firstinspires.ftc.teamcode.Swerve.Drive.SwerveModule;
+import org.firstinspires.ftc.teamcode.core.HWMap;
+import org.firstinspires.ftc.teamcode.core.Logger;
 
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .forwardZeroPowerAcceleration(-117.118)
-            .lateralZeroPowerAcceleration(-117.118)
+            .forwardZeroPowerAcceleration(-91.502)
+            .lateralZeroPowerAcceleration(-91.502)
             .useSecondaryDrivePIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryTranslationalPIDF(true)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0.005 , 0))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.003, 0.01))
-            .headingPIDFCoefficients(new PIDFCoefficients(2.5, 0 , 0.003, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.2, 0 , 0.005, 0))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.63, 0, 0.035, 0))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0025, 0, 0.00001, 0.6, 0.13))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.000005, 0.6, 0.13))
@@ -40,12 +45,8 @@ public class Constants {
 //            .translationalPIDFSwitch(5)
             .mass(8.845051);
 
-
-
-
-
-    public static SwerveConstants driveConstants = new SwerveConstants()
-            .velocity(48) // in per sec
+        public static SwerveConstants driveConstants = new SwerveConstants()
+            .velocity(52.95) // in per sec
 //            .maxPower(.75)
             .staticFrictionCoefficient(0.02);
 
@@ -55,8 +56,8 @@ public class Constants {
     private static CoaxialPod leftFront(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"FLM","FLS","FLE",
                 new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(2.25),
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE,
+                Math.toDegrees(-0.2),
                 new Pose(4.251,4.815),
                 0,3.3,
                 false);
@@ -65,8 +66,8 @@ public class Constants {
     private static CoaxialPod rightFront(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"FRM","FRS","FRE",
                 new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(-1.5),
+                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE,
+                Math.toDegrees(2.6),
                 new Pose(4.251,-4.815),
                 0,3.3,
                 false);
@@ -76,8 +77,8 @@ public class Constants {
     private static CoaxialPod leftBack(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"BLM","BLS","BLE",
                 new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.FORWARD,DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(0.9),
+                DcMotorSimple.Direction.REVERSE,DcMotorSimple.Direction.REVERSE,
+                Math.toDegrees(3),
                 new Pose(-4.251,4.815),
                 0,3.3,
                 false);
@@ -85,9 +86,9 @@ public class Constants {
 
     private static CoaxialPod rightBack(HardwareMap hardwareMap) {
         return new CoaxialPod(hardwareMap,"BRM","BRS","BRE",
-                new PIDFCoefficients(0.035*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
-                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                Math.toDegrees(-0.8),
+                new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE,
+                Math.toDegrees(1.4),
                 new Pose(-4.251,-4.815),
                 0,3.3,
                 false);

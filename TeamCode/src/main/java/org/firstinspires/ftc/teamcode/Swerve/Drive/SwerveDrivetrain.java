@@ -23,7 +23,8 @@ public class SwerveDrivetrain {
     private Logger logger;
 
     private double[] ws = new double[4], wa = new double[4], lastwa = new double[4];
-    private double[] MotorScaling = new double[]{1, 1, 1, 1};
+
+    private double[] MotorScaling = new double[]{-1,1,-1,-1};
     private double trackwidth = 9.921, wheelbase = 9.927, R = hypot(trackwidth, wheelbase);
 
     private States state = States.DRIVING;
@@ -33,10 +34,10 @@ public class SwerveDrivetrain {
 
     public SwerveDrivetrain(HWMap hwMap, Logger logger) {
         this.logger = logger;
-        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, 2.25, false, logger);
-        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, -1.5, false, logger);
-        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, -0.8, false, logger);
-        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, 0.9, false, logger);
+        frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, -0.2, false, logger);
+        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, 2.6, false, logger);
+        backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, 1.4, false, logger);
+        backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, 3, false, logger);
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
         for (SwerveModule m : modules) m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         R = hypot(trackwidth, wheelbase);

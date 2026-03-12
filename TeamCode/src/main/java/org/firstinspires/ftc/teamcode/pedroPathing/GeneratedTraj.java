@@ -9,6 +9,8 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
 import org.firstinspires.ftc.teamcode.core.Pinpoint;
@@ -40,7 +42,7 @@ public class GeneratedTraj extends LinearOpMode {
     private int pathState;
 
 
-    private final Pose startPose = new Pose(120 ,127.87, Math.toRadians(319.6));
+    private Pose startPose = new Pose(120 ,127.87, Math.toRadians(319.6));
 
     private HWMap hwMap;
     private Logger logger;
@@ -118,7 +120,7 @@ public class GeneratedTraj extends LinearOpMode {
                 .build();
     }
     
-    public void farPaths() {
+    public void farPaths(Follower follower) {
 
             FarPath1 = follower.pathBuilder().addPath(
                             new BezierCurve(
@@ -325,12 +327,23 @@ public class GeneratedTraj extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        robotSettings = RobotSettings.load();
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
         actionTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
-        ClosePaths(follower);
+        if(robotSettings.startPosState.equals(RobotSettings.StartPos.CLOSE_BLUE) || robotSettings.startPosState.equals(RobotSettings.StartPos.CLOSE_RED)) {
+            telemetry.addData("close","");
+            ClosePaths(follower);
+        }
+        else {
+            telemetry.addData("far","");
+            farPaths(follower);
+
+        }
+
+        startPose = new Pose(robotSettings.startPosState.getPose2D().getX(DistanceUnit.INCH),robotSettings.startPosState.getPose2D().getY(DistanceUnit.INCH), robotSettings.startPosState.getPose2D().getHeading(AngleUnit.DEGREES));
         follower.setStartingPose(startPose);
 
         opmodeTimer.resetTimer();
@@ -348,7 +361,12 @@ public class GeneratedTraj extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             follower.update();
-            CloseSideUpdate();
+            if(robotSettings.startPosState.equals(RobotSettings.StartPos.CLOSE_BLUE) || robotSettings.startPosState.equals(RobotSettings.StartPos.CLOSE_RED)) {
+                CloseSideUpdate();
+            }
+            else {
+                FarSideUpdate();
+            }
             PoseStorage.currentPose = follower.getPose();
 
             launcherFSM.log();

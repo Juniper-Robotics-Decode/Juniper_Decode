@@ -53,8 +53,8 @@ public class SwerveTest extends LinearOpMode {
 
     private double lastX = 0, lastY = 0, lastTurn = 0, lastPidOut = 0;
 
-    public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{2.25,-1.5,-0.8,0.9};
+    public static double[] MotorScalars = new double[]{-1,1,-1,-1};
+    public static double[] Zeros = new double[]{-0.2,2.6,1.4,3};
 
 
     @Override

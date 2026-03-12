@@ -114,6 +114,6 @@ public class TransferFSM {
     }
 
     public boolean TRANSFERED() {
-        return currentState == State.CLOSED;
+        return currentState == State.OPENED;
     }
 }
