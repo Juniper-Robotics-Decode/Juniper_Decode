@@ -66,9 +66,9 @@ public class PositionFSM {
     private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: x: 60.05 mm, y: 53.845 mm, distance: 80.656 mm
     private double PINPOINT_OFFSET = 0;
 
-    private double threshold1LL = 1.5, threshold2LL = 2, threshold3LL = 2.5, threshold4LL = 3;
+    private double threshold1LL = 59.0551, threshold2LL = 78.7402, threshold3LL = 98.4252, threshold4LL = 118.11;
 
-    private double threshold1PP = 1.4, threshold2PP = 2, threshold3PP = 2.5, threshold4PP = 3;
+    private double threshold1PP = 55.1181, threshold2PP = 78.7402, threshold3PP = 98.4252, threshold4PP = 118.11;
 
     private double SENSOR_CHOICE_THRESHOLD = 2;
     private double RELOCALIZATION_TRHESHOLD = 0.1;
@@ -202,7 +202,7 @@ public class PositionFSM {
     }
 
     public void findFlywheelTargetVelocity(double distance_m) {
-        if(distance_m <= 0.5 || distance_m >= 3.5 || Double.isNaN(distance_m)) {
+        if(distance_m <= 19.685 || distance_m >= 137.795 || Double.isNaN(distance_m)) {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {
@@ -217,7 +217,7 @@ public class PositionFSM {
     }
 
     public double getFlywheelTargetVelocity(double distance_m) {
-        if(distance_m <= 0.5 || distance_m >= 3.5 || Double.isNaN(distance_m)) {
+        if(distance_m <= 19.685 || distance_m >= 137.795 || Double.isNaN(distance_m)) {
             return defaultFlywheelVelocity;
         }
         else {
