@@ -32,12 +32,12 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
     public static double targetAngle;
 
     private PIDFController pidfController;
-    public static double TOLERANCE = 1;
+    public static double TOLERANCEPITCH = 1;
     public static double P=0.1, I=0, D=0, F=0;
     public static double gearRatio = 1.0/12.0;
 
-    public static double UPPER_HARD_STOP = 28;
-    public static double LOWER_HARD_STOP = 10;
+    public static double UPPER_HARD_STOP = 25;
+    public static double LOWER_HARD_STOP = 0;
 
 
     public static double vP=3, vI=0, vD=0, vF = 0;
@@ -52,6 +52,14 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
     private Logger logger;
 
+    public static double TOLERANCE_FLYWHEEL = 100;
+
+    public static double pitchReductionFactor = 0.1;
+
+    public static double boostPower = 1;
+
+    public static double pitchAngle = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         logger = new Logger(telemetry);
@@ -59,17 +67,16 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         robotSettings = RobotSettings.load();
 
         transferFSM = new TransferFSM(hwMap, telemetry, logger);
-        intakeFSM = new IntakeFSM(hwMap,telemetry, transferFSM,logger);
+        intakeFSM = new IntakeFSM(hwMap,telemetry, logger);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         motor.setRunMode(Motor.RunMode.VelocityControl);
 
         pitchServo = new NewAxonServo(hwMap.getPitchServo(),hwMap.getPitchEncoder(),false,false,0,gearRatio); // TODO: Change ratio
-        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        //limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
+        limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry, robotSettings);
         pidfController = new PIDFController(P,I,D,F);
-        pidfController.setTolerance(TOLERANCE);
+        pidfController.setTolerance(TOLERANCEPITCH);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -82,6 +89,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
 
             updatePIDPitch();
             telemetry.addData("pitch target angle", targetAngle);
+            telemetry.addData("pitch target angle corrected", pitchAngle);
             telemetry.addData("pitch servo current angle", pitchServo.getServoAngle());
             telemetry.addData("pitch current angle", pitchServo.getScaledPos());
 
@@ -121,38 +129,58 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         motor.setVeloCoefficients(vP,vI,vD);
         motor.setFeedforwardCoefficients(ks,kv,ka);
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
-        targetVelocityTicks = -targetVelocityTicks;
-        motor.setVelocity(targetVelocityTicks);
+        //targetVelocityTicks = targetVelocityTicks;
+        double error = targetVelocityTicks - motor.getCorrectedVelocity();
+        adjustForFlywheel(error);
+        if(error > TOLERANCE_FLYWHEEL) {
+            motor.set(boostPower);
+        }
+        else {
+            motor.setVelocity(targetVelocityTicks);
+        }
         telemetry.addData("Target Velocity RPM", targetVelocityRPM);
         telemetry.addData("Target Velocity Ticks", targetVelocityTicks);
         telemetry.addData("Current Velocity Corrected", motor.getCorrectedVelocity());
         telemetry.addData("Current Velocity Get", motor.getVelocity());
+        telemetry.addData("flywheel error", error);
+        telemetry.addData("flywheel power", motor.get());
 
         //motor.setVelocity(targetVelocity,RADIANS);
     }
+
     private static double convertRPMToTicks(double RPMVelocity) {
         return (RPMVelocity*28)/60;
     }
 
 
     public void updatePIDPitch() {
-        if(targetAngle > UPPER_HARD_STOP) {
-            targetAngle = UPPER_HARD_STOP;
+        if(pitchAngle > UPPER_HARD_STOP) {
+            pitchAngle = UPPER_HARD_STOP;
         }
-        else if (targetAngle < LOWER_HARD_STOP) {
-            targetAngle = LOWER_HARD_STOP;
+        else if (pitchAngle < LOWER_HARD_STOP) {
+            pitchAngle = LOWER_HARD_STOP;
         }
         pidfController.setPIDF(P,I,D,F);
-        pidfController.setTolerance(TOLERANCE);
+        pidfController.setTolerance(TOLERANCEPITCH);
         pitchServo.readPos();
 
-        double error = targetAngle - pitchServo.getScaledPos();
+        double error = pitchAngle - pitchServo.getScaledPos();
 
         telemetry.addData("error", error);
 
-        double power = pidfController.calculate(pitchServo.getScaledPos(),targetAngle);
+        double power = pidfController.calculate(pitchServo.getScaledPos(),pitchAngle);
         telemetry.addData("power", power);
         pitchServo.set(power);
+    }
+
+    private void adjustForFlywheel(double error) {
+        double flywheelError = error;
+        if(flywheelError > 100 && flywheelError < 1000) {
+            double offset = flywheelError * pitchReductionFactor;
+            pitchAngle = targetAngle + offset;
+        } else {
+            pitchAngle = targetAngle;
+        }
     }
 
 }

@@ -29,8 +29,10 @@ public class TurretPIDTest extends LinearOpMode {
 
     private PIDController pidController;
     public static double TOLERANCE = 3;
-    public static double P=0.01, I=0.0, D=0, F=0.2;
-    public static double gearRatio = 16.0/109.0;
+    public static double P_Counter = 0.02;
+    public static double P_clock =  0.02;
+    public static double P=0.02, I=0.02, D=0.001, F=0;
+    public static double gearRatio = 20.0/152.0;
 
     public static double UPPER_HARD_STOP = 0;
     public static double LOWER_HARD_STOP = -90;
@@ -39,7 +41,7 @@ public class TurretPIDTest extends LinearOpMode {
 
 
     Timing.Timer timer;
-    public static long sleepTime = 25;
+    public static long sleepTime = 45;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,9 +58,9 @@ public class TurretPIDTest extends LinearOpMode {
             timer.start();
             updatePID();
             telemetry.addData("turret target angle", targetAngle);
-            telemetry.addData("Turret motor target Angle", targetAngle * (109.0/16.0));
+            telemetry.addData("Turret motor target Angle", targetAngle * (152.0/20.0));
             telemetry.addData("turret motor current angle", turretMotor.getAngle());
-            telemetry.addData("turret current angle", turretMotor.getScaledPos());
+            telemetry.addData("turret current angle", turretMotor.getScaledPos() + 90);
             telemetry.addData("TIcks per rev", turretMotor.getTicksPerRev());
             telemetry.addData("Curret Pos ticks", turretMotor.readandGetPosTicks());
             telemetry.addData("loop time", timer.elapsedTime());
@@ -70,6 +72,7 @@ public class TurretPIDTest extends LinearOpMode {
 
 
     public void updatePID() {
+
         pidController.setPID(P,I,D);
         pidController.setTolerance(TOLERANCE);
         turretMotor.readPosition();
@@ -83,10 +86,16 @@ public class TurretPIDTest extends LinearOpMode {
 /*
         double delta = angleDelta(turretMotor.getScaledPos(), targetAngle);
         double sign = angleDeltaSign(turretMotor.getScaledPos(), targetAngle);*/
-        double currentPos = turretMotor.getScaledPos();
+        double currentPos = turretMotor.getScaledPos() + 90;
         double error = targetAngle - currentPos;
         telemetry.addData("Error", error);
 
+        if (error < 0) {
+            P  = P_Counter;
+        }
+        else {
+            P = P_clock;
+        }
         double power = pidController.calculate(currentPos,targetAngle);
         if(Math.abs(error) >= TOLERANCE) {
             power = power + (F * Math.signum(error));
@@ -96,6 +105,7 @@ public class TurretPIDTest extends LinearOpMode {
             power = signPower*POWER_CAP;
         }
         turretMotor.set(power);
+        telemetry.addData("power", turretMotor.get());
     }
 
 

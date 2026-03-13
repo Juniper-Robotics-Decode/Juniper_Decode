@@ -66,9 +66,9 @@ public class PositionFSM {
     private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: x: 60.05 mm, y: 53.845 mm, distance: 80.656 mm
     private double PINPOINT_OFFSET = 0;
 
-    private double threshold1LL = 59.0551, threshold2LL = 78.7402, threshold3LL = 98.4252, threshold4LL = 118.11;
+    private double threshold1LL = 1.5, threshold2LL = 2, threshold3LL = 2.5, threshold4LL = 3;
 
-    private double threshold1PP = 55.1181, threshold2PP = 78.7402, threshold3PP = 98.4252, threshold4PP = 118.11;
+    private double threshold1PP = 1.4, threshold2PP = 2, threshold3PP = 2.5, threshold4PP = 3;
 
     private double SENSOR_CHOICE_THRESHOLD = 2;
     private double RELOCALIZATION_TRHESHOLD = 0.1;
@@ -90,7 +90,7 @@ public class PositionFSM {
     private Logger logger;
 
 
-    public PositionFSM(HWMap hwMap, Telemetry telemetry, Pinpoint pinpoint, DoubleSupplier turretAngleProvider, RobotSettings robotSettings, Logger logger) {
+    public PositionFSM(HWMap hwMap, Telemetry telemetry, DoubleSupplier turretAngleProvider, RobotSettings robotSettings, Logger logger, Pinpoint pinpoint) {
         this.logger = logger;
         limelightCamera = new LimelightCamera(hwMap.getLimelight(), telemetry, robotSettings);
         this.pinpoint = pinpoint;
@@ -109,44 +109,46 @@ public class PositionFSM {
         }
 
         lastRightBumper = rightBumper2;
-        limelightCamera.update();
         chooseSensor();
 
-        if(limelightCamera.hasTarget() || pinpoint.pinpointReady()) {
-            if(sensor == Sensor.LIMELIGHT) {
-                if(limelightCamera.getFlatDistance() >= threshold4LL) {
-                    state = States.ZONE_5;
-                }
-                else if (limelightCamera.getFlatDistance() >= threshold3LL) {
-                    state = States.ZONE_4;
-                }
-                else if (limelightCamera.getFlatDistance() >= threshold2LL) {
-                    state = States.ZONE_3;
-                } else if (limelightCamera.getFlatDistance() >= threshold1LL) {
-                    state = States.ZONE_2;
-                } else {
-                    state = States.ZONE_1;
-                }
-                findFlywheelTargetVelocity(limelightCamera.getFlatDistance());
-                findPitchTargetAngle();
-                findTurretError(limelightCamera.getTy());
-            }
-            else if(sensor == Sensor.PINPOINT) {
-                if (pinpoint.pinpointReady()) {
-                    if(pinpoint.getGoalDistanceV() >= threshold4PP) {
+
+            if (sensor == Sensor.LIMELIGHT) {
+                limelightCamera.update();
+                if(limelightCamera.hasTarget()) {
+                    if (limelightCamera.getGoalDistance() >= threshold4PP) {
                         state = States.ZONE_5;
-                    }
-                    else if (pinpoint.getGoalDistanceV() >= threshold3PP) {
+                    } else if (limelightCamera.getGoalDistance() >= threshold3PP) {
                         state = States.ZONE_4;
-                    }
-                    else if (pinpoint.getGoalDistanceV() >= threshold2PP) {
+                    } else if (limelightCamera.getGoalDistance() >= threshold2PP) {
                         state = States.ZONE_3;
-                    } else if (pinpoint.getGoalDistanceV() >= threshold1PP) {
+                    } else if (limelightCamera.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_2;
                     } else {
                         state = States.ZONE_1;
                     }
-                    findFlywheelTargetVelocity(pinpoint.getGoalDistanceV());
+                    findFlywheelTargetVelocity(limelightCamera.getGoalDistance());
+                    findPitchTargetAngle();
+                    findTurretError(limelightCamera.getTx());
+                }
+                else {
+                    state = States.NO_VALID_TARGET;
+                }
+            }
+            else if (sensor == Sensor.PINPOINT) {
+                pinpoint.update();
+                if(pinpoint.pinpointReady()) {
+                    if (pinpoint.getGoalDistance() >= threshold4PP) {
+                        state = States.ZONE_5;
+                    } else if (pinpoint.getGoalDistance() >= threshold3PP) {
+                        state = States.ZONE_4;
+                    } else if (pinpoint.getGoalDistance() >= threshold2PP) {
+                        state = States.ZONE_3;
+                    } else if (pinpoint.getGoalDistance() >= threshold1PP) {
+                        state = States.ZONE_2;
+                    } else {
+                        state = States.ZONE_1;
+                    }
+                    findFlywheelTargetVelocity(pinpoint.getGoalDistance());
                     findPitchTargetAngle();
                     findTurretError(pinpoint.getHeadingErrorTrig());
                 }
@@ -154,10 +156,6 @@ public class PositionFSM {
                     state = States.NO_VALID_TARGET;
                 }
             }
-        }
-        else {
-            state = States.NO_VALID_TARGET;
-        }
 
         //TODO: add if turret velocity under threshold and drive velocity under threshold then relocalize at all times
 /*
@@ -173,15 +171,15 @@ public class PositionFSM {
         // FOR Limelight
         velocityMapLL = new InterpLUT();
 
-        // distance (in) , velocity (rpm)
+        // distance (m) , velocity (rpm)
 
-        velocityMapLL.add(19.685,2500);
-        velocityMapLL.add(53.14961, 2550);
-        velocityMapLL.add(62.20472, 2625);
-        velocityMapLL.add(87.00787, 3050);
-        velocityMapLL.add(112.2047, 3400);
-        velocityMapLL.add(127.9528, 3700);
-        velocityMapLL.add(137.795,4000);
+        velocityMapLL.add(0.5,2500);
+        velocityMapLL.add(1.35, 2550);
+        velocityMapLL.add(1.58, 2625);
+        velocityMapLL.add(2.21, 3050);
+        velocityMapLL.add(2.85, 3400);
+        velocityMapLL.add(3.25, 3700);
+        velocityMapLL.add(3.5,4000);
         velocityMapLL.createLUT();
 
 
@@ -189,10 +187,9 @@ public class PositionFSM {
 
         velocityMapPP = new InterpLUT();
 
-
         velocityMapPP.add(19.685,2500);
-        velocityMapPP.add(46.85039, 2500);
-        velocityMapPP.add(56.69291, 2550);
+        velocityMapPP.add(46.85039, 2850); // pitch down 3/4
+        velocityMapPP.add(56.69291, 3250); // pitch has 2 hash marks left below
         velocityMapPP.add(80.31496, 2725);
         velocityMapPP.add(103.5433, 3050);
         velocityMapPP.add(119.2913, 3150);
@@ -202,7 +199,7 @@ public class PositionFSM {
     }
 
     public void findFlywheelTargetVelocity(double distance_m) {
-        if(distance_m <= 19.685 || distance_m >= 137.795 || Double.isNaN(distance_m)) {
+        if(distance_m <= 20 || distance_m >= 147 || Double.isNaN(distance_m)) {
             flywheelTargetVelocityRPM = defaultFlywheelVelocity;
         }
         else {
@@ -211,21 +208,6 @@ public class PositionFSM {
             }
             else {
                 flywheelTargetVelocityRPM = velocityMapPP.get(distance_m + PINPOINT_OFFSET);
-            }
-        }
-
-    }
-
-    public double getFlywheelTargetVelocity(double distance_m) {
-        if(distance_m <= 19.685 || distance_m >= 137.795 || Double.isNaN(distance_m)) {
-            return defaultFlywheelVelocity;
-        }
-        else {
-            if(sensor == Sensor.LIMELIGHT) {
-                return velocityMapLL.get(distance_m + LIMELIGHT_FORWARD_OFFSET);
-            }
-            else {
-                return velocityMapPP.get(distance_m + PINPOINT_OFFSET);
             }
         }
 
@@ -267,12 +249,12 @@ public class PositionFSM {
             sensor = Sensor.PINPOINT;
         }
         else if(robotSettings.distanceMethod.equals(RobotSettings.DistanceMethod.LIMELIGHT_AND_PINPOINT)) {
-             if (!pinpoint.pinpointReady()) {
+            /* if (!pinpoint.pinpointReady()) {
                 sensor = Sensor.LIMELIGHT;
             }
             else {
                 sensor = Sensor.PINPOINT;
-            }
+            }*/
 //            if(Math.abs(pinpoint.getGoalDistance() - limelightCamera.getFlatDistance()) > 0.1 && pinpoint.pinpointReady() && limelightCamera.hasTarget()) {
 //                rumbleNotification = true;
 //            }
@@ -364,12 +346,12 @@ public class PositionFSM {
         limelightCamera.update();
         X = limelightCamera.getxField();
         Y = limelightCamera.getyField();
-        pinpoint.update();
-        return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES,pinpoint.getHeading());
+       // pinpoint.update();
+        return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES, pinpoint.getHeading());
     }
 
     public void resetOdo() {
-        pinpoint.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,pinpoint.getHeading()));
+     //   pinpoint.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,pinpoint.getHeading()));
     }
 
 }

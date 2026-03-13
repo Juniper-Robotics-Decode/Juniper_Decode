@@ -39,7 +39,7 @@ public class PinpointLLRelocalizationTest extends LinearOpMode {
         robotSettings = RobotSettings.load();
      //   telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         limelightCamera = new LimelightCamera(hwMap.getLimelight(),telemetry,robotSettings);
-        pinpoint = new Pinpoint(hwMap,robotSettings,false);
+        pinpoint = new Pinpoint(hwMap,robotSettings);
 
         waitForStart();
 

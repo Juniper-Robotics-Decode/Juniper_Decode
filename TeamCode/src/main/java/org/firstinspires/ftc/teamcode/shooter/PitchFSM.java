@@ -24,10 +24,10 @@ public class PitchFSM {
     private double targetAngle;
 
     private PIDFController pidfController;
-    public static double TOLERANCE = 1;
+    public static double TOLERANCE = 5;
     public static double P=0.05, I=0, D=0, F=0;
-    public static double UPPER_HARD_STOP = 29;
-    public static double LOWER_HARD_STOP = 10;
+    public static double UPPER_HARD_STOP = 25;
+    public static double LOWER_HARD_STOP = 0;
     public static double gearRatio = 1.0/12.0;
     public static double pitchReductionFactor = 0.10;
     private double MANUAL_OFFSET = 0;

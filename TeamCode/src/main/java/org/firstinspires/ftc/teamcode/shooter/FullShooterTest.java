@@ -28,9 +28,9 @@ public class FullShooterTest extends LinearOpMode {
             logger = new Logger(telemetry);
             hwMap = new HWMap(hardwareMap);
             robotSettings = RobotSettings.load();
-            pinpoint = new Pinpoint(hwMap, robotSettings,false);
+            pinpoint = new Pinpoint(hwMap, robotSettings);
             gamepad = new GamepadEx(gamepad1);
-            launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint,robotSettings,logger);
+            launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint,robotSettings,logger, false);
         }catch (Exception e) {
             telemetry.addData("Exception", e.getMessage());
             telemetry.update();

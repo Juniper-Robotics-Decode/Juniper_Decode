@@ -15,10 +15,10 @@ public class RollerFSM {
     public static double kS = 0, kV = 1.5, kA = 0;
     public static double p = 0.15, i = 0, d = 0;
     private double currentVelocity;
-    public static double targetVelocity = 2790;
+    public static double targetVelocity = -2790;
     public static double stoppingTargetVelocity = 0;
-    public static double intakingTargetVelocity = 2790;
-    public static double ejectingTargetVelocity = -1400;
+    public static double intakingTargetVelocity = -2790;
+    public static double ejectingTargetVelocity = 1400;
     public static double INTAKE_SLOW_VELO_FOR_TRANSFER = 500;
     public static double jammingCurrentThreshold = 5;
     public static double jammingVelocityThreshold = 1000;
@@ -47,11 +47,11 @@ public class RollerFSM {
             State = State.STOPPED;
         }
 
-        if (currentVelocity > 50) {
+        if (currentVelocity < 50) {
             State = State.INTAKING;
         }
 
-        if (currentVelocity < 0) {
+        if (currentVelocity > 0) {
             State = State.EJECTING;
         }
 

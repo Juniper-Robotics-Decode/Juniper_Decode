@@ -24,22 +24,21 @@ public class GateFSM {
     private Logger logger;
     public State currentState;
     public double currentPosition = 0;
-    public static double targetPosition = 0.49;
-    public static double positionUp = 0.27;
-    public static double positionDown = 0.49;
+    public static double targetPosition = 0.1;
+    public static double positionUp = 0.1;
+    public static double positionDown = 0;
     Timing.Timer timer;
 
 
     public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
         this.logger = logger;
         transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        timer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
     }
 
     public void updateState() {
-
 
         telemetry.addData("Current Position  ", transferServo.getPosition());
         telemetry.addData("Elapsed Time: ", timer.elapsedTime());
@@ -92,6 +91,3 @@ public class GateFSM {
         logger.log("gate timer: ",timer.elapsedTime(), Logger.LogLevels.PRODUCTION);
     }
 }
-
-
-

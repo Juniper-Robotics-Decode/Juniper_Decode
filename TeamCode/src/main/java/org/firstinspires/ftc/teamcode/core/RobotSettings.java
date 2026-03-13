@@ -19,6 +19,7 @@ public class RobotSettings {
     public enum Alliance{
         RED(new Pose2D(DistanceUnit.METER, 131, 128, AngleUnit.DEGREES, 136.4)),
         BLUE (new Pose2D(DistanceUnit.METER, 131, 128, AngleUnit.DEGREES, 136.4));
+
         private Pose2D pose2D;
 
         Alliance(Pose2D pos) {

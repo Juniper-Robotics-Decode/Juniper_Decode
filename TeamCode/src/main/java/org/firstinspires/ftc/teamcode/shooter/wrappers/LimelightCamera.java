@@ -134,4 +134,29 @@ public class LimelightCamera {
         return targetID;
     }
 
+    public double getGoalDistance() {
+        return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - xField), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - yField), 2));
+    }
+
+    public double getHeadingErrorTrig(double heading) {
+        double targetAngle;
+        targetAngle = Math.toDegrees(Math.atan2((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - yField), (robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - xField)));
+
+        double error = targetAngle - heading;
+
+        if(error <= -180) {
+            error += 360;
+        }
+        else if (error >= 180) {
+            error -= 360;
+        }
+       /* error = -error;
+        error = 360 - error;*/
+        return error;
+    }
+
+
+
+
+
 }

@@ -11,28 +11,32 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 public class Pinpoint {  // TODO: add junit
 
     GoBildaPinpointDriver odo;
-    Pose2D pos, vel;
-    public double x, y, heading, xVel, yVel, hVel = 0;
-    public double XVelocityOffset, YVelocityOffset = 0;
+    Pose2D pos;
+    public double x, y, heading;
     public static double Xoffset, Yoffset;
     private RobotSettings robotSettings;
 
 
-    public Pinpoint(HWMap hwMap, RobotSettings robotSettings, boolean isAuto) {
+    public Pinpoint(HWMap hwMap, RobotSettings robotSettings) {
         odo = hwMap.getOdo();
         this.robotSettings = robotSettings;
-        Xoffset = -132.5; Yoffset = 14.075;
+        Xoffset = -127.6669; Yoffset = -52.23;
+
         odo.setOffsets(Xoffset, Yoffset, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections( GoBildaPinpointDriver.EncoderDirection.FORWARD,  GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
+
        // odo.resetPosAndIMU();
 
        // Pose2D pose2D = new Pose2D(DistanceUnit.METER, 0, 0.0, AngleUnit.DEGREES, 0.0);
-      //  if (isAuto) {
-            odo.setPosition(robotSettings.startPosState.getPose2D());
-       // }
+       /* if (isAuto) {*/
+        //}
 
+    //  odo.setPosition(robotSettings.startPosState.getPose2D());
+
+
+        odo.setPosition(robotSettings.startPosState.getPose2D());
         update();
     }
 
@@ -46,14 +50,11 @@ public class Pinpoint {  // TODO: add junit
         x = pos.getX(DistanceUnit.INCH);
         y= pos.getY(DistanceUnit.INCH);
         heading = pos.getHeading(AngleUnit.DEGREES);
-        xVel = odo.getVelX(DistanceUnit.INCH);
-        yVel = odo.getVelY(DistanceUnit.INCH);
-        hVel = odo.getHeadingVelocity(AngleUnit.DEGREES.getUnnormalized());
     }
 
     public void updateHeadingOnly() {
         odo.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
-        heading = odo.getHeading(AngleUnit.DEGREES);
+        heading = Math.toDegrees(odo.getHeading(AngleUnit.DEGREES));
     }
 
     public Pose2D getPos() {
@@ -73,33 +74,18 @@ public class Pinpoint {  // TODO: add junit
     public double getY() {
         return y;
     }
-    public double getXV(){return xVel;}
-    public double getYV(){return yVel;}
-    public double getHV(){return hVel;}
 
     public void resetIMU() {
-        //     if(robotSettings.alliance == RobotSettings.Alliance.RED){
-        odo.setPosition(new Pose2D(DistanceUnit.INCH, 89, 8, AngleUnit.DEGREES, 0));
-        //   } else{
-        //   odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, -17.32283, AngleUnit.DEGREES, 180));
-        // }
+   //     if(robotSettings.alliance == RobotSettings.Alliance.RED){
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, 89, 8, AngleUnit.DEGREES, 0));
+     //   } else{
+         //   odo.setPosition(new Pose2D(DistanceUnit.INCH, 64.56693, -17.32283, AngleUnit.DEGREES, 180));
+       // }
     }
 
-    public void resetPos() {
-        odo.setPosition(new Pose2D(DistanceUnit.INCH,1.2,0,AngleUnit.DEGREES,heading));
-    }
-
-    public void setVelocityOffsets(double XVOffset, double YVOffset){
-        XVelocityOffset = XVOffset;
-        YVelocityOffset = YVOffset;
-    }
 
     public double getGoalDistance() {
         return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));
-    }
-
-    public double getGoalDistanceV() {
-        return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x - XVelocityOffset), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y - YVelocityOffset), 2));
     }
 
     public void setPosition(Pose2D pose2D) {
@@ -119,12 +105,12 @@ public class Pinpoint {  // TODO: add junit
             error = -error;
         }
         return error;
+    }*/
 
-    }
-*/
+
     public double getHeadingErrorTrig() {
         double targetAngle;
-        targetAngle = Math.toDegrees(Math.atan2((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y - YVelocityOffset), (robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x - XVelocityOffset)));
+        targetAngle = Math.toDegrees(Math.atan2((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), (robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x)));
 
         double error = targetAngle - heading;
 
@@ -134,8 +120,10 @@ public class Pinpoint {  // TODO: add junit
         else if (error >= 180) {
             error -= 360;
         }
-       /* error = -error;
-        error = 360 - error;*/
+
+        /*error = -error;
+        error = 360 - error;
+*/
         return error;
     }
 
