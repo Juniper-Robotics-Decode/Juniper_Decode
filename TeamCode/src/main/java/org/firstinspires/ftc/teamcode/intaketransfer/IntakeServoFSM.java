@@ -34,7 +34,7 @@ public class IntakeServoFSM {
         intakeServo.setPosition(positionDown);
     }
 
-    public void updateState() {
+    public void updateState(boolean D_Pad_Down_Press) {
         telemetry.addData("intake servo current Position ", intakeServo.getPosition());
         telemetry.addData("Elapsed Time ", transferPostitionTimer.elapsedTime());
         telemetry.addData("Intake servo target Position ", targetPosition);
@@ -47,6 +47,11 @@ public class IntakeServoFSM {
             currentState = State.MOVING_TO_POSITION;
             intakeServo.setPosition(targetPosition);
             transferPostitionTimer.start();
+        }
+
+        if(D_Pad_Down_Press){
+            if(AT_DOWN()){MoveUp();}
+            else if(AT_UP()){MoveDown();}
         }
 
 
