@@ -36,7 +36,7 @@ public class TurretFSM {
 
     public static double POWER_CAP = 1;
 
-    public static double TURRET_OFFSET = 30;
+    public static double TURRET_OFFSET = 3;
 
     private double MANUAL_OFFSET = 0;
 
@@ -187,6 +187,8 @@ public class TurretFSM {
         logger.log("turret target angle", targetAngle, Logger.LogLevels.PRODUCTION);
         logger.log("turret current angle", turretMotor.getScaledPos() + 90, Logger.LogLevels.PRODUCTION);
         logger.log("turret motor current", turretMotor.getCurrent(), Logger.LogLevels.DEBUG);
+        logger.log("turret upper hard stop", UPPER_HARD_STOP, Logger.LogLevels.DEBUG);
+        logger.log("turret lower hard stop", LOWER_HARD_STOP, Logger.LogLevels.DEBUG);
     }
 
     public double getCurrentAngle() {
