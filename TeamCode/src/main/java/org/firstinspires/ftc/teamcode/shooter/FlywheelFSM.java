@@ -40,6 +40,11 @@ public class FlywheelFSM {
 
     Logger logger;
 
+
+    public static double TOLERANCE_FLYWHEEL = 100;
+
+    public static double boostPower = 1;
+
     public FlywheelFSM(HWMap hwMap, Telemetry telemetry, Logger logger) {
         this.logger = logger;
         this.hwMap = hwMap;
@@ -82,17 +87,18 @@ public class FlywheelFSM {
             stopping = false;
         }
         flywheelMotor.readVelocity();
-
         flywheelMotor.setVelocityConstants(vP,vI,vD,ks,kv,ka);
+
         targetVelocityTicks = convertRPMToTicks(targetVelocityRPM);
-//        targetVelocityTicks = -targetVelocityTicks;
+        //targetVelocityTicks = targetVelocityTicks;
         double error = targetVelocityTicks - flywheelMotor.getVelocity();
-        if(error > TOLERANCE) {
-            flywheelMotor.set(1);
+        if(error > TOLERANCE_FLYWHEEL) {
+            flywheelMotor.set(boostPower);
         }
         else {
             flywheelMotor.setVelocity(targetVelocityTicks);
         }
+
     }
 
     private boolean atSetPoint() {

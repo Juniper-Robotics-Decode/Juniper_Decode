@@ -29,7 +29,7 @@ public class PitchFSM {
     public static double UPPER_HARD_STOP = 25;
     public static double LOWER_HARD_STOP = 0;
     public static double gearRatio = 1.0/12.0;
-    public static double pitchReductionFactor = 0.10;
+    public double pitchReductionFactor = -0.10;
     private double MANUAL_OFFSET = 0;
     private DoubleSupplier flywheelErrorProvider;
 
@@ -61,6 +61,7 @@ public class PitchFSM {
     }
 
     public void updatePID(boolean yPress, boolean aPress) {
+        adjustForFlywheel();
         if(yPress) {
             MANUAL_OFFSET--;
         }
@@ -111,8 +112,9 @@ public class PitchFSM {
     }
     */
 
-    public void setTargetAngle(double pitchTargetAngle) {
+    public void setTargetAngle(double pitchTargetAngle, double ReductionFactor) {
         targetAngle = pitchTargetAngle;
+        pitchReductionFactor = ReductionFactor;
     }
 
     public boolean ALIGNED() {
@@ -128,9 +130,11 @@ public class PitchFSM {
     }
 
     private void adjustForFlywheel() {
-        double flywheelError = flywheelErrorProvider.getAsDouble();
-        if(flywheelError > 40) {
-            targetAngle = targetAngle + flywheelError * pitchReductionFactor;
+        if(flywheelErrorProvider.getAsDouble() > 100 && flywheelErrorProvider.getAsDouble() < 1000) {
+            double offset = flywheelErrorProvider.getAsDouble() * pitchReductionFactor;
+            targetAngle = targetAngle + offset;
+        } else {
+            targetAngle = targetAngle;
         }
     }
 

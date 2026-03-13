@@ -20,26 +20,36 @@ import java.util.function.DoubleSupplier;
 public class PositionFSM {
 
     public enum States {
-        ZONE_1(12), // TODO: check does pitch at 22.5 equal like almost 360?
-        ZONE_2(12),
-        ZONE_3(12),
-        ZONE_4(12),
-        ZONE_5(12),
+        ZONE_1(13, -0.015), // TODO: check does pitch at 22.5 equal like almost 360? -.1
+        ZONE_2(15, -0.1), // -.015
+        ZONE_3(16, -0.15), // -.15
+        ZONE_4(22,-1.4), //-1.4
+        ZONE_5(18,-2.1), // -1.5
+
 
         NO_VALID_TARGET;
 
         private double targetAngle;
 
-        States(double angle) {
+        private double pitchCompensation;
+
+        States(double angle, double pitchComp) {
             this.targetAngle = angle;
+            pitchCompensation = pitchComp;
         }
 
         States() {
-            this.targetAngle = 0; // doesn't matter if 0 - never used
+            this.targetAngle = 0;
+            this.pitchCompensation = 0;
+            // doesn't matter if 0 - never used
         }
 
         public double getTargetAngle() {
             return targetAngle;
+        }
+
+        public double getPitchCompensation() {
+            return pitchCompensation;
         }
     }
 
@@ -61,14 +71,16 @@ public class PositionFSM {
     private double defaultFlywheelVelocity = 2500;
     private double flywheelTargetVelocityRPM;
     private double pitchTargetAngle;
+    private double pitchCompensation;
     private double turretError;
 
     private double LIMELIGHT_FORWARD_OFFSET = 0; // TODO: x: 60.05 mm, y: 53.845 mm, distance: 80.656 mm
     private double PINPOINT_OFFSET = 0;
 
+
     private double threshold1LL = 1.5, threshold2LL = 2, threshold3LL = 2.5, threshold4LL = 3;
 
-    private double threshold1PP = 1.4, threshold2PP = 2, threshold3PP = 2.5, threshold4PP = 3;
+    private double threshold1PP = 46.85039, threshold2PP = 80.31496, threshold3PP = 103.5433, threshold4PP = 119.2913;
 
     private double SENSOR_CHOICE_THRESHOLD = 2;
     private double RELOCALIZATION_TRHESHOLD = 0.1;
@@ -174,12 +186,12 @@ public class PositionFSM {
         // distance (m) , velocity (rpm)
 
         velocityMapLL.add(0.5,2500);
-        velocityMapLL.add(1.35, 2550);
-        velocityMapLL.add(1.58, 2625);
-        velocityMapLL.add(2.21, 3050);
-        velocityMapLL.add(2.85, 3400);
-        velocityMapLL.add(3.25, 3700);
-        velocityMapLL.add(3.5,4000);
+        velocityMapLL.add(0.861, 2900);
+        velocityMapLL.add(1.35, 3000);
+        velocityMapLL.add(2.21, 3100);
+        velocityMapLL.add(2.85, 3250);
+        velocityMapLL.add(3.25, 3400);
+        velocityMapLL.add(3.5,3650);
         velocityMapLL.createLUT();
 
 
@@ -188,11 +200,12 @@ public class PositionFSM {
         velocityMapPP = new InterpLUT();
 
         velocityMapPP.add(19.685,2500);
-        velocityMapPP.add(46.85039, 2850); // pitch down 3/4
-        velocityMapPP.add(56.69291, 3250); // pitch has 2 hash marks left below
-        velocityMapPP.add(80.31496, 2725);
-        velocityMapPP.add(103.5433, 3050);
-        velocityMapPP.add(119.2913, 3150);
+        velocityMapPP.add(33.898, 2900);
+        velocityMapPP.add(46.85039, 3000);
+        velocityMapPP.add(80.31496, 3100);
+        velocityMapPP.add(103.5433, 3250);
+        velocityMapPP.add(119.2913, 3400);
+        velocityMapPP.add(127.14,3425);
         velocityMapPP.add(147.2441,3650);
         velocityMapPP.createLUT();
 
@@ -218,6 +231,7 @@ public class PositionFSM {
             return;
         }
         pitchTargetAngle = state.getTargetAngle();
+        pitchCompensation = state.getPitchCompensation();
     }
 
     public void findTurretError(double error) {
@@ -235,6 +249,10 @@ public class PositionFSM {
 
     public double getPitchTargetAngle() {
         return pitchTargetAngle;
+    }
+
+    public double getPitchCompensation() {
+        return pitchCompensation;
     }
 
     public double getTurretError() {
@@ -306,6 +324,7 @@ public class PositionFSM {
         logger.log("<font color='orange'>Current shooting Sensor</font>", sensor, Logger.LogLevels.PRODUCTION);
         logger.log("Flywheel Target", flywheelTargetVelocityRPM, Logger.LogLevels.DEBUG);
         logger.log("Pitch Target", pitchTargetAngle, Logger.LogLevels.DEBUG);
+        logger.log("Pitch compensation", pitchCompensation, Logger.LogLevels.DEBUG);
         logger.log("Turret Error", turretError, Logger.LogLevels.DEBUG);
     }
     public void logLL() {

@@ -66,7 +66,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         hwMap = new HWMap(hardwareMap);
         robotSettings = RobotSettings.load();
 
-        transferFSM = new TransferFSM(hwMap, telemetry, logger);
+        transferFSM = new TransferFSM(hwMap, telemetry, logger, false);
         intakeFSM = new IntakeFSM(hwMap,telemetry, logger);
         motor = new MotorEx(hardwareMap,"FM", Motor.GoBILDA.BARE);
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

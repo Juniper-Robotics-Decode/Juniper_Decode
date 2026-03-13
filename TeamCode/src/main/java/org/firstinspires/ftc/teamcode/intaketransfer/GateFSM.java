@@ -28,12 +28,13 @@ public class GateFSM {
     public static double positionUp = 0.1;
     public static double positionDown = 0;
     Timing.Timer timer;
+    public static long transfer_Time = 500;
 
 
     public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
         this.logger = logger;
         transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
-        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+        timer = new Timing.Timer(transfer_Time, TimeUnit.MILLISECONDS);
         this.telemetry = telemetry;
         currentState = State.AT_DOWN;
     }
