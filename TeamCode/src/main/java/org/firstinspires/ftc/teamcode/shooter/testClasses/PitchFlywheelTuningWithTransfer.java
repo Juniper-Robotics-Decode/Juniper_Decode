@@ -82,7 +82,7 @@ public class PitchFlywheelTuningWithTransfer extends LinearOpMode {
         while (opModeIsActive()) {
             limelightCamera.update();
             transferFSM.updateState(gamepad1.right_bumper);
-            intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left);
+            intakeFSM.updateState(gamepad1.y, gamepad1.dpad_left, gamepad1.dpad_down);
             updatePID();
             telemetry.addData("Voltage", hardwareMap.voltageSensor.iterator().next().getVoltage());
             telemetry.addData("accel", motor.getAcceleration());

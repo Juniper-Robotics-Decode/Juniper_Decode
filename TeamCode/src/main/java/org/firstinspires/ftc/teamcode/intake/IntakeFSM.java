@@ -42,9 +42,9 @@ public class IntakeFSM {
         telemetry.addData("Current Intake state", currentState);
     }
 
-    public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press) {
+    public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press, boolean D_Pad_Down_Press) {
         Roller.updateState();
-        Servo.updateState();
+        Servo.updateState(D_Pad_Down_Press);
 
         findTargetState(D_Pad_Up_Press, D_Pad_Left_Press);
         switch (currentState) {

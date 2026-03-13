@@ -157,7 +157,7 @@ public class GeneratedTraj extends LinearOpMode {
     public void CloseSideUpdate() {
         pinpoint.update();
         launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
-        intakeFSM.updateState(false,false);
+        intakeFSM.updateState(false,false,false);
         switch (pathState) {
             case 0:
                 transferFSM.updateState(false);
@@ -262,7 +262,7 @@ public class GeneratedTraj extends LinearOpMode {
     public void FarSideUpdate() {
         pinpoint.update();
         launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
-        intakeFSM.updateState(false,false);
+        intakeFSM.updateState(false,false,false);
         switch (pathState) {
             case 0:
                 if(!follower.isBusy()) {
