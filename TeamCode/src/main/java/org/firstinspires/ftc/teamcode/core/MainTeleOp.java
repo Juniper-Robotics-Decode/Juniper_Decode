@@ -75,17 +75,18 @@ public class MainTeleOp extends LinearOpMode {
 
     public static double TRANSLATION_SLEW = 1.5;
     public static double ROTATION_SLEW = 3.0;
-    public static double PID_SLEW_RATE = 2.0;
+    public static double PID_SLEW_RATE = 20000000000000.0;
 
     public static double MIN_TRANSLATION_POW = 0.05;
     public static double MIN_ROTATION_POW = 0.08;
 
-    public static double STICK_SCALAR = 0.8;
+    public static double STICK_SCALAR = 0.9;
 
     private double lastX = 0, lastY = 0, lastTurn = 0, lastPidOut = 0;
 
-    public static double[] MotorScalars = new double[]{1,1,1,1};
-    public static double[] Zeros = new double[]{2.25,-1.5,-0.8,0.9};
+
+    public static double[] MotorScalars = new double[]{-1,1,-1,-1};
+    public static double[] Zeros = new double[]{-0.2,3.9,1.4,3};
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -105,7 +106,7 @@ public class MainTeleOp extends LinearOpMode {
         }
 
         launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger, false);
-        transferFSM = new TransferFSM(hwMap, telemetry,logger);
+        transferFSM = new TransferFSM(hwMap, telemetry,logger, false);
         intakeFSM = new IntakeFSM(hwMap, telemetry, logger);
 
 
@@ -117,12 +118,12 @@ public class MainTeleOp extends LinearOpMode {
             logger.log("<b><u><font color='blue'>ALLIANCE</font></u></b>", robotSettings.alliance, Logger.LogLevels.PRODUCTION);
         }
         logger.log("<b><u><i><font color='orange'>CHECK THE CHECKLIST</font></i></b></u>","", Logger.LogLevels.PRODUCTION);
-
+/*
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.setOffsets(10.5, 1, DistanceUnit.CM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odo.resetPosAndIMU();
+        odo.resetPosAndIMU();*/
 
         hwMap = new HWMap(hardwareMap);
         swerveDrivetrain = new SwerveDrivetrain(hwMap, logger);
@@ -168,7 +169,6 @@ public class MainTeleOp extends LinearOpMode {
             swerveDrivetrain.setOffsets(Zeros);
             swerveDrivetrain.setMotorScaling(MotorScalars);
 
-            if (gamepad1.options) { odo.resetPosAndIMU(); targetHeading = 0; }
 
             double rawX = abs(gamepad1.left_stick_x) < 0.05 ? 0 : gamepad1.left_stick_x;
             double rawY = abs(gamepad1.left_stick_y) < 0.05 ? 0 : -gamepad1.left_stick_y;
@@ -205,9 +205,9 @@ public class MainTeleOp extends LinearOpMode {
             lastPidOut = slewedPid;
 
             double totalTurn = driveTurn + slewedPid;
-            Point rotated = new Point(driveX, driveY).rotate(BotHeading);
+            Point drivevector = new Point(driveX, driveY);
 
-            swerveDrivetrain.setPose(new Pose(rotated.x, rotated.y, totalTurn));
+            swerveDrivetrain.setPose(new Pose(new Point(drivevector.x, drivevector.y).rotate(botHeading), totalTurn));
 
             intakeFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.DPAD_UP), gamepadE1.getButton(GamepadKeys.Button.DPAD_LEFT));
             transferFSM.updateState(gamepadE1.isDown(GamepadKeys.Button.RIGHT_BUMPER));

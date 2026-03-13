@@ -40,6 +40,7 @@ public class GeneratedTraj extends LinearOpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
+    private int transferSubState = 0;
 
 
     private Pose startPose = new Pose(120 ,127.87, Math.toRadians(319.6));
@@ -271,16 +272,62 @@ public class GeneratedTraj extends LinearOpMode {
                 }
                 break;
             case 1:
-                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
+                if(actionTimer.getElapsedTimeSeconds() >= 5) {
                     transferFSM.updateState(true);
                     pathState = 2;
                 }
                 break;
             case 2:
-                transferFSM.updateState(true);
-                if (transferFSM.TRANSFERED()) {
-                    follower.followPath(FarPath1, true);
-                    setPathState(3);
+                switch (transferSubState) {
+                    case 0: // Phase 1: First Open
+                        transferFSM.updateState(true);
+                        if (transferFSM.TRANSFERED()) {
+                            transferSubState = 1; // Move to next phase
+                        }
+                        break;
+
+                    case 1: // Phase 2: First Close
+                        transferFSM.updateState(false);
+                        if (transferFSM.CLOSED()) {
+                            transferSubState = 2;
+                        }
+                        break;
+
+                    case 2: // Phase 3: Second Open
+                        transferFSM.updateState(true);
+                        if (transferFSM.TRANSFERED()) {
+                            transferSubState = 3;
+                        }
+                        break;
+
+                    case 3: // Phase 2: First Close
+                        transferFSM.updateState(false);
+                        if (transferFSM.CLOSED()) {
+                            actionTimer.resetTimer();
+                            transferSubState = 4;
+                        }
+                        break;
+
+                    case 4: // Phase 3: Second Open
+                        if(actionTimer.getElapsedTimeSeconds() > 1) {
+                            transferFSM.updateState(true);
+                            if (transferFSM.TRANSFERED()) {
+                                transferSubState = 5;
+                            }
+                        }
+                        break;
+
+                    case 5: // Phase 4: Second Close
+                        transferFSM.updateState(false);
+                        if (transferFSM.CLOSED()) {
+                            // Cycle is entirely finished!
+                            transferSubState = 0; // Reset for future use
+
+                            // Drive to next position
+                            follower.followPath(FarPath1, true);
+                            setPathState(3);
+                        }
+                        break;
                 }
                 break;
 
@@ -306,16 +353,62 @@ public class GeneratedTraj extends LinearOpMode {
                 break;
             case 6:
                 if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
-                    transferFSM.updateState(true);
-                    pathState = 7;
+                    switch (transferSubState) {
+                        case 0: // Phase 1: First Open
+                            transferFSM.updateState(true);
+                            if (transferFSM.TRANSFERED()) {
+                                transferSubState = 1; // Move to next phase
+                            }
+                            break;
+
+                        case 1: // Phase 2: First Close
+                            transferFSM.updateState(false);
+                            if (transferFSM.CLOSED()) {
+                                transferSubState = 2;
+                            }
+                            break;
+
+                        case 2: // Phase 3: Second Open
+                            transferFSM.updateState(true);
+                            if (transferFSM.TRANSFERED()) {
+                                transferSubState = 3;
+                            }
+                            break;
+
+                        case 3: // Phase 2: First Close
+                            transferFSM.updateState(false);
+                            if (transferFSM.CLOSED()) {
+                                transferSubState = 4;
+                            }
+                            break;
+
+                        case 4: // Phase 3: Second Open
+                            transferFSM.updateState(true);
+                            if (transferFSM.TRANSFERED()) {
+                                transferSubState = 5;
+                            }
+                            break;
+
+                        case 5: // Phase 4: Second Close
+                            transferFSM.updateState(false);
+                            if (transferFSM.CLOSED()) {
+                                // Cycle is entirely finished!
+                                transferSubState = 0; // Reset for future use
+
+                                // Drive to next position
+                                follower.followPath(FarPath1, true);
+                                setPathState(7);
+                            }
+                            break;
+                    }
                 }
                 break;
-            case 7:
+            case 7:/*
                 transferFSM.updateState(true);
-                if (transferFSM.TRANSFERED()) {
+                if (transferFSM.TRANSFERED()) {*/
                     launcherFSM.setEndOfAuto(true);
                     setPathState(-1);
-                }
+               // }
                 break;
         }
     }
@@ -355,7 +448,7 @@ public class GeneratedTraj extends LinearOpMode {
         robotSettings = RobotSettings.load();
         pinpoint = new Pinpoint(hwMap,robotSettings);
         launcherFSM = new LauncherFSM(hwMap,telemetry,pinpoint,robotSettings,logger, true);
-        transferFSM = new TransferFSM(hwMap, telemetry,logger);
+        transferFSM = new TransferFSM(hwMap, telemetry,logger, true);
         intakeFSM = new IntakeFSM(hwMap, telemetry,logger);
 
         waitForStart();

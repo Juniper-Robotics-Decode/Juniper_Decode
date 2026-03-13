@@ -17,7 +17,7 @@ public class RollerFSM {
     private double currentVelocity;
     public static double targetVelocity = -2790;
     public static double stoppingTargetVelocity = 0;
-    public static double intakingTargetVelocity = -2790;
+    public static double intakingTargetVelocity = -1500;
     public static double ejectingTargetVelocity = 1400;
     public static double INTAKE_SLOW_VELO_FOR_TRANSFER = 500;
     public static double jammingCurrentThreshold = 5;

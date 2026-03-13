@@ -25,7 +25,7 @@ public class SwerveModule {
     private double lastTargetPosition;
     private boolean inverse;
 
-    public static double P = 0.35, I = 0, D = 0.01, Kstatic = 0.0;
+    public static double P = 0.325, I = 0, D = 0.01, Kstatic = 0.0;
     private final PIDController rotationController = new PIDController(P, I, D);
 
     public SwerveModule(DcMotorEx motor, CRServo servo, AnalogInput encoder, double offset, boolean inverse, Logger logger) {

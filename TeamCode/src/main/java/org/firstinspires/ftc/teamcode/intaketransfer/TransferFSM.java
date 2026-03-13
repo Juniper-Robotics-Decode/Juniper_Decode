@@ -31,13 +31,15 @@ public class TransferFSM {
     public static long DOWN_TIME = 1000;
     public static long UP_TIME = 500;
 
+    private boolean isAuto = false;
 
-    public TransferFSM(HWMap hardwareMap, Telemetry telemetry, Logger logger) {
+    public TransferFSM(HWMap hardwareMap, Telemetry telemetry, Logger logger, boolean isAuto) {
         this.logger = logger;
         this.telemetry = telemetry;
         transferServoFSM = new GateFSM(hardwareMap, telemetry, logger);
         autoMoveTimer = new Timing.Timer(DOWN_TIME, TimeUnit.MILLISECONDS);
         upTimer = new Timing.Timer(UP_TIME,TimeUnit.MILLISECONDS);
+        this.isAuto = isAuto;
     }
 
     public void updateState(boolean Right_Bumper) {
@@ -47,6 +49,10 @@ public class TransferFSM {
         switch (currentState) {
             case CLOSING:
                 transferServoFSM.MoveUp();
+                /*if(isAuto) {
+                    currentState = State.OPENING;
+                }
+                */
                 if(transferServoFSM.AT_UP()) {
                     currentState = State.CLOSED;
                 }
@@ -84,9 +90,15 @@ public class TransferFSM {
                 break;
             case OPENING:
                 transferServoFSM.MoveDown();
-                if(transferServoFSM.AT_DOWN()) {
-                    currentState = State.OPENED;
+               /* if(isAuto) {
+                    currentState = State.CLOSING;
                 }
+               *//* else if (transferServoFSM.AT_DOWN() && !isAuto) {
+               */
+                if(transferServoFSM.AT_DOWN()) {
+                currentState = State.OPENED;
+                }
+
                 break;
         }
     }
@@ -102,8 +114,8 @@ public class TransferFSM {
 
     }
 
-    public boolean TRANSFERING() {
-        return currentState == State.CLOSING;
+    public boolean CLOSED() {
+        return currentState == State.CLOSED;
     }
 
 
@@ -114,6 +126,7 @@ public class TransferFSM {
     }
 
     public boolean TRANSFERED() {
-        return currentState == State.OPENED;
+        return currentState == State.OPENED || currentState == State.OPENING;
     }
+
 }

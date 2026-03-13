@@ -154,7 +154,7 @@ public class TurretFSM {
         lastLeft = dPadLeft2;
         lastRight = dPadRight2;
 
-        targetAngle = turretError - MANUAL_OFFSET + TURRET_OFFSET;
+        targetAngle = turretError - MANUAL_OFFSET - TURRET_OFFSET;
 
 /*
         if(i >= 0) {

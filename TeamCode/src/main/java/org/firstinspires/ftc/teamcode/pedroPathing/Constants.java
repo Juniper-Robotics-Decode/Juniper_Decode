@@ -67,7 +67,7 @@ public class Constants {
         return new CoaxialPod(hardwareMap,"FRM","FRS","FRE",
                 new PIDFCoefficients(0.35*(Math.PI/180.0), 0.0, 0.01*(Math.PI/180.0),0),
                 DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE,
-                Math.toDegrees(2.6),
+                Math.toDegrees(3.9),
                 new Pose(4.251,-4.815),
                 0,3.3,
                 false);

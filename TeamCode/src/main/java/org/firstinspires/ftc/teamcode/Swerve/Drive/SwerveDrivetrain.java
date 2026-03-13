@@ -35,7 +35,7 @@ public class SwerveDrivetrain {
     public SwerveDrivetrain(HWMap hwMap, Logger logger) {
         this.logger = logger;
         frontLeftModule = new SwerveModule(hwMap.FLM, hwMap.FLS, hwMap.FLE, -0.2, false, logger);
-        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, 2.6, false, logger);
+        frontRightModule = new SwerveModule(hwMap.FRM, hwMap.FRS, hwMap.FRE, 3.9, false, logger);
         backRightModule = new SwerveModule(hwMap.BRM, hwMap.BRS, hwMap.BRE, 1.4, false, logger);
         backLeftModule = new SwerveModule(hwMap.BLM, hwMap.BLS, hwMap.BLE, 3, false, logger);
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backRightModule, backLeftModule};
