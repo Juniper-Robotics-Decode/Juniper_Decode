@@ -41,6 +41,7 @@ public class SwerveCalibration extends LinearOpMode {
     public static double motorpower;
     public static double P, I, D;
     public static double target;
+    public static long sleeptime;
 
     Logger logger;
 
@@ -77,6 +78,7 @@ public class SwerveCalibration extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            sleep(sleeptime);
             if (i== 4){
                 i = 0;
             }

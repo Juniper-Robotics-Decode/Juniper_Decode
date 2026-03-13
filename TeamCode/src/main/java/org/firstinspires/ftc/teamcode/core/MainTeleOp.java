@@ -75,12 +75,12 @@ public class MainTeleOp extends LinearOpMode {
 
     public static double TRANSLATION_SLEW = 1.5;
     public static double ROTATION_SLEW = 3.0;
-    public static double PID_SLEW_RATE = 2.0;
+    public static double PID_SLEW_RATE = 20000000000000.0;
 
     public static double MIN_TRANSLATION_POW = 0.05;
     public static double MIN_ROTATION_POW = 0.08;
 
-    public static double STICK_SCALAR = 0.8;
+    public static double STICK_SCALAR = 0.9;
 
     private double lastX = 0, lastY = 0, lastTurn = 0, lastPidOut = 0;
 
