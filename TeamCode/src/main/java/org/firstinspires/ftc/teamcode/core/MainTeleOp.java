@@ -102,7 +102,7 @@ public class MainTeleOp extends LinearOpMode {
         pinpoint = new Pinpoint(hwMap, robotSettings);
 
         if(PoseStorage.currentPose != null) {
-            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, PoseStorage.currentPose.getX(),PoseStorage.currentPose.getY(), AngleUnit.DEGREES, PoseStorage.currentPose.getHeading()));
+            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, PoseStorage.currentPose.getX(),PoseStorage.currentPose.getY(), RADIANS, PoseStorage.currentPose.getHeading()));
         }
 
         launcherFSM = new LauncherFSM(hwMap,telemetry, pinpoint, robotSettings, logger, false);

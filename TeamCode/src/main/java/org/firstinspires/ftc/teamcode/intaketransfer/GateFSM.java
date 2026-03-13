@@ -28,7 +28,7 @@ public class GateFSM {
     public static double positionUp = 0.1;
     public static double positionDown = 0;
     Timing.Timer timer;
-    public static long transfer_Time = 500;
+    public static long transfer_Time = 32;
 
 
     public GateFSM(HWMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
@@ -90,5 +90,9 @@ public class GateFSM {
         logger.log("gate state: ",currentState, Logger.LogLevels.PRODUCTION);
         logger.log("gate pos: ",currentPosition, Logger.LogLevels.PRODUCTION);
         logger.log("gate timer: ",timer.elapsedTime(), Logger.LogLevels.PRODUCTION);
+    }
+
+    public void setTransfer_Time(long t) {
+        transfer_Time = t;
     }
 }

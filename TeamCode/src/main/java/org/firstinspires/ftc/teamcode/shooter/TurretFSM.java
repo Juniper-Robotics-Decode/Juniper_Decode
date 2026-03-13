@@ -22,6 +22,7 @@ public class TurretFSM {
     }
 
     private MotorWrapper turretMotor;
+    private RobotSettings robotSettings;
     private States state;
     private double targetAngle;
     private PIDController pidController;
@@ -53,6 +54,7 @@ public class TurretFSM {
 
     Logger logger;
     public TurretFSM(HWMap hwMap, Telemetry telemetry, Logger logger) {
+        robotSettings = new RobotSettings();
         this.logger = logger;
         turretMotor = new MotorWrapper(hwMap.getTurretMotor(),false,gearRatio, false);
         turretMotor.resetEncoder();
@@ -61,6 +63,7 @@ public class TurretFSM {
         pidController.setTolerance(TOLERANCE);
         this.telemetry = telemetry;
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        if(robotSettings.alliance == RobotSettings.Alliance.BLUE){TURRET_OFFSET = -TURRET_OFFSET;}
     }
 
     public void updateState(){

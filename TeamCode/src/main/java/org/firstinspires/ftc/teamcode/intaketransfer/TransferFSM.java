@@ -6,7 +6,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.HWMap;
 import org.firstinspires.ftc.teamcode.core.Logger;
 
-
 import java.util.concurrent.TimeUnit;
 
 public class TransferFSM {
@@ -24,7 +23,10 @@ public class TransferFSM {
     public static Timing.Timer autoMoveTimer;
     public static Timing.Timer upTimer;
     private double counter = 0;
-    boolean lastRightBumper;
+
+    // CHANGE 1: Initialize to true so the first 'false' command registers
+    boolean lastRightBumper = true;
+
     private boolean hasCountedCurrentCycle = false;
     private Logger logger;
 
@@ -49,75 +51,40 @@ public class TransferFSM {
         switch (currentState) {
             case CLOSING:
                 transferServoFSM.MoveUp();
-                /*if(isAuto) {
-                    currentState = State.OPENING;
-                }
-                */
                 if(transferServoFSM.AT_UP()) {
                     currentState = State.CLOSED;
                 }
-                /*if(transferServoFSM.AT_DOWN()) {
-                    if(!upTimer.isTimerOn()) {
-                        upTimer.start();
-                    }
-                    upTimer.start();
-                    hasCountedCurrentCycle = false;
-                    if(autoMoveTimer.done() || counter == 0) {
-                        autoMoveTimer.pause();
-                        transferServoFSM.MoveUp();
-                    }
-                    if(counter >= 0) {
-                        counter = 0;
-                        currentState = State.TRANSFERED;
-                    } else {
-                        if(autoMoveTimer.done() || counter == 0) {
-                            autoMoveTimer.pause();
-                            transferServoFSM.MoveUp();
-                        }
-                    }
-                }
-                else if(transferServoFSM.AT_UP() && upTimer.done()) {
-                    upTimer.pause();
-                    transferServoFSM.MoveDown();
-                    if(!autoMoveTimer.isTimerOn()) {
-                        autoMoveTimer.start();
-                    }
-                    if (!hasCountedCurrentCycle) {
-                        counter++;
-                        hasCountedCurrentCycle = true;
-                    }
-                }*/
                 break;
             case OPENING:
                 transferServoFSM.MoveDown();
-               /* if(isAuto) {
-                    currentState = State.CLOSING;
-                }
-               *//* else if (transferServoFSM.AT_DOWN() && !isAuto) {
-               */
                 if(transferServoFSM.AT_DOWN()) {
-                currentState = State.OPENED;
+                    currentState = State.OPENED;
                 }
-
                 break;
         }
     }
 
+    // CHANGE 2: Edge detection logic
     public void findTargetState(boolean Right_Bumper) {
-        if(Right_Bumper) {
-            currentState = State.OPENING;
-        }
-        else {
-            currentState = State.CLOSING;
+        if (Right_Bumper != lastRightBumper) {
+            if(Right_Bumper) {
+                currentState = State.OPENING;
+            }
+            else {
+                currentState = State.CLOSING;
+            }
         }
         lastRightBumper = Right_Bumper;
-
     }
 
     public boolean CLOSED() {
         return currentState == State.CLOSED;
     }
 
+    // CHANGE 3: Strictly wait for OPENED
+    public boolean TRANSFERED() {
+        return currentState == State.OPENED;
+    }
 
     public void log() {
         logger.log("Transfer Current State ", currentState, Logger.LogLevels.PRODUCTION);
@@ -125,8 +92,7 @@ public class TransferFSM {
         logger.log("Auto Transfer Move Timer", autoMoveTimer.elapsedTime(), Logger.LogLevels.PRODUCTION);
     }
 
-    public boolean TRANSFERED() {
-        return currentState == State.OPENED || currentState == State.OPENING;
+    public void setTransferTime(long t) {
+        transferServoFSM.setTransfer_Time(t);
     }
-
 }

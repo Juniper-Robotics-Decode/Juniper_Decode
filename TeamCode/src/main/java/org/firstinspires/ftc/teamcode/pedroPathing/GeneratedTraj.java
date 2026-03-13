@@ -45,6 +45,22 @@ public class GeneratedTraj extends LinearOpMode {
 
     private Pose startPose = new Pose(120 ,127.87, Math.toRadians(319.6));
 
+    // --- FAR PATH POSES ---
+    // Start of Path 1 (Also usually your startPose)
+    public Pose farStartPose = new Pose(89.000, 8.000, Math.toRadians(0));
+
+    // Control point for the curve in Path 1
+    public Pose farPath1Control = new Pose(80.000, 36.000);
+
+    // End of Path 1 / Start of Path 2
+    public Pose farPath1End = new Pose(105.000, 38.500, Math.toRadians(0));
+
+    // End of Path 2 / Start of Path 3
+    public Pose farPath2End = new Pose(130.000, 35.500, Math.toRadians(0));
+
+    // End of Path 3
+    public Pose farPath3End = new Pose(89.000, 12.000, Math.toRadians(0));
+
     private HWMap hwMap;
     private Logger logger;
     private RobotSettings robotSettings;
@@ -120,39 +136,47 @@ public class GeneratedTraj extends LinearOpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
     }
-    
-    public void farPaths(Follower follower) {
+
+        public void farPaths(Follower follower) {
+
+            if(robotSettings.alliance.equals(RobotSettings.Alliance.BLUE)) {
+                mirrorFarPoses();
+            }
 
             FarPath1 = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(89.000, 8.000),
-                                    new Pose(90.000, 20.000),
-                                    new Pose(105.000, 35.500)
+                                    farStartPose,
+                                    farPath1Control,
+                                    farPath1End
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
+                    ).setLinearHeadingInterpolation(farStartPose.getHeading(), farPath1End.getHeading())
                     .build();
 
             FarPath2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(105.000, 35.500),
-
-                                    new Pose(130.000, 35.500)
+                                    farPath1End,
+                                    farPath2End
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
+                    ).setLinearHeadingInterpolation(farPath1End.getHeading(), farPath2End.getHeading())
                     .build();
 
             FarPath3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(130.000, 35.500),
-
-                                    new Pose(89.000, 12.000)
+                                    farPath2End,
+                                    farPath3End
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
+                    ).setLinearHeadingInterpolation(farPath2End.getHeading(), farPath3End.getHeading())
                     .build();
         }
+
+    public void mirrorFarPoses() {
+        // Assuming your Pedro Pathing branch supports a direct .mirror() or .flip() mutation
+        farStartPose = farStartPose.mirror();
+        farPath1Control = farPath1Control.mirror();
+        farPath1End = farPath1End.mirror();
+        farPath2End = farPath2End.mirror();
+        farPath3End = farPath3End.mirror();
+    }
 
     public void CloseSideUpdate() {
         pinpoint.update();
@@ -199,6 +223,7 @@ public class GeneratedTraj extends LinearOpMode {
                     follower.followPath(ClosePath4, true);
                     setPathState(6);
                 }
+                break;
             case 6:
                 if(!follower.isBusy()) {
                     transferFSM.updateState(false);
@@ -279,37 +304,40 @@ public class GeneratedTraj extends LinearOpMode {
                 break;
             case 2:
                 switch (transferSubState) {
-                    case 0: // Phase 1: First Open
+                    case 0: // Shot 1: Open
                         transferFSM.updateState(true);
                         if (transferFSM.TRANSFERED()) {
-                            transferSubState = 1; // Move to next phase
+                            transferSubState = 1;
                         }
                         break;
 
-                    case 1: // Phase 2: First Close
+                    case 1: // Shot 1: Close
                         transferFSM.updateState(false);
                         if (transferFSM.CLOSED()) {
+                            actionTimer.resetTimer(); // Start delay timer for next shot
                             transferSubState = 2;
                         }
                         break;
 
-                    case 2: // Phase 3: Second Open
-                        transferFSM.updateState(true);
-                        if (transferFSM.TRANSFERED()) {
-                            transferSubState = 3;
+                    case 2: // Shot 2: Wait & Open
+                        if(actionTimer.getElapsedTimeSeconds() >= 1.0) { // 1-second delay
+                            transferFSM.updateState(true);
+                            if (transferFSM.TRANSFERED()) {
+                                transferSubState = 3;
+                            }
                         }
                         break;
 
-                    case 3: // Phase 2: First Close
+                    case 3: // Shot 2: Close
                         transferFSM.updateState(false);
                         if (transferFSM.CLOSED()) {
-                            actionTimer.resetTimer();
+                            actionTimer.resetTimer(); // Start delay timer for next shot
                             transferSubState = 4;
                         }
                         break;
 
-                    case 4: // Phase 3: Second Open
-                        if(actionTimer.getElapsedTimeSeconds() > 1) {
+                    case 4: // Shot 3: Wait & Open
+                        if(actionTimer.getElapsedTimeSeconds() >= 1.0) { // 1-second delay
                             transferFSM.updateState(true);
                             if (transferFSM.TRANSFERED()) {
                                 transferSubState = 5;
@@ -317,13 +345,29 @@ public class GeneratedTraj extends LinearOpMode {
                         }
                         break;
 
-                    case 5: // Phase 4: Second Close
+
+                    case 5: // Shot 2: Close
                         transferFSM.updateState(false);
                         if (transferFSM.CLOSED()) {
-                            // Cycle is entirely finished!
-                            transferSubState = 0; // Reset for future use
+                            actionTimer.resetTimer(); // Start delay timer for next shot
+                            transferSubState = 6;
+                        }
+                        break;
 
-                            // Drive to next position
+                    case 6: // Shot 3: Wait & Open
+                        if(actionTimer.getElapsedTimeSeconds() >= 1.0) { // 1-second delay
+                            transferFSM.setTransferTime(100);
+                            transferFSM.updateState(true);
+                            if (transferFSM.TRANSFERED()) {
+                                transferSubState = 7;
+                            }
+                        }
+                        break;
+                    case 7: // Shot 3: Close
+                        transferFSM.updateState(false);
+                        if (transferFSM.CLOSED()) {
+                            // 3 Shots complete! Drive to next position
+                            transferSubState = 0; // Reset for future use
                             follower.followPath(FarPath1, true);
                             setPathState(3);
                         }
@@ -344,6 +388,7 @@ public class GeneratedTraj extends LinearOpMode {
                     follower.followPath(FarPath3, true);
                     setPathState(5);
                 }
+                break;
             case 5:
                 if(!follower.isBusy()) {
                     transferFSM.updateState(false);
@@ -354,50 +399,73 @@ public class GeneratedTraj extends LinearOpMode {
             case 6:
                 if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
                     switch (transferSubState) {
-                        case 0: // Phase 1: First Open
+                        case 0: // Shot 1: Open
+                            transferFSM.setTransferTime(32);
                             transferFSM.updateState(true);
                             if (transferFSM.TRANSFERED()) {
-                                transferSubState = 1; // Move to next phase
+                                transferSubState = 1;
                             }
                             break;
 
-                        case 1: // Phase 2: First Close
+                        case 1: // Shot 1: Close
                             transferFSM.updateState(false);
                             if (transferFSM.CLOSED()) {
+                                actionTimer.resetTimer(); // Start delay timer for next shot
                                 transferSubState = 2;
                             }
                             break;
 
-                        case 2: // Phase 3: Second Open
-                            transferFSM.updateState(true);
-                            if (transferFSM.TRANSFERED()) {
-                                transferSubState = 3;
+                        case 2: // Shot 2: Wait & Open
+                            if(actionTimer.getElapsedTimeSeconds() >= 1.0) { // 1-second delay
+                                transferFSM.updateState(true);
+                                if (transferFSM.TRANSFERED()) {
+                                    transferSubState = 3;
+                                }
                             }
                             break;
 
-                        case 3: // Phase 2: First Close
+                        case 3: // Shot 2: Close
                             transferFSM.updateState(false);
                             if (transferFSM.CLOSED()) {
+                                actionTimer.resetTimer(); // Start delay timer for next shot
                                 transferSubState = 4;
                             }
                             break;
 
-                        case 4: // Phase 3: Second Open
-                            transferFSM.updateState(true);
-                            if (transferFSM.TRANSFERED()) {
-                                transferSubState = 5;
+                        case 4: // Shot 3: Wait & Open
+                            if(actionTimer.getElapsedTimeSeconds() >= 1.0) { // 1-second delay
+                                transferFSM.updateState(true);
+                                if (transferFSM.TRANSFERED()) {
+                                    transferSubState = 5;
+                                }
                             }
                             break;
 
-                        case 5: // Phase 4: Second Close
+
+                        case 5: // Shot 2: Close
                             transferFSM.updateState(false);
                             if (transferFSM.CLOSED()) {
-                                // Cycle is entirely finished!
-                                transferSubState = 0; // Reset for future use
+                                actionTimer.resetTimer(); // Start delay timer for next shot
+                                transferSubState = 6;
+                            }
+                            break;
 
-                                // Drive to next position
+                        case 6: // Shot 3: Wait & Open
+                            if(actionTimer.getElapsedTimeSeconds() >= 1.0) { // 1-second delay
+                                transferFSM.setTransferTime(100);
+                                transferFSM.updateState(true);
+                                if (transferFSM.TRANSFERED()) {
+                                    transferSubState = 7;
+                                }
+                            }
+                            break;
+                        case 7: // Shot 3: Close
+                            transferFSM.updateState(false);
+                            if (transferFSM.CLOSED()) {
+                                // 3 Shots complete! Drive to next position
+                                transferSubState = 0; // Reset for future use
                                 follower.followPath(FarPath1, true);
-                                setPathState(7);
+                                setPathState(3);
                             }
                             break;
                     }
@@ -436,7 +504,7 @@ public class GeneratedTraj extends LinearOpMode {
 
         }
 
-        startPose = new Pose(robotSettings.startPosState.getPose2D().getX(DistanceUnit.INCH),robotSettings.startPosState.getPose2D().getY(DistanceUnit.INCH), robotSettings.startPosState.getPose2D().getHeading(AngleUnit.DEGREES));
+        startPose = new Pose(robotSettings.startPosState.getPose2D().getX(DistanceUnit.INCH),robotSettings.startPosState.getPose2D().getY(DistanceUnit.INCH), robotSettings.startPosState.getPose2D().getHeading(AngleUnit.RADIANS));
         follower.setStartingPose(startPose);
 
         opmodeTimer.resetTimer();
@@ -466,6 +534,7 @@ public class GeneratedTraj extends LinearOpMode {
             transferFSM.log();
             intakeFSM.log();
             telemetry.addData("path state", pathState);
+            telemetry.addData("transfer states", transferSubState);
             telemetry.addData("x", follower.getPose().getX());
             telemetry.addData("y", follower.getPose().getY());
             telemetry.addData("heading", follower.getPose().getHeading());
