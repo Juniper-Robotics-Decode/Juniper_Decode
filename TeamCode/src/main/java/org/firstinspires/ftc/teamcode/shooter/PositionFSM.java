@@ -117,7 +117,9 @@ public class PositionFSM {
     }
 
     public void updateState() {
-        chooseSensor();
+      //  chooseSensor();
+
+        sensor = Sensor.PINPOINT;
 
 
             if (sensor == Sensor.LIMELIGHT) {
@@ -143,9 +145,9 @@ public class PositionFSM {
                 }
             }
             else if (sensor == Sensor.PINPOINT) {
-                limelightCamera.update();
+              //  limelightCamera.update();
                 pinpoint.update();
-                if(pinpoint.pinpointReady()) {
+              //  if(pinpoint.pinpointReady()) {
                     if (pinpoint.getGoalDistance() >= threshold4PP) {
                         state = States.ZONE_5;
                     } else if (pinpoint.getGoalDistance() >= threshold3PP) {
@@ -159,11 +161,11 @@ public class PositionFSM {
                     }
                     findFlywheelTargetVelocity(pinpoint.getGoalDistance());
                     findPitchTargetAngle();
-                    findTurretError(limelightCamera.getTx());
-                }
-                else {
+                    findTurretError(pinpoint.getHeadingErrorTrig());
+              //  }
+                /*else {
                     state = States.NO_VALID_TARGET;
-                }
+                }*/
             }
 
         //TODO: add if turret velocity under threshold and drive velocity under threshold then relocalize at all times
