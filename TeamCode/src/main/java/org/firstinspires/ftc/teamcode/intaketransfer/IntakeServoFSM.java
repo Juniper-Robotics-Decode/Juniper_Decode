@@ -22,7 +22,7 @@ public class IntakeServoFSM {
     private ServoWrapper intakeServo;
     public State currentState;
     public static double targetPosition = 0;
-    public static double positionUp = 0.6;
+    public static double positionUp = 0.25;
     public static double positionDown = 0;
     static Timing.Timer transferPostitionTimer;
 

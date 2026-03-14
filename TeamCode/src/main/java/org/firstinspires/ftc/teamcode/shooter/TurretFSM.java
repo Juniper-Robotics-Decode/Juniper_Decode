@@ -133,23 +133,23 @@ public class TurretFSM {
 
         if(dPadUp2 && !lastUp) {
             MANUAL_OFFSET = MANUAL_OFFSET + 10;
-            UPPER_HARD_STOP = UPPER_HARD_STOP + 10;
-            LOWER_HARD_STOP = LOWER_HARD_STOP + 10;
-        }
-        if(dPadDown2 && !lastDown) {
-            MANUAL_OFFSET = MANUAL_OFFSET - 10;
             UPPER_HARD_STOP = UPPER_HARD_STOP - 10;
             LOWER_HARD_STOP = LOWER_HARD_STOP - 10;
         }
+        if(dPadDown2 && !lastDown) {
+            MANUAL_OFFSET = MANUAL_OFFSET - 10;
+            UPPER_HARD_STOP = UPPER_HARD_STOP + 10;
+            LOWER_HARD_STOP = LOWER_HARD_STOP + 10;
+        }
         if(dPadRight2 && !lastRight) {
             MANUAL_OFFSET = MANUAL_OFFSET + 1;
-            UPPER_HARD_STOP = UPPER_HARD_STOP + 1;
-            LOWER_HARD_STOP = LOWER_HARD_STOP + 1;
+            UPPER_HARD_STOP = UPPER_HARD_STOP -1;
+            LOWER_HARD_STOP = LOWER_HARD_STOP - 1;
         }
         if(dPadLeft2 && !lastLeft) {
             MANUAL_OFFSET = MANUAL_OFFSET - 1;
-            UPPER_HARD_STOP = UPPER_HARD_STOP - 1;
-            LOWER_HARD_STOP = LOWER_HARD_STOP - 1;
+            UPPER_HARD_STOP = UPPER_HARD_STOP + 1;
+            LOWER_HARD_STOP = LOWER_HARD_STOP + 1;
         }
 
         lastUp = dPadUp2;

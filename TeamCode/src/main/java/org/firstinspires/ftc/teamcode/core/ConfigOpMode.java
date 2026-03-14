@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.core;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Robot Settings")
+@TeleOp(name = "Robot Settings", group = "A")
 public class ConfigOpMode extends LinearOpMode {
 
 

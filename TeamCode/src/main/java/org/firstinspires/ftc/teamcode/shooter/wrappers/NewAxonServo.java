@@ -42,6 +42,9 @@ public class NewAxonServo {
     /**
      * Reads the encoder and calculates angle
      */
+    /**
+     * Reads the encoder and calculates angle
+     */
     public void readPos() {
         // Get raw angle
         double currentRawAngle = (encoder.getVoltage() / 3.3) * 360.0;
@@ -53,7 +56,17 @@ public class NewAxonServo {
         // offset encoder at first read pos
         if (isFirstRead) {
             lastRawServoAngle = currentRawAngle;
-            continuousServoAngle = currentRawAngle + encoderOffset;
+
+            double startingAngle = currentRawAngle;
+
+            // THE FIX: Catch the initial wraparound.
+            // If the mechanism is resting slightly behind 0 on INIT, it will read 300+.
+            // We subtract 360 so it starts at a proper negative number (e.g., -2 degrees) instead of 358.
+            if (startingAngle > 300.0) {
+                startingAngle -= 360.0;
+            }
+
+            continuousServoAngle = startingAngle + encoderOffset;
             isFirstRead = false;
             return;
         }

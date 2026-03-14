@@ -83,6 +83,15 @@ public class Pinpoint {  // TODO: add junit
        }
     }
 
+    public void resetOnlyIMU() {
+        if(robotSettings.alliance == RobotSettings.Alliance.RED) {
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.DEGREES, 0));
+        }
+        else {
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.DEGREES, 180));
+        }
+    }
+
 
     public double getGoalDistance() {
         return Math.sqrt(Math.pow((robotSettings.alliance.getGoalPos().getX(DistanceUnit.METER) - x), 2) + Math.pow((robotSettings.alliance.getGoalPos().getY(DistanceUnit.METER) - y), 2));

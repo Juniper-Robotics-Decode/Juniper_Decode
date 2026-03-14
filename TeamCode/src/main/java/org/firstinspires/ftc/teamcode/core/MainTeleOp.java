@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.intaketransfer.TransferFSM;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp
+@TeleOp(group = "A")
 public class MainTeleOp extends LinearOpMode {
     private SwerveDrivetrain swerveDrivetrain;
 
@@ -145,17 +145,21 @@ public class MainTeleOp extends LinearOpMode {
                 pinpoint.resetIMU();
             }
 
+/*
             if(gamepadE1.getButton(GamepadKeys.Button.BACK) && robotSettings.distanceMethod == RobotSettings.DistanceMethod.PINPOINT_ONLY) {
                 robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
             }
 
             if(gamepadE1.getButton(GamepadKeys.Button.BACK) && robotSettings.distanceMethod == RobotSettings.DistanceMethod.LIMELIGHT_ONLY) {
-                robotSettings.distanceMethod = RobotSettings.DistanceMethod.LIMELIGHT_ONLY;
-            }
+                robotSettings.distanceMethod = RobotSettings.DistanceMethod.PINPOINT_ONLY;
+            }*/
 
             pinpoint.update();
             pos = pinpoint.getPos();
             if(robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos())) {
+                if(robotSettings.startPosState.equals(RobotSettings.StartPos.CLOSE_BLUE)) {
+
+                }
                 botHeading = -pos.getHeading(RADIANS) + Math.PI;
             }
             else {
@@ -213,6 +217,9 @@ public class MainTeleOp extends LinearOpMode {
             transferFSM.updateState(gamepadE1.isDown(GamepadKeys.Button.RIGHT_BUMPER));
             launcherFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.B),gamepadE1.getButton(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_UP), gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),gamepadE2.wasJustPressed(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.A),gamepadE2.wasJustPressed(GamepadKeys.Button.B),gamepadE2.wasJustPressed(GamepadKeys.Button.X), gamepadE2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER));
 
+            if(gamepadE1.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
+                pinpoint.resetOnlyIMU();
+            }
             //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
             logUpdate(botHeading, voltage);
 

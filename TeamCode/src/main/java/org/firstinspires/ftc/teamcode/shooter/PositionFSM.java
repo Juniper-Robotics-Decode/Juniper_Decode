@@ -143,6 +143,7 @@ public class PositionFSM {
                 }
             }
             else if (sensor == Sensor.PINPOINT) {
+                limelightCamera.update();
                 pinpoint.update();
                 if(pinpoint.pinpointReady()) {
                     if (pinpoint.getGoalDistance() >= threshold4PP) {
@@ -158,7 +159,7 @@ public class PositionFSM {
                     }
                     findFlywheelTargetVelocity(pinpoint.getGoalDistance());
                     findPitchTargetAngle();
-                    findTurretError(pinpoint.getHeadingErrorTrig());
+                    findTurretError(limelightCamera.getTx());
                 }
                 else {
                     state = States.NO_VALID_TARGET;
@@ -360,10 +361,10 @@ public class PositionFSM {
 
     public Pose2D relocalize(){
         limelightCamera.update();
-        X = limelightCamera.getxField();
-        Y = limelightCamera.getyField();
+        X = (limelightCamera.getyField()/DistanceUnit.mPerInch) + 72;
+        Y = -(limelightCamera.getxField()/DistanceUnit.mPerInch) + 72;
        // pinpoint.update();
-        return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES, pinpoint.getHeading());
+        return new Pose2D(DistanceUnit.INCH,X,Y, AngleUnit.DEGREES, pinpoint.getHeading());
     }
 
 }
