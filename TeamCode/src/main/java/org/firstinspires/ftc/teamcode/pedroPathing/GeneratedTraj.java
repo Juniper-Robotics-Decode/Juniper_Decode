@@ -50,16 +50,16 @@ public class GeneratedTraj extends LinearOpMode {
     public Pose farStartPose = new Pose(89.000, 8.000, Math.toRadians(0));
 
     // Control point for the curve in Path 1
-    public Pose farPath1Control = new Pose(80.000, 36.000);
+    public Pose farPath1Control = new Pose(90.000, 20);
 
     // End of Path 1 / Start of Path 2
-    public Pose farPath1End = new Pose(105.000, 38.500, Math.toRadians(0));
+    public Pose farPath1End = new Pose(105.000, 35.5, Math.toRadians(0));
 
     // End of Path 2 / Start of Path 3
     public Pose farPath2End = new Pose(130.000, 35.500, Math.toRadians(0));
 
     // End of Path 3
-    public Pose farPath3End = new Pose(89.000, 12.000, Math.toRadians(0));
+    public Pose farPath3End = new Pose(89.000, 8.000, Math.toRadians(0));
 
     private HWMap hwMap;
     private Logger logger;
@@ -397,7 +397,7 @@ public class GeneratedTraj extends LinearOpMode {
                 }
                 break;
             case 6:
-                if(actionTimer.getElapsedTimeSeconds() >= 1.5) {
+                if(actionTimer.getElapsedTimeSeconds() >= 0.5) {
                     switch (transferSubState) {
                         case 0: // Shot 1: Open
                             transferFSM.setTransferTime(32);
@@ -465,7 +465,7 @@ public class GeneratedTraj extends LinearOpMode {
                                 // 3 Shots complete! Drive to next position
                                 transferSubState = 0; // Reset for future use
                                 follower.followPath(FarPath1, true);
-                                setPathState(3);
+                                setPathState(7);
                             }
                             break;
                     }
@@ -475,6 +475,7 @@ public class GeneratedTraj extends LinearOpMode {
                 transferFSM.updateState(true);
                 if (transferFSM.TRANSFERED()) {*/
                     launcherFSM.setEndOfAuto(true);
+
                     setPathState(-1);
                // }
                 break;

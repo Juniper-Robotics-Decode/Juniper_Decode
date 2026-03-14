@@ -20,10 +20,11 @@ import java.util.function.DoubleSupplier;
 public class PositionFSM {
 
     public enum States {
-        ZONE_1(13, -0.015), // TODO: check does pitch at 22.5 equal like almost 360? -.1
+        ZONE_0(5, -0.1),
+        ZONE_1(15, -0.1), // TODO: check does pitch at 22.5 equal like almost 360? -.1
         ZONE_2(15, -0.1), // -.015
-        ZONE_3(16, -0.15), // -.15
-        ZONE_4(22,-1.4), //-1.4
+        ZONE_3(15, -0.1), // -.15
+        ZONE_4(20,-1.4), //-1.4
         ZONE_5(18,-2.1), // -1.5
 
 
@@ -80,7 +81,7 @@ public class PositionFSM {
 
     private double threshold1LL = 1.5, threshold2LL = 2, threshold3LL = 2.5, threshold4LL = 3;
 
-    private double threshold1PP = 46.85039, threshold2PP = 80.31496, threshold3PP = 103.5433, threshold4PP = 119.2913;
+    private double threshold1PP = 46.85039, threshold2PP = 65, threshold3PP = 88.955, threshold4PP = 115;
 
     private double SENSOR_CHOICE_THRESHOLD = 2;
     private double RELOCALIZATION_TRHESHOLD = 0.1;
@@ -132,11 +133,11 @@ public class PositionFSM {
                     } else if (limelightCamera.getGoalDistance() >= threshold3PP) {
                         state = States.ZONE_4;
                     } else if (limelightCamera.getGoalDistance() >= threshold2PP) {
-                        state = States.ZONE_3;
-                    } else if (limelightCamera.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_2;
-                    } else {
+                    } else if (limelightCamera.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_1;
+                    } else {
+                        state = States.ZONE_0;
                     }
                     findFlywheelTargetVelocity(limelightCamera.getGoalDistance());
                     findPitchTargetAngle();
@@ -154,11 +155,11 @@ public class PositionFSM {
                     } else if (pinpoint.getGoalDistance() >= threshold3PP) {
                         state = States.ZONE_4;
                     } else if (pinpoint.getGoalDistance() >= threshold2PP) {
-                        state = States.ZONE_3;
-                    } else if (pinpoint.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_2;
-                    } else {
+                    } else if (pinpoint.getGoalDistance() >= threshold1PP) {
                         state = States.ZONE_1;
+                    } else {
+                        state = States.ZONE_0;
                     }
                     findFlywheelTargetVelocity(pinpoint.getGoalDistance());
                     findPitchTargetAngle();
@@ -199,13 +200,14 @@ public class PositionFSM {
 
         velocityMapPP = new InterpLUT();
 
-        velocityMapPP.add(19.685,2500);
-        velocityMapPP.add(33.898, 2900);
-        velocityMapPP.add(46.85039, 3000);
-        velocityMapPP.add(80.31496, 3100);
-        velocityMapPP.add(103.5433, 3250);
-        velocityMapPP.add(119.2913, 3400);
-        velocityMapPP.add(127.14,3425);
+        velocityMapPP.add(19.685,2450);
+        velocityMapPP.add(33.898, 2450);
+        velocityMapPP.add(46.85039, 2800);
+        velocityMapPP.add(56.85039, 2800);
+        velocityMapPP.add(80.31496, 2950);
+        velocityMapPP.add(103.5433, 3200);
+        velocityMapPP.add(119.2913, 3200);
+        velocityMapPP.add(147.14,3425);
         velocityMapPP.add(147.2441,3650);
         velocityMapPP.createLUT();
 

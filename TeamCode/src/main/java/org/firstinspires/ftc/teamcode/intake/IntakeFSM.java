@@ -28,6 +28,7 @@ public class IntakeFSM {
     private State currentState = State.RAMPING_UP_TO_INTAKE;
     private Telemetry telemetry;
     Timing.Timer autoReverseTimer;
+    boolean Last_D_Pad_Up_Press, Last_D_Pad_Left_Press, Last_D_Pad_Down_Press = false;
 
     TransferFSM transferFSM;
 
@@ -44,9 +45,9 @@ public class IntakeFSM {
 
     public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press, boolean D_Pad_Down_Press) {
         Roller.updateState();
-        Servo.updateState(D_Pad_Down_Press);
+        Servo.updateState((D_Pad_Down_Press && !Last_D_Pad_Down_Press));
 
-        findTargetState(D_Pad_Up_Press, D_Pad_Left_Press);
+        findTargetState((D_Pad_Up_Press && !Last_D_Pad_Up_Press), (D_Pad_Left_Press && !Last_D_Pad_Left_Press));
         switch (currentState) {
 
             case RAMPING_UP_TO_INTAKE:
@@ -76,6 +77,11 @@ public class IntakeFSM {
 
 
         }
+
+        Last_D_Pad_Left_Press = D_Pad_Left_Press;
+        Last_D_Pad_Down_Press = D_Pad_Down_Press;
+        Last_D_Pad_Up_Press = D_Pad_Up_Press;
+
         telemetry.addData("Intake Current State", currentState);
     }
 
@@ -85,14 +91,14 @@ public class IntakeFSM {
         if (D_Pad_Up_Press && (currentState == State.READY_TO_INTAKE || currentState == State.STOPPED || currentState == State.RAMPING_UP_TO_INTAKE)) {
             currentState = State.RAMPING_UP_TO_EJECT;
 
-        } else if (D_Pad_Up_Press && (Roller.EJECTING())) {
+        } else if (D_Pad_Up_Press && (currentState == State.RAMPING_UP_TO_EJECT || currentState == State.EJECTING)) {
             currentState = State.RAMPING_UP_TO_INTAKE;
 
         }
 
         if (D_Pad_Left_Press && (currentState == State.READY_TO_INTAKE || currentState == State.EJECTING)) {
             currentState = State.STOPPING;
-        } else if (D_Pad_Left_Press && currentState == State.STOPPED) {
+        } else if (D_Pad_Left_Press && (currentState == State.STOPPED || currentState == State.STOPPING)) {
             currentState = State.RAMPING_UP_TO_INTAKE;
         }
 
