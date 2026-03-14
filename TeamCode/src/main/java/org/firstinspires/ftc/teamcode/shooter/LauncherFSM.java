@@ -51,11 +51,11 @@ public class LauncherFSM {
         this.auto = auto;
     }
 
-    public void updateState(boolean bPress, boolean yPress, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2, boolean rightBumper2) {
+    public void updateState(boolean bPress, boolean yPress, boolean dPadUp2, boolean dPadDown2, boolean dPadLeft2, boolean dPadRight2, boolean yPress2, boolean aPress2, boolean bPress2, boolean xPress2, boolean leftBumper2) {
         flywheelFSM.updateState(bPress2,xPress2);
         turretFSM.updateState();
         pitchFSM.updateState(yPress2,aPress2);
-        positionFSM.updateState(rightBumper2);
+        positionFSM.updateState();
         findTargetState(bPress, yPress);
 
         switch (state) {

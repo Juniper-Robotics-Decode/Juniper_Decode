@@ -116,12 +116,7 @@ public class PositionFSM {
         this.robotSettings = robotSettings;
     }
 
-    public void updateState(boolean rightBumper2) {
-        if(rightBumper2 && !lastRightBumper) {
-            resetOdo();
-        }
-
-        lastRightBumper = rightBumper2;
+    public void updateState() {
         chooseSensor();
 
 
@@ -369,10 +364,6 @@ public class PositionFSM {
         Y = limelightCamera.getyField();
        // pinpoint.update();
         return new Pose2D(DistanceUnit.METER,X,Y, AngleUnit.DEGREES, pinpoint.getHeading());
-    }
-
-    public void resetOdo() {
-     //   pinpoint.setPosition(new Pose2D(DistanceUnit.METER,1.2,0,AngleUnit.DEGREES,pinpoint.getHeading()));
     }
 
 }

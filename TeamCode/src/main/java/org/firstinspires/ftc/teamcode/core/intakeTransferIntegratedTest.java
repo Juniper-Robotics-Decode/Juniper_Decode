@@ -18,6 +18,7 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
 
     private HWMap hwmap;
     private GamepadEx gamepad;
+    private GamepadEx gamepad2ex;
     private IntakeFSM intakeFSM;
     private TransferFSM transferFSM;
     private Logger logger;
@@ -29,6 +30,7 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         hwmap = new HWMap(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
+        gamepad2ex = new GamepadEx(gamepad2);
         logger = new Logger(telemetry);
         transferFSM = new TransferFSM(hwmap, telemetry, logger, false);
         intakeFSM = new IntakeFSM(hwmap, telemetry, logger);
@@ -37,7 +39,7 @@ public class intakeTransferIntegratedTest extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.update();
             gamepad.readButtons();
-            intakeFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.Y), (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)), (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)));
+            intakeFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.Y), (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)), (gamepad2ex.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)));
             transferFSM.updateState(gamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER));
 
         }

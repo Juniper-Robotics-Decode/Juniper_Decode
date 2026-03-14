@@ -180,7 +180,7 @@ public class GeneratedTraj extends LinearOpMode {
 
     public void CloseSideUpdate() {
         pinpoint.update();
-        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
+        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false);
         intakeFSM.updateState(false,false,false);
         switch (pathState) {
             case 0:
@@ -286,7 +286,7 @@ public class GeneratedTraj extends LinearOpMode {
 
     public void FarSideUpdate() {
         pinpoint.update();
-        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false,false);
+        launcherFSM.updateState(false,false,false,false,false,false,false,false,false,false,false);
         intakeFSM.updateState(false,false,false);
         switch (pathState) {
             case 0:

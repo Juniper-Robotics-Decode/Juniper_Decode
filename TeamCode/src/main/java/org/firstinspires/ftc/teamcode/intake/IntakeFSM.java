@@ -28,7 +28,7 @@ public class IntakeFSM {
     private State currentState = State.RAMPING_UP_TO_INTAKE;
     private Telemetry telemetry;
     Timing.Timer autoReverseTimer;
-    boolean Last_D_Pad_Up_Press, Last_D_Pad_Left_Press, Last_D_Pad_Down_Press = false;
+    boolean Last_D_Pad_Up_Press, Last_D_Pad_Left_Press, Last_Right_Bumper_Press = false;
 
     TransferFSM transferFSM;
 
@@ -43,9 +43,9 @@ public class IntakeFSM {
         telemetry.addData("Current Intake state", currentState);
     }
 
-    public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press, boolean D_Pad_Down_Press) {
+    public void updateState(boolean D_Pad_Up_Press, boolean D_Pad_Left_Press, boolean Right_Bumper_Press) {
         Roller.updateState();
-        Servo.updateState((D_Pad_Down_Press && !Last_D_Pad_Down_Press));
+        Servo.updateState((Right_Bumper_Press && !Last_Right_Bumper_Press));
 
         findTargetState((D_Pad_Up_Press && !Last_D_Pad_Up_Press), (D_Pad_Left_Press && !Last_D_Pad_Left_Press));
         switch (currentState) {
@@ -79,7 +79,7 @@ public class IntakeFSM {
         }
 
         Last_D_Pad_Left_Press = D_Pad_Left_Press;
-        Last_D_Pad_Down_Press = D_Pad_Down_Press;
+        Last_Right_Bumper_Press = Right_Bumper_Press;
         Last_D_Pad_Up_Press = D_Pad_Up_Press;
 
         telemetry.addData("Intake Current State", currentState);

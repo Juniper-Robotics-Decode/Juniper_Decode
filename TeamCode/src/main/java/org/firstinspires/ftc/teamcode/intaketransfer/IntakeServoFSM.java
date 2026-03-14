@@ -21,9 +21,9 @@ public class IntakeServoFSM {
     private Telemetry telemetry;
     private ServoWrapper intakeServo;
     public State currentState;
-    public static double targetPosition = .7;
-    public static double positionUp = 1;
-    public static double positionDown = .7;
+    public static double targetPosition = 0;
+    public static double positionUp = 0.6;
+    public static double positionDown = 0;
     static Timing.Timer transferPostitionTimer;
 
     public IntakeServoFSM(HWMap intaketransferhwmap, Telemetry telemetry) {
@@ -34,7 +34,7 @@ public class IntakeServoFSM {
         intakeServo.setPosition(positionDown);
     }
 
-    public void updateState(boolean D_Pad_Down_Press) {
+    public void updateState(boolean Right_Bumper_Press) {
         telemetry.addData("intake servo current Position ", intakeServo.getPosition());
         telemetry.addData("Elapsed Time ", transferPostitionTimer.elapsedTime());
         telemetry.addData("Intake servo target Position ", targetPosition);
@@ -49,7 +49,7 @@ public class IntakeServoFSM {
             transferPostitionTimer.start();
         }
 
-        if(D_Pad_Down_Press){
+        if(Right_Bumper_Press){
             if(AT_DOWN()){MoveUp();}
             else if(AT_UP()){MoveDown();}
         }

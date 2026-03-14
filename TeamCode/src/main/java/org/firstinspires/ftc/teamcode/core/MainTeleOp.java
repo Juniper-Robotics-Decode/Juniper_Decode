@@ -209,9 +209,9 @@ public class MainTeleOp extends LinearOpMode {
 
             swerveDrivetrain.setPose(new Pose(new Point(drivevector.x, drivevector.y).rotate(botHeading), totalTurn));
 
-            intakeFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.DPAD_UP), gamepadE1.getButton(GamepadKeys.Button.DPAD_LEFT), gamepadE1.getButton(GamepadKeys.Button.DPAD_DOWN));
+            intakeFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.DPAD_UP), gamepadE1.getButton(GamepadKeys.Button.DPAD_LEFT), gamepadE2.getButton(GamepadKeys.Button.RIGHT_BUMPER));
             transferFSM.updateState(gamepadE1.isDown(GamepadKeys.Button.RIGHT_BUMPER));
-            launcherFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.B),gamepadE1.getButton(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_UP), gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),gamepadE2.wasJustPressed(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.A),gamepadE2.wasJustPressed(GamepadKeys.Button.B),gamepadE2.wasJustPressed(GamepadKeys.Button.X), gamepadE2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER), gamepadE2.getButton(GamepadKeys.Button.RIGHT_BUMPER));
+            launcherFSM.updateState(gamepadE1.getButton(GamepadKeys.Button.B),gamepadE1.getButton(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_UP), gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),gamepadE2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),gamepadE2.wasJustPressed(GamepadKeys.Button.Y),gamepadE2.wasJustPressed(GamepadKeys.Button.A),gamepadE2.wasJustPressed(GamepadKeys.Button.B),gamepadE2.wasJustPressed(GamepadKeys.Button.X), gamepadE2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER));
 
             //   logger.log("is blue", robotSettings.alliance.getGoalPos().equals(RobotSettings.Alliance.BLUE.getGoalPos()), Logger.LogLevels.PRODUCTION);
             logUpdate(botHeading, voltage);
