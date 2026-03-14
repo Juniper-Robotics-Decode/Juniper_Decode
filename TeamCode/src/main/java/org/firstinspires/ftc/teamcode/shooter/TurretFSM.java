@@ -142,14 +142,14 @@ public class TurretFSM {
             LOWER_HARD_STOP = LOWER_HARD_STOP + 10;
         }
         if(dPadRight2 && !lastRight) {
-            MANUAL_OFFSET = MANUAL_OFFSET + 1;
-            UPPER_HARD_STOP = UPPER_HARD_STOP -1;
-            LOWER_HARD_STOP = LOWER_HARD_STOP - 1;
+            MANUAL_OFFSET = MANUAL_OFFSET + 3;
+            UPPER_HARD_STOP = UPPER_HARD_STOP -3;
+            LOWER_HARD_STOP = LOWER_HARD_STOP - 3;
         }
         if(dPadLeft2 && !lastLeft) {
-            MANUAL_OFFSET = MANUAL_OFFSET - 1;
-            UPPER_HARD_STOP = UPPER_HARD_STOP + 1;
-            LOWER_HARD_STOP = LOWER_HARD_STOP + 1;
+            MANUAL_OFFSET = MANUAL_OFFSET - 3;
+            UPPER_HARD_STOP = UPPER_HARD_STOP + 3;
+            LOWER_HARD_STOP = LOWER_HARD_STOP + 3;
         }
 
         lastUp = dPadUp2;
