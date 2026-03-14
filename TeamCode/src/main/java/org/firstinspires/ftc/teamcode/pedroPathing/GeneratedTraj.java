@@ -53,10 +53,10 @@ public class GeneratedTraj extends LinearOpMode {
     public Pose farPath1Control = new Pose(90.000, 20);
 
     // End of Path 1 / Start of Path 2
-    public Pose farPath1End = new Pose(105.000, 35.5, Math.toRadians(0));
+    public Pose farPath1End = new Pose(105.000, 27.5, Math.toRadians(0));
 
     // End of Path 2 / Start of Path 3
-    public Pose farPath2End = new Pose(130.000, 35.500, Math.toRadians(0));
+    public Pose farPath2End = new Pose(130.000, 27.500, Math.toRadians(0));
 
     // End of Path 3
     public Pose farPath3End = new Pose(89.000, 8.000, Math.toRadians(0));
@@ -157,7 +157,7 @@ public class GeneratedTraj extends LinearOpMode {
                                     farPath1End,
                                     farPath2End
                             )
-                    ).setLinearHeadingInterpolation(farPath1End.getHeading(), farPath2End.getHeading())
+                    ).setTangentHeadingInterpolation()
                     .build();
 
             FarPath3 = follower.pathBuilder().addPath(

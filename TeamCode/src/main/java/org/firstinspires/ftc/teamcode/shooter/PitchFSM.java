@@ -70,7 +70,7 @@ public class PitchFSM {
         }
 
 
-        targetAngle = targetAngle + MANUAL_OFFSET;
+        targetAngle = targetAngle - MANUAL_OFFSET;
       //  adjustForFlywheel();
         if(targetAngle > UPPER_HARD_STOP) {
             targetAngle = UPPER_HARD_STOP;
