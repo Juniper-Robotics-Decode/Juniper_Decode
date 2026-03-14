@@ -21,7 +21,7 @@ public class PitchFSM {
 
     private NewAxonServo pitchServo;
     private States state;
-    private double targetAngle;
+    private double targetAngle, pitchAngle;
 
     private PIDFController pidfController;
     public static double TOLERANCE = 5;
@@ -61,7 +61,6 @@ public class PitchFSM {
     }
 
     public void updatePID(boolean yPress, boolean aPress) {
-        adjustForFlywheel();
         if(yPress) {
             MANUAL_OFFSET--;
         }
@@ -71,23 +70,23 @@ public class PitchFSM {
 
 
         targetAngle = targetAngle - MANUAL_OFFSET;
-      //  adjustForFlywheel();
-        if(targetAngle > UPPER_HARD_STOP) {
-            targetAngle = UPPER_HARD_STOP;
-        }
-        else if (targetAngle < LOWER_HARD_STOP) {
-            targetAngle = LOWER_HARD_STOP;
-        }
         pidfController.setPIDF(P,I,D,F);
         pidfController.setTolerance(TOLERANCE);
         pitchServo.readPos();
 
-        double error = targetAngle - pitchServo.getScaledPos();
+        double error = pitchAngle - pitchServo.getScaledPos();
+        adjustForFlywheel(flywheelErrorProvider.getAsDouble());
+        if(pitchAngle > UPPER_HARD_STOP) {
+            pitchAngle = UPPER_HARD_STOP;
+        }
+        else if (pitchAngle < LOWER_HARD_STOP) {
+            pitchAngle = LOWER_HARD_STOP;
+        }
 
-//        telemetry.addData("error", error);
+        telemetry.addData("error", error);
 
-        double power = pidfController.calculate(pitchServo.getScaledPos(),targetAngle);
-//        telemetry.addData("power", power);
+        double power = pidfController.calculate(pitchServo.getScaledPos(),pitchAngle);
+        telemetry.addData("power", power);
         pitchServo.set(power);
     }
 
@@ -129,12 +128,13 @@ public class PitchFSM {
         logger.log("pitch current angle", pitchServo.getScaledPos(), Logger.LogLevels.PRODUCTION);
     }
 
-    private void adjustForFlywheel() {
-        if(flywheelErrorProvider.getAsDouble() > 100 && flywheelErrorProvider.getAsDouble() < 1000) {
-            double offset = flywheelErrorProvider.getAsDouble() * pitchReductionFactor;
-            targetAngle = targetAngle + offset;
+    private void adjustForFlywheel(double error) {
+        double flywheelError = error;
+        if(flywheelError > 100 && flywheelError < 1000) {
+            double offset = flywheelError * pitchReductionFactor;
+            pitchAngle = targetAngle + offset;
         } else {
-            targetAngle = targetAngle;
+            pitchAngle = targetAngle;
         }
     }
 
